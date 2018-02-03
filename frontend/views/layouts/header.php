@@ -239,7 +239,7 @@ use yii\helpers\Html;
                                  alt="User Image"/>
 
                             <p>
-                                Alexander Pierce - Web Developer
+                                <?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->username:'User not Auth'; ?>
                                 <small>Member since Nov. 2012</small>
                             </p>
                         </li>

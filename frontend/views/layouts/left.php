@@ -11,7 +11,7 @@ use yii\helpers\Html;
                 <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
+                <p><?= Yii::$app->user->identity->username; ?></p>
 
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -30,9 +30,6 @@ use yii\helpers\Html;
         <?php
         $menuItems=[
             ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
-            ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
-            ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
-            ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
             [
                 'label' => 'Some tools',
                 'icon' => 'share',
@@ -64,7 +61,7 @@ use yii\helpers\Html;
             $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
-            $menuItems[] = $menuItems[] = ['label'=>'Logout (' . Yii::$app->user->identity->username . ')','url'=>['/user/security/logout']];
+            $menuItems[] =  ['label'=>'Logout (' . Yii::$app->user->identity->username . ')','url'=>['/user/security/logout']];
         } ?>
         <?= dmstr\widgets\Menu::widget(
             [
