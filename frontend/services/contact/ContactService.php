@@ -1,29 +1,32 @@
 <?php
 
 
-namespace services\contact;
+namespace frontend\services\contact;
 
-
+use Yii;
+use yii\mail\MailerInterface;
+use frontend\forms\ContactForm;
 class ContactService
 {
 
     private $suportEmail;
-    private $adminEmail;
 
-    public function __construct($suportEmail,$adminEmail)
+    public function __construct($suportEmail/*,MailerInterface $mailer*/)
     {
         $this->$suportEmail=$suportEmail;
-        $this->adminEmail=$adminEmail;
+
     }
 
-    public function send($email)
+    public function send(ContactForm $form): void
     {
-        return Yii::$app->mailer->compose()
+        $sent=Yii::$app->mailer->compose()
             ->setTo($this->suportEmail)
-            ->setFrom([$this->adminEmail])
             ->setSubject($this->subject)
             ->setTextBody($this->body)
             ->send();
+        if (!$sent) {
+            throw new \RuntimeException('Sending error.');
+        }
     }
 
 }

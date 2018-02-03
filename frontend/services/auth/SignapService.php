@@ -1,8 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- */
-
 namespace frontend\services\auth;
 
 use common\entities\User;
@@ -12,10 +8,10 @@ class SignapService
 {
     public function signup(SignupForm $form): User
     {
-        if(User::find()->andWhere(['username'=>$form->username])){
+        if(User::find()->andWhere(['username'=>$form->username])->one()){
             throw new \DomainException('Username is already exist');
         }
-        if(User::find()->andWhere(['email'=>$form->username])){
+        if(User::find()->andWhere(['email'=>$form->username])->one()){
             throw new \DomainException('Email is already exist');
         }
 
@@ -26,7 +22,7 @@ class SignapService
         );
 
         if (!$user->save()) {
-            throw new \RuntimeException('Saving Error');
+            throw new \RuntimeException(json_encode($user->errors));
         }
 
         return $user;

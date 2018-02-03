@@ -1,12 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 21.01.18
- * Time: 18:54
- */
-
-namespace services\auth;
+namespace frontend\services\auth;
 
 use Yii;
 use common\entities\User;
