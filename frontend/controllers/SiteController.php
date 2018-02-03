@@ -161,7 +161,6 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $form = new SignupForm();
-        if(!$form->validate())
 
         if ($form->load(Yii::$app->request->post())/*&&$form->validate()*/) {
             try{
