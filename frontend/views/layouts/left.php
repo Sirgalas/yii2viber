@@ -11,7 +11,7 @@ use yii\helpers\Html;
                 <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
-                <p><?= Yii::$app->user->identity->username; ?></p>
+                <p><?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->username:'User not Auth'; ?></p>
 
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
