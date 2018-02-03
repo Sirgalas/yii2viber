@@ -24,12 +24,12 @@ return [
         ],
         'i18n' => [
             'class' => Zelenin\yii\modules\I18n\components\I18N::className(),
-            /*'languages' => ['ru-RU'],
+            'languages' => ['ru-RU'],
             'translations' => [
                 'yii' => [
                     'class' => yii\i18n\DbMessageSource::className()
                 ]
-            ]*/
+            ]
         ],
     ],
     'modules' => [
