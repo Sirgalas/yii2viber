@@ -36,6 +36,7 @@ return [
         'user' => [
             'class' => 'dektrium\user\Module',
             'enableUnconfirmedLogin'=>true,
+            'emailChangeStrategy'=>1
         ],
     ],
 ];
