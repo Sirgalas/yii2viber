@@ -23,6 +23,7 @@ return [
             'cookieValidationKey'=>$params['cookieValidationKey']
         ],
         'user' => [
+            'identityClass' => 'dektrium\user\Module',
             'identityCookie' => [
                 'name'     => '_backendIdentity',
                 'path'     => '/admin',
@@ -54,7 +55,6 @@ return [
         },
         'frontendUrlManager' => require  __DIR__.'/../../frontend/config/urlManager.php',
     ],
-
     'as access' => [
         'class' => 'yii\filters\AccessControl',
         'except' => ['site/login', 'site/error'],

@@ -23,7 +23,7 @@ use common\traits\ Insantiate;
  * @property integer $updated_at
  * @property string $password write-only password
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends \dektrium\user\models\User//extends ActiveRecord implements IdentityInterface
 {
     //use Insantiate;
 
@@ -100,7 +100,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username, /*'status' => self::STATUS_ACTIVE*/]);
     }
 
     /**
