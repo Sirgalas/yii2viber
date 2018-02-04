@@ -11,9 +11,12 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
+    'language'=>'ru',
     'modules' => [
         'user' => [
+            'class' => 'dektrium\user\Module',
            'as backend' => 'dektrium\user\filters\BackendFilter',
+           'urlPrefix'=>'auth'
         ],
         'i18n' => Zelenin\yii\modules\I18n\Module::className(),
     ],
@@ -23,10 +26,10 @@ return [
             'cookieValidationKey'=>$params['cookieValidationKey']
         ],
         'user' => [
-            'identityClass' => 'dektrium\user\Module',
+
             'identityCookie' => [
                 'name'     => '_backendIdentity',
-                'path'     => '/admin',
+                'path'     => '/',
                 'httpOnly' => true,
             ],
         ],
@@ -34,7 +37,7 @@ return [
             'name' => 'BACKENDSESSID',
             'cookieParams' => [
                 'httpOnly' => true,
-                'path'     => '/admin',
+                'path'     => '/',
             ],
         ],
         'log' => [
