@@ -6,6 +6,14 @@
 3. Главную админку	   Admin
 У каждого типа свои права.
 
+--------------------------
+contact_collection -
+id
+user_id
+name
+crated_at
+length
+
 Client
 id username email token passsword 3 id_contact sum_messanger id_diler price_messanger
                                                    ^

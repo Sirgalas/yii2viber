@@ -10,6 +10,10 @@ namespace common\entities\user;
 
 use dektrium\user\models\User as BaseUser;
 
+/**
+ * @property mixed type
+
+ */
 class User extends BaseUser
 {
     public function scenarios()
@@ -39,7 +43,7 @@ class User extends BaseUser
         $rules['image']   = ['image', 'string', 'max'=>255];
         $rules['dealer_confirmed']   = ['dealer_confirmed', 'boolean'];
         $rules['dealer_id']   = ['dealer_id', 'integer'];
-        $rules['typeLength']   =  ['dealer_id', 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['dealer_id' => 'id']];
+        $rules['typeLength']   =  ['dealer_id', 'exist', 'skipOnError' => true, 'targetClass' => self::className(), 'targetAttribute' => ['dealer_id' => 'id']];
 
 
         return $rules;
@@ -52,5 +56,15 @@ class User extends BaseUser
         $labels['dealer_confirmed'] = 'Статус дилера';
         $labels['dealer_id'] = 'Родительский дилер';
         $labels['image'] = 'Аватар';
+    }
+
+    public function isAdmin(){
+        return $this->type==='admin';
+    }
+    public function isClient(){
+        return $this->type==='client';
+    }
+    public function isDealer(){
+        return $this->type==='dealer';
     }
 }

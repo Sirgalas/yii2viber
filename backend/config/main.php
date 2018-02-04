@@ -14,9 +14,14 @@ return [
     'language'=>'ru',
     'modules' => [
         'user' => [
-            'class' => 'dektrium\user\Module',
+           'class' => 'dektrium\user\Module',
            'as backend' => 'dektrium\user\filters\BackendFilter',
-           'urlPrefix'=>'auth'
+           'urlPrefix'=>'auth',
+
+            'modelMap' => [
+                'User' => 'backend\entities\user\User',
+                'LoginForm' => 'backend\entities\user\LoginForm',
+            ],
         ],
         'i18n' => Zelenin\yii\modules\I18n\Module::className(),
     ],
@@ -26,7 +31,6 @@ return [
             'cookieValidationKey'=>$params['cookieValidationKey']
         ],
         'user' => [
-
             'identityCookie' => [
                 'name'     => '_backendIdentity',
                 'path'     => '/',
