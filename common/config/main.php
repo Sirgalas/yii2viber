@@ -10,6 +10,13 @@ return [
         'common\bootstrap\SetUp',
     ],
     'components' => [
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'pgsql:host=localhost;dbname=yii2viber',
+            'username' => 'postgres',
+            'password' => '',
+
+        ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
             'useMemcached'=>true
@@ -38,6 +45,10 @@ return [
             'enableUnconfirmedLogin'=>true,
             'emailChangeStrategy'=>1,
             'admins'=>['Sergalas'],
+            'modelMap' => [
+                'User' => 'common\entities\user\User',
+            ],
         ],
+
     ],
 ];
