@@ -19,19 +19,17 @@ return [
 
         ],
         'user' => [
-            'identityClass' => 'common\entities\User',
-            'enableAutoLogin' => true,
             'identityCookie' => [
-                'name' => '_identity',
+                'name'     => '_frontendIdentity',
+                'path'     => '/',
                 'httpOnly' => true,
-                'domain'=>$params['cookieDomain'],
             ],
         ],
         'session' => [
-            'name' => '_session',
-            'cookieParams'=>[
-                'domain'=>$params['cookieDomain'],
-                'httpOnly'=> true
+            'name' => 'FRONTENDSESSID',
+            'cookieParams' => [
+                'httpOnly' => true,
+                'path'     => '/',
             ],
         ],
         'log' => [
@@ -51,6 +49,11 @@ return [
             return Yii::$app->get('frontendUrlManager');
         },
         'backendUrlManager' => require  __DIR__.'/../../backend/config/urlManager.php',
+    ],
+    'modules' => [
+        'user' => [
+            'as frontend' => 'dektrium\user\filters\FrontendFilter',
+        ],
     ],
     'params' => $params,
 ];

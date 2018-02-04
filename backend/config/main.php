@@ -11,26 +11,30 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'user' => [
+           'as backend' => 'dektrium\user\filters\BackendFilter',
+        ],
+        'i18n' => Zelenin\yii\modules\I18n\Module::className(),
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
             'cookieValidationKey'=>$params['cookieValidationKey']
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+            'identityClass' => 'dektrium\user\Module',
             'identityCookie' => [
-                'name' => '_identity',
+                'name'     => '_backendIdentity',
+                'path'     => '/admin',
                 'httpOnly' => true,
-                'domain'=>$params['cookieDomain'],
             ],
         ],
         'session' => [
-            'name' => '_session',
-            'cookieParams'=>[
-                'domain'=>$params['cookieDomain'],
-                'httpOnly'=> true
+            'name' => 'BACKENDSESSID',
+            'cookieParams' => [
+                'httpOnly' => true,
+                'path'     => '/admin',
             ],
         ],
         'log' => [
@@ -51,7 +55,7 @@ return [
         },
         'frontendUrlManager' => require  __DIR__.'/../../frontend/config/urlManager.php',
     ],
-    'as access' => [
+    /*'as access' => [
         'class' => 'yii\filters\AccessControl',
         'except' => ['site/login', 'site/error'],
         'rules' => [
@@ -60,6 +64,6 @@ return [
                 'roles' => ['@'],
             ],
         ],
-    ],
+    ],*/
     'params' => $params,
 ];
