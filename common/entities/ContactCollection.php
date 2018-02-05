@@ -72,6 +72,9 @@ class ContactCollection extends \yii\db\ActiveRecord
         return new ContactCollectionQuery(get_called_class());
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPhones(){
         return $this->hasMany(Phone::className(),['contact_collection_id'=>'id']);
     }

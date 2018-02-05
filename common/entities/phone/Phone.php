@@ -18,12 +18,20 @@ use common\entities\ViberMessage;
  * @property User $user
  * @property ViberMessage $currentMessage
  */
+
 class Phone extends ActiveRecord
 {
     public $contact_collection_id;
     public $phone;
     public $clients_id;
     public $username;
+
+    /**
+     * @param int $contact_collection_id
+     * @param int $phone
+     * @param int $clients_id
+     * @param string $username
+     */
     public static function createPhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
         $phones = new static();
         $phones->contact_collection_id=$contact_collection_id;
@@ -31,19 +39,32 @@ class Phone extends ActiveRecord
         $phones->clients_id=$clients_id;
         $phones->username=$username;
     }
-    
+
+    /**
+     * @return array
+     */
     public function attributes()
     {
         return ['_id','contact_collection_id','phone','clients_id','username'];
     }
 
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
     public function getUser(){
         return $this->hasOne(User::className(),['id'=>'clients_id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
     public function getContactCollection(){
         return $this->hasOne(ContactCollection::className(),['id'=>'contact_collection_id']);
     }
+
+    /**
+     * @return array
+     */
     public function attributeLabels()
     {
         return [
