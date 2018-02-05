@@ -2,6 +2,7 @@
 
 namespace common\entities;
 
+use common\entities\phone\Phone;
 use Yii;
 
 /**
@@ -69,5 +70,9 @@ class ContactCollection extends \yii\db\ActiveRecord
     public static function find()
     {
         return new ContactCollectionQuery(get_called_class());
+    }
+
+    public function getPhones(){
+        return $this->hasMany(Phone::className(),['contact_collection_id'=>'id']);
     }
 }
