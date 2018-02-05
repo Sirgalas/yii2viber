@@ -2,7 +2,7 @@
 
 namespace common\entities;
 
-use common\entities\phone\Phone;
+use common\entities\mongo\Phone;
 use Yii;
 
 /**

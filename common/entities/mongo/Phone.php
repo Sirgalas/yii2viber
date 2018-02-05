@@ -1,5 +1,5 @@
 <?php
-namespace common\entities\phone;
+namespace common\entities\mongo;
 
 use common\entities\ContactCollection;
 use yii\mongodb\ActiveRecord;
@@ -24,6 +24,12 @@ class Phone extends ActiveRecord
     public $phone;
     public $clients_id;
     public $username;
+
+    public static function collectionName()
+    {
+        return 'phone';
+    }
+
     public static function createPhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
         $phones = new static();
         $phones->contact_collection_id=$contact_collection_id;
