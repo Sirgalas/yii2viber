@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\entities\mongo\Phone;
+use common\entities\mongo\PhoneSearch;
 use Yii;
 use common\entities\ContactCollection;
 use common\entities\ContactCollectionSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -52,8 +55,13 @@ class ContactCollectionController extends Controller
      */
     public function actionView($id)
     {
+
+        $searchModel = new PhoneSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$id);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'modelCollections' => $this->findModel($id),
+            'dataProvider'=>$dataProvider,
+            'searchModel' =>$searchModel
         ]);
     }
 

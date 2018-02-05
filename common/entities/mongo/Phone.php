@@ -44,6 +44,14 @@ class Phone extends ActiveRecord
         $phones->phone=$phone;
         $phones->clients_id=$clients_id;
         $phones->username=$username;
+        return $phones;
+    }
+
+    public function updatePhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
+        $this->contact_collection_id=$contact_collection_id;
+        $this->phone=$phone;
+        $this->clients_id=$clients_id;
+        $this->username=$username;
     }
 
     /**
