@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 ?>
 <aside class="main-sidebar">
 
@@ -61,6 +62,7 @@ use yii\helpers\Html;
             $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
+            $menuItems[] =  ['label'=>'Коллекции контактов' ,'url'=> Url::toRoute(['/contact-collection'])];
             $menuItems[] =  ['label'=>'Logout (' . Yii::$app->user->identity->username . ')','url'=>['/user/security/logout']];
         } ?>
         <?= dmstr\widgets\Menu::widget(
