@@ -17,7 +17,6 @@ return [
            'class' => 'dektrium\user\Module',
            'as backend' => 'dektrium\user\filters\BackendFilter',
            'urlPrefix'=>'auth',
-
             'modelMap' => [
                 'User' => 'backend\entities\user\User',
                 'LoginForm' => 'backend\entities\user\LoginForm',
@@ -36,6 +35,7 @@ return [
                 'path'     => '/',
                 'httpOnly' => true,
             ],
+            'identityClass' => 'common\entities\user\User',
         ],
         'session' => [
             'name' => 'BACKENDSESSID',
@@ -62,7 +62,7 @@ return [
         },
         'frontendUrlManager' => require  __DIR__.'/../../frontend/config/urlManager.php',
     ],
-    /*'as access' => [
+    'as access' => [
         'class' => 'yii\filters\AccessControl',
         'except' => ['site/login', 'site/error'],
         'rules' => [
@@ -71,6 +71,6 @@ return [
                 'roles' => ['@'],
             ],
         ],
-    ],*/
+    ],
     'params' => $params,
 ];

@@ -116,6 +116,10 @@ class PhoneController extends Controller
         }
     }
 
+    public function actionCreateExel($id){
+
+    }
+
     private function findModel($id)
     {
         if (($model = Phone::find()->where(['_id' => $id])->one()) != null) {
