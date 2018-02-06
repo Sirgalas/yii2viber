@@ -3,7 +3,7 @@
 
 namespace console\controllers;
 
-use common\entities\phone\Phone;
+use common\entities\mongo\Phone;
 use common\entities\user\User;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use yii\console\Controller;
@@ -12,19 +12,19 @@ class TestController extends Controller
 {
 
     public function actionAddPhone(){
-        $phone = Yii::$app->mongodb->getCollection('phone');
-
-        try{
-            if(! $phone->insert([
-                'contact_collection_id'=>1,
+       // $phone = Yii::$app->mongodb->getCollection('phone');
+        $array=['contact_collection_id'=>1,
                 'phone'=>79789877878,
                 'clients_id'=>1,
-                'username'=>'John'
-            ]))
+                'username'=>'John'];
+        $phone= new Phone($array);
+        var_dump($phone->save());
+        /*try{
+            if(!$phone->save())
                 throw new RuntimeException( json_encode($phone->errors));
         }catch (RuntimeException $ex){
             var_dump($ex->getMessage());
-        }
+        }*/
 
     }
     public function actionAddMessage(){

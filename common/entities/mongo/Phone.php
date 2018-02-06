@@ -54,6 +54,7 @@ class Phone extends ActiveRecord
         $this->username=$username;
     }
 
+
     /**
      * @return array
      */
