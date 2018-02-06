@@ -47,14 +47,14 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
-            [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'integer'],
+            [['user_id',   'limit_messages'], 'integer'],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
             [['image', 'url_button'], 'string', 'max' => 255],
             [['title_button', 'alpha_name'], 'string', 'max' => 32],
-            [['type'], 'string', 'max' => 10],
+
             ['type', 'in', 'range' => array_keys(static::listTypes())],
             [['time_start', 'time_finish'], 'string', 'max' => 5],
             [['status'], 'string', 'max' => 16],
@@ -155,6 +155,12 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         if ($this->user_id){
             $this->user_id = Yii::$app->user->id;
+        }
+        if (!is_int($this->date_start)){
+            $this->date_start=strtotime($this->date_start);
+        }
+        if (!is_int($this->date_finish)){
+            $this->date_finish=strtotime($this->date_finish);
         }
         return parent::beforeValidate();
     }
