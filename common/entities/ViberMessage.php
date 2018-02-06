@@ -32,6 +32,18 @@ use common\entities\user\User;
  */
 class ViberMessage extends \yii\db\ActiveRecord
 {
+    const ONLYTEXT='only_text';
+    const ONLYIMAGE='only_image';
+    const TEXTBUTTON='text_and_button';
+    const TEXTBUTTONIMAGE='text_and_button_and_image';
+
+
+    public static $types=[
+        self::ONLYTEXT          => 'Только текст (Официально)',
+        self::ONLYIMAGE         => 'Только изображение (Официально)',
+        self::TEXTBUTTON        => 'Текст + кнопка (Официально)',
+        self::TEXTBUTTONIMAGE   => 'Текст + кнопка + изображение (Официально)',
+        ];
     /**
      * @inheritdoc
      */
@@ -124,31 +136,18 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public static function listTypes()
     {
-        return [
-            'only_text' => 'Только текст (Официально)',
-            'only_image' => 'Только изображение (Официально)',
-            'text_and_button' => 'Текст + кнопка (Официально)',
-            'text_and_button_and_image' => 'Текст + кнопка + изображение (Официально)',
-        ];
+        return self::$types;
     }
 
     public static function getTypeText($ind)
     {
-        $list = static::listTypes();
-
-        return $list[$ind];
+       return self::$types[$ind];
     }
 
     public static function getTypeComment($ind)
     {
-        $list = [
-            'only_text' => 'абонент получает текст',
-            'only_image' => 'абонент получает картинку',
-            'text_and_button' => 'абонент получает текстовое сообщение, под которым расположена кнопка. При нажатии на кнопку – происходит переход по заданной ссылке',
-            'text_and_button_and_image' => 'абонент получает текстовое сообщение, под которым расположены картинка и кнопка',
-        ];
 
-        return $list[$ind];
+        return self::$types[$ind];
     }
 
     public function beforeValidate()

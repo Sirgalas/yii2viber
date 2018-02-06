@@ -11,10 +11,10 @@ use kartik\datetime\DateTimePicker;
 <div class="viber-message-form">
 
     <?php $form = ActiveForm::begin(); ?>
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'type')->dropDownList($model->listTypes(),['maxlength' => true]) ?>
 
-    <?//= $form->field($model, 'alpha_name')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'type')->dropDownList($model->listTypes(),['maxlength' => true]) ?>
 
     <?=  $form->field($model, 'date_start')->widget(DateTimePicker::classname(), [
         'options' => ['placeholder' => 'Enter event time ...'],
@@ -22,9 +22,13 @@ use kartik\datetime\DateTimePicker;
             'autoclose' => true
         ]
     ]);?>
-    <?= $form->field($model, 'date_start')->textInput() ?>
 
-    <?= $form->field($model, 'date_finish')->textInput() ?>
+    <?= $form->field($model, 'date_finish')->widget(DateTimePicker::classname(), [
+        'options' => ['placeholder' => 'Enter event time ...'],
+        'pluginOptions' => [
+            'autoclose' => true
+        ]
+    ]);?>
 
     <?= $form->field($model, 'time_start')->textInput(['maxlength' => true]) ?>
 
@@ -37,8 +41,11 @@ use kartik\datetime\DateTimePicker;
     <?= $form->field($model, 'cost')->textInput() ?>
 
     <?= $form->field($model, 'balance')->textInput() ?>
+
     <?php if (!Yii::$app->user->identity->isClient()): ?>
-    <?= $form->field($model, 'user_id')->textInput() ?>
+
+        <?= $form->field($model, 'user_id')->textInput() ?>
+
     <?php endif ?>
 
 

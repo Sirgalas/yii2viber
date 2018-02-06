@@ -58,8 +58,8 @@ class PhoneSearch extends Phone
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', 'phone', $this->title])
-            ->andFilterWhere(['like', 'username', $this->type]);
+        $query->andFilterWhere(['like', 'phone', $this->phone])
+            ->andFilterWhere(['like', 'username', $this->username]);
 
         return $dataProvider;
     }

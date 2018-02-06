@@ -12,7 +12,13 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'phone')->textInput() ?>
+    <?= $form->field($model, 'phone')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '+9(999)-999-99-99',
+            'clientOptions'=>[
+                'removeMaskOnSubmit' => true,
+                'clearIncomplete'=>true
+            ]
+    ]) ?>
     <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>   
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

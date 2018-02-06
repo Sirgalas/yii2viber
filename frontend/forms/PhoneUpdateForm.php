@@ -21,7 +21,7 @@ class PhoneUpdateForm extends Model
     public function rules(){
         return [
             ['phone', 'required', 'message' => 'поле телефон должно быть заполнено'],
-            [['phone'], 'integer'],
+            [['phone'], 'string'],
             [['username'], 'string', 'max' => 255],
         ];
     }

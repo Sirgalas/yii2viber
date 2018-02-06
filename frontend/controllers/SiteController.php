@@ -2,17 +2,14 @@
 namespace frontend\controllers;
 
 use JsonSchema\Exception\RuntimeException;
-//use frontend\services\auth\PasswordResetService;
-//use frontend\services\contact\ContactService;
 use Yii;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\forms\LoginForm;
 
 use frontend\forms\ContactForm;
-use frontend\services\auth\SignapService;
+//use frontend\services\auth\SignapService;
 /**
  * Site controller
  */

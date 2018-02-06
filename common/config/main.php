@@ -11,6 +11,11 @@ return [
     ],
     'components' => [
 
+        'resourceManager' => [
+            'class' => 'common\components\FileSystemResourseManager',
+            'basePath' => dirname(dirname(__DIR__)) .'/files',
+            'baseUrl' => '/files'
+        ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
             'useMemcached' => true,
