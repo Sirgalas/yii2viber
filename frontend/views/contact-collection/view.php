@@ -54,17 +54,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'update' =>function ($url,$model) {
                         return Html::a(
                             '<i class="glyphicon glyphicon-pencil"></i>',
-                            Url::to(['/phone/update','id'=>$model->_id]));
+                            Url::to(['/phone/update','id'=> (string)$model['_id']]));
                     },
                     'views' =>function ($url,$model) {
                         return Html::a(
                             '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/views','id'=>$model->_id]));
+                            Url::to(['/phone/views','id'=> (string)$model['_id']]));
                     },
                     'delete' =>function ($url,$model) {
                         return Html::a(
                             '<i class="glyphicon glyphicon-trash"></i>',
-                            Url::to(['/phone/delete','id'=>$model->_id]));
+                            Url::to(['/phone/delete','id'=> (string)$model['_id']]),
+                            ['data-method'=>"post"]);
                     },
 
                 ],

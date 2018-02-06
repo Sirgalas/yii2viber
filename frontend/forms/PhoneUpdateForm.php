@@ -6,6 +6,7 @@ use yii\base\Model;
 
 class PhoneUpdateForm extends Model
 {
+    public $_id;
     public $contact_collection_id;
     public $phone;
     public $username;
