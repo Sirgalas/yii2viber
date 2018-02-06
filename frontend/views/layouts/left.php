@@ -63,6 +63,13 @@ use yii\helpers\Url;
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
             $menuItems[] =  ['label'=>'Коллекции контактов' ,'url'=> Url::toRoute(['/contact-collection'])];
+            $menuItems[] =  ['label'=>'Рассылки' ,'url'=> Url::toRoute(['/viber-message'])];
+
+            if (Yii::$app->user->identity->isDealer()){
+                $menuItems[] =  ['label'=>'Клиенты' ,'url'=> Url::toRoute(['/client'])];
+            }
+            $menuItems[] =  ['label'=>'Отчеты' ,'url'=> Url::toRoute(['/reports'])];
+            $menuItems[] =  ['label'=>'Статистика' ,'url'=> Url::toRoute(['/statistics'])];
             $menuItems[] =  ['label'=>'Logout (' . Yii::$app->user->identity->username . ')','url'=>['/user/security/logout']];
         } ?>
         <?= dmstr\widgets\Menu::widget(
