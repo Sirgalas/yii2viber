@@ -10,11 +10,12 @@ use PHPUnit\Framework\MockObject\RuntimeException;
 class PhoneFormUpdateService
 {
     public function update(PhoneUpdateForm $form, Phone $phones){
+        $array=['+','(',')','-'];
         if(!Phone::find()->where(['phone'=>$form->phone,'contact_collection_id'=>$form->contact_collection_id])->one())
             throw new \RuntimeException('Phone already exist');
         $phone=$phones->update(
             $form->contact_collection_id,
-            $form->phone,
+            (int)str_replace($array,'',$form->phone),
             $form->username,
             $form->clients_id
         );

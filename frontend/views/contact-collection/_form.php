@@ -11,18 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="contact-collection-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?//= $form->field($model, 'user_id')->textInput() ?>
-
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-
-    <?//= $form->field($model, 'type')->textInput(['maxlength' => true]) ?>
-
-    <?//= $form->field($model, 'created_at')->textInput() ?>
-    <div class="form-group">
-        <label><?=Yii::t('app', 'created_at')?></label>
-        <?= date('Y-m-d H:i:s', $model->created_at) ?>
-    </div>
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>

@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -239,26 +240,21 @@ use yii\helpers\Html;
                                  alt="User Image"/>
 
                             <p>
-                                <?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->username:'User not Auth'; ?>
-                                <small>Member since Nov. 2012</small>
+                                <?php if (is_object(Yii::$app->user->identity)):  ?>
+                                <?= Yii::$app->user->identity->username; ?>
+                                <small>Member since Nov. <?= date('Y-m-d',Yii::$app->user->identity->created_at) ?></small>
+                                <?php else: ?>
+                                Не авторизован
+                                <?php endif ?>
                             </p>
                         </li>
                         <!-- Menu Body -->
-                        <li class="user-body">
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Followers</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Sales</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Friends</a>
-                            </div>
-                        </li>
+
                         <!-- Menu Footer-->
+                        <?php if (is_object(Yii::$app->user->identity)):  ?>
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <a href="<?= Url::to(['/user/settings/profile']) ?>" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(
@@ -268,6 +264,7 @@ use yii\helpers\Html;
                                 ) ?>
                             </div>
                         </li>
+                        <?php endif ?>
                     </ul>
                 </li>
 

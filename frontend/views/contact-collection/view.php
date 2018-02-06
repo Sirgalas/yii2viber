@@ -36,6 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at',
         ],
     ]) ?>
+    <p class="col-md-12">
+        <?=Html::a(Yii::t('app', 'Create phone'), Url::to(['/phone/create','id'=>$modelCollections->id]), ['class' => 'btn btn-success'])?>
+    </p>
     <?=GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -48,10 +51,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['width' => '90'],
                 'template' => ' {create} {update}{view}{delete}',
                 'buttons' => [
-                    'create' => function ($url,$model) {
+                    'create' => function ($url,$model)use($modelCollections) {
                         return Html::a(
                             '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/create','id'=>$model->_id]));
+                            Url::to(['/phone/create','id'=>$modelCollections]));
                     },
                     'update' =>function ($url,$model) {
                         return Html::a(

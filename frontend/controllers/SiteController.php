@@ -2,32 +2,21 @@
 namespace frontend\controllers;
 
 use JsonSchema\Exception\RuntimeException;
-use frontend\services\auth\PasswordResetService;
-use frontend\services\contact\ContactService;
 use Yii;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\forms\LoginForm;
-use frontend\forms\PasswordResetRequestForm;
-use frontend\forms\ResetPasswordForm;
-use frontend\forms\SignupForm;
+
 use frontend\forms\ContactForm;
-use frontend\services\auth\SignapService;
+//use frontend\services\auth\SignapService;
 /**
  * Site controller
  */
 class SiteController extends Controller
 {
-    private $passwordResetService;
-    private $contactService;
-    public function __construct(string $id, $module, PasswordResetService $passwordResetService, ContactService $contactService, array $config = [])
-    {
-        parent::__construct($id, $module, $config);
-        $this->passwordResetService=$passwordResetService;
-        $this->contactService=$contactService;
-    }
+
+
 
     /**
      * @inheritdoc
@@ -153,85 +142,10 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-    /**
-     * Signs user up.
-     *
-     * @return mixed
-     */
-    public function actionSignup()
-    {
-        $form = new SignupForm();
-        if(!$form->validate())
-            return var_dump($form->getErrors());
-        if ($form->load(Yii::$app->request->post())&&$form->validate()) {
-            try{
-                $user= (new SignapService())->signup($form);
-                if (Yii::$app->getUser()->login($user,300)) {
-                    return $this->goHome();
-                }
-            }catch (\DomainException $ex){
-                Yii::$app->session->setFlash('error', $ex->getMessage());
-            }
 
-        }
-        return $this->render('signup', [
-            'model' => $form,
-        ]);
-    }
 
-    /**
-     * Requests password reset.
-     *
-     * @return mixed
-     */
-    public function actionRequestPasswordReset()
-    {
-        $form = new PasswordResetRequestForm();
-        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-             try {
-                $this->passwordResetService->request($form);
-                 return $this->goHome();
-                 } catch (\DomainException $e) {
-                     Yii::$app->errorHandler->logException($e);
-                     Yii::$app->session->setFlash('error', $e->getMessage());
-             }
-        }
-        return $this->render('requestPasswordResetToken', [
-            'model'=>$form]
-        );
-    }
 
-    /**
-     * Resets password.
-     *
-     * @param string $token
-     * @return mixed
-     * @throws BadRequestHttpException
-     */
-    public function actionResetPassword($token)
-    {
 
-        try {
-            $this->passwordResetService->validateToken($token);
-        } catch (\DomainException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
-        $form = new ResetPasswordForm();
-        if ($form->load(Yii::$app->request->post()) && $form->validate() && $form->resetPassword()) {
-            try{
-                $this->passwordResetService->reset($token,$form);
-                Yii::$app->session->setFlash('success','New password save.');
-                return $this->goHome();
-            }
-            catch (\DomainException $e){
-                Yii::$app->errorHandler->logException($e);
-                Yii::$app->session->setFlash('error',$e->getMessage());
-            }
 
-        }
 
-        return $this->render('resetPassword', [
-            'model' => $form,
-        ]);
-    }
 }
