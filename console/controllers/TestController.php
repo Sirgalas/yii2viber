@@ -26,4 +26,18 @@ class TestController extends Controller
         }
 
     }
+    public function actionAddMessage(){
+        $message_phone_list = Yii::$app->mongodb->getCollection('message_phone_list');
+
+        try{
+            if(! $message_phone_list->insert([
+                'message_id'=>1,
+                'last_date_message'=>79789877878,
+                'status'=>1,]))
+                throw new RuntimeException( json_encode($message_phone_list->errors));
+        }catch (RuntimeException $ex){
+            var_dump($ex->getMessage());
+        }
+
+    }
 }
