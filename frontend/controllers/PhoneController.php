@@ -80,7 +80,6 @@ class PhoneController extends Controller
                 'entities'=>$entities
             ]);
         }
-
     }
 
     public function actionViews($id){
@@ -101,7 +100,6 @@ class PhoneController extends Controller
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash('error', $ex->getMessage());
         }
-
     }
 
     private function findModel($id){
