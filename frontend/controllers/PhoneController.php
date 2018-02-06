@@ -45,7 +45,6 @@ class PhoneController extends Controller
 
     public function actionCreate($id)
     {
-
         $form = new PhoneCreateForm();
         if ($id) {
             $form->contact_collection_id = Yii::$app->request->get('id');
@@ -53,8 +52,7 @@ class PhoneController extends Controller
         $form->clients_id = Yii::$app->user->identity->id;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-               // $entities = $this->createService->create($form);
-                return var_dump($form);
+                $entities = $this->createService->create($form);
                 return $this->redirect(['view', 'id' =>  (string)$entities['_id']]);
             } catch (RuntimeException $ex) {
                 Yii::$app->errorHandler->logException($ex);

@@ -1,18 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 05.02.18
- * Time: 15:22
- */
+
 
 namespace frontend\services\phone;
 
 
 use common\entities\mongo\Phone;
 use frontend\forms\PhoneCreateForm;
-
-
 class PhoneFormCreateService
 {
     public function create(PhoneCreateForm $phoneCreateForm){
@@ -28,6 +21,5 @@ class PhoneFormCreateService
         if(!$phone->save())
             throw new \RuntimeException(json_encode($phone->errors));
         return $phone;
-
     }
 }
