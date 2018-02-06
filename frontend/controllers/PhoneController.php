@@ -53,7 +53,7 @@ class PhoneController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $entities = $this->createService->create($form);
-                return $this->redirect(['view', 'id' =>  (string)$entities['_id']]);
+                return $this->redirect(['contact-collection/'.$entities->contact_collection_id ]);
             } catch (RuntimeException $ex) {
                 Yii::$app->errorHandler->logException($ex);
                 Yii::$app->session->setFlash('error', $ex->getMessage());
@@ -76,9 +76,8 @@ class PhoneController extends Controller
         $form = new PhoneUpdateForm($entities);
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $this->updateService($form);
-
-                return $this->redirect('view', ['id' => $entities->_id]);
+                $phone=$this->updateService->update($form,$entities);
+                return $this->redirect(['contact-collection/'.$phone->contact_collection_id ]);
             } catch (RuntimeException $ex) {
                 Yii::$app->errorHandler->logException($ex);
                 Yii::$app->session->setFlash('error', $ex->getMessage());
@@ -100,16 +99,17 @@ class PhoneController extends Controller
 
     public function actionDelete($id)
     {
-        if (! Phone::find()->where(['_id' => $id, 'clients_id' => Yii::$app->user->identity->id])) {
+        if (! Phone::find()->where(['_id' => $id, 'clients_id' => Yii::$app->user->identity->id])->one()) {
             throw new RuntimeException('Этот телефон вам не принадлежит');
         }
         $entities = $this->findModel($id);
+        $id=$entities->contact_collection_id;
         try {
             if (! $entities->delete()) {
                 throw new RuntimeException(json_encode($entities->errors));
             }
 
-            return $this->redirect($this->goBack());
+            return $this->redirect(['contact-collection/'.$id ]);
         } catch (RuntimeException $ex) {
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash('error', $ex->getMessage());
@@ -118,7 +118,7 @@ class PhoneController extends Controller
 
     private function findModel($id)
     {
-        if (($model = Phone::find()->where(['_id' => $id])) != null) {
+        if (($model = Phone::find()->where(['_id' => $id])->one()) != null) {
             return $model;
         }
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

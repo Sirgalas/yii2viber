@@ -51,25 +51,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['width' => '90'],
                 'template' => ' {create} {update}{view}{delete}',
                 'buttons' => [
-                    'create' => function ($url,$model)use($modelCollections) {
-                        return Html::a(
-                            '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/create','id'=>$modelCollections]));
-                    },
                     'update' =>function ($url,$model) {
                         return Html::a(
-                            '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/update','id'=>$model->_id]));
+                            '<i class="glyphicon glyphicon-pencil"></i>',
+                            Url::to(['/phone/update','id'=> (string)$model['_id']]));
                     },
                     'views' =>function ($url,$model) {
                         return Html::a(
                             '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/views','id'=>$model->_id]));
+                            Url::to(['/phone/views','id'=> (string)$model['_id']]));
                     },
                     'delete' =>function ($url,$model) {
                         return Html::a(
-                            '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/delete','id'=>$model->_id]));
+                            '<i class="glyphicon glyphicon-trash"></i>',
+                            Url::to(['/phone/delete','id'=> (string)$model['_id']]),
+                            ['data-method'=>"post"]);
                     },
 
                 ],
