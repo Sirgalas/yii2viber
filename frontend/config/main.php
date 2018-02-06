@@ -56,6 +56,7 @@ return [
             'class' => 'dektrium\user\Module',
             'as frontend' => 'dektrium\user\filters\FrontendFilter',
         ],
+
     ],
     'params' => $params,
 ];

@@ -12,8 +12,10 @@ use Yii;
  * @property string $title
  * @property string $type
  * @property int $created_at
+ * @property int $viber_message_id
  *
  * @property ContactCollection $contactCollection
+ * @property ViberMessage $viberMessage
  */
 class MessageContactCollection extends \yii\db\ActiveRecord
 {
@@ -31,12 +33,13 @@ class MessageContactCollection extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['contact_collection_id', 'created_at'], 'default', 'value' => null],
-            [['contact_collection_id', 'created_at'], 'integer'],
+            [['contact_collection_id', 'created_at', 'viber_message_id'], 'default', 'value' => null],
+            [['contact_collection_id', 'created_at', 'viber_message_id'], 'integer'],
             [['title'], 'required'],
             [['title'], 'string', 'max' => 50],
             [['type'], 'string', 'max' => 10],
             [['contact_collection_id'], 'exist', 'skipOnError' => true, 'targetClass' => ContactCollection::className(), 'targetAttribute' => ['contact_collection_id' => 'id']],
+            [['viber_message_id'], 'exist', 'skipOnError' => true, 'targetClass' => ViberMessage::className(), 'targetAttribute' => ['viber_message_id' => 'id']],
         ];
     }
 
@@ -51,6 +54,7 @@ class MessageContactCollection extends \yii\db\ActiveRecord
             'title' => 'Title',
             'type' => 'Type',
             'created_at' => 'Created At',
+            'viber_message_id' => 'Viber Message ID',
         ];
     }
 
@@ -60,6 +64,14 @@ class MessageContactCollection extends \yii\db\ActiveRecord
     public function getContactCollection()
     {
         return $this->hasOne(ContactCollection::className(), ['id' => 'contact_collection_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getViberMessage()
+    {
+        return $this->hasOne(ViberMessage::className(), ['id' => 'viber_message_id']);
     }
 
     /**

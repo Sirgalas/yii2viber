@@ -63,7 +63,7 @@ use yii\helpers\Url;
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
             $menuItems[] =  ['label'=>'Коллекции контактов' ,'url'=> Url::toRoute(['/contact-collection'])];
-            $menuItems[] =  ['label'=>'Рассылки' ,'url'=> Url::toRoute(['/message'])];
+            $menuItems[] =  ['label'=>'Рассылки' ,'url'=> Url::toRoute(['/viber-message'])];
 
             if (Yii::$app->user->identity->isDealer()){
                 $menuItems[] =  ['label'=>'Клиенты' ,'url'=> Url::toRoute(['/client'])];

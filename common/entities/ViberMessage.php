@@ -5,6 +5,7 @@ namespace common\entities;
 
 use common\entities\user\User;
 /**
+
  * This is the model class for table "viber_message".
  *
  * @property int $id
@@ -24,6 +25,8 @@ use common\entities\user\User;
  * @property int $limit_messages Сколько сообщений отправлять?
  * @property string $cost Стоимость
  * @property string $balance Сколько средств уже потрачено
+ *
+ * @property MessageContactCollection[] $messageContactCollections
  *
  * @property user/User $user
  */
@@ -45,7 +48,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'integer'],
-            [['title', 'text', 'image', 'title_button', 'url_button'], 'required'],
+            [['title'], 'required'],
             [['cost', 'balance'], 'number'],
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
@@ -94,10 +97,21 @@ class ViberMessage extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getMessageContactCollections()
+    {
+        return $this->hasMany(MessageContactCollection::className(), ['viber_message_id' => 'id']);
+    }
+
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
+
+
 
     /**
      * @inheritdoc
@@ -136,4 +150,13 @@ class ViberMessage extends \yii\db\ActiveRecord
 
         return $list[$ind];
     }
+
+    public function beforeValidate()
+    {
+        if ($this->user_id){
+            $this->user_id = Yii::$app->user->id;
+        }
+        return parent::beforeValidate();
+    }
+
 }

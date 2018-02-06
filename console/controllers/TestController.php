@@ -4,6 +4,7 @@
 namespace console\controllers;
 
 use common\entities\phone\Phone;
+use common\entities\user\User;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use yii\console\Controller;
 use Yii;
@@ -39,5 +40,10 @@ class TestController extends Controller
             var_dump($ex->getMessage());
         }
 
+    }
+    public function actionCheckUserRecursive(){
+        $user=User::findOne(8);
+        echo 'actionCheckUserRecursive 8 & 9, result= ', $user->amParent(9);
+        echo "\n",'    actionCheckUserRecursive 8 & 10    result=', $user->amParent(10);
     }
 }
