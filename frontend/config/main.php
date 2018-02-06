@@ -9,7 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log','debug'],
+    'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'language'=>'ru',
     'components' => [
@@ -55,15 +55,6 @@ return [
         'user' => [
             'class' => 'dektrium\user\Module',
             'as frontend' => 'dektrium\user\filters\FrontendFilter',
-        ],
-        'debug' => [
-            'class' => 'yii\\debug\\Module',
-            'panels' => [
-                'mongodb' => [
-                    'class' => 'yii\\mongodb\\debug\\MongoDbPanel',
-                    // 'db' => 'mongodb', // ID MongoDB компонента, по умолчанию `db`. Раскоментируйте и измените эту строку, если вы регистрируете компонент MongoDB с другим ID.
-                ],
-            ],
         ],
     ],
     'params' => $params,

@@ -21,10 +21,10 @@ use common\entities\ViberMessage;
 
 class Phone extends ActiveRecord
 {
-    public $contact_collection_id;
+   /* public $contact_collection_id;
     public $phone;
     public $clients_id;
-    public $username;
+    public $username;*/
 
     public static function collectionName()
     {
@@ -38,7 +38,7 @@ class Phone extends ActiveRecord
      * @param int $clients_id
      * @param string $username
      */
-    public static function createPhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
+   /* public static function createPhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
         $phones = new static();
         $phones->contact_collection_id=$contact_collection_id;
         $phones->phone=$phone;
@@ -52,7 +52,7 @@ class Phone extends ActiveRecord
         $this->phone=$phone;
         $this->clients_id=$clients_id;
         $this->username=$username;
-    }
+    }*/
 
 
     /**

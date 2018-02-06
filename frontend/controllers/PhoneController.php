@@ -53,7 +53,7 @@ class PhoneController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $entities = $this->createService->create($form);
-                return $this->redirect(['view', 'id' =>  (string)$entities['_id']]);
+                return $this->redirect(['contact-collection/'.$entities->contact_collection_id ]);
             } catch (RuntimeException $ex) {
                 Yii::$app->errorHandler->logException($ex);
                 Yii::$app->session->setFlash('error', $ex->getMessage());
