@@ -1,23 +1,19 @@
 <?php
-
+// Временный файл
+// Удалить после отладки интерфейса contact-collection
 namespace frontend\controllers;
 
-use common\entities\mongo\Phone;
-use common\entities\mongo\PhoneSearch;
 use Yii;
 use common\entities\ContactCollection;
-use common\entities\ContactCollectionSearch;
-use yii\data\ActiveDataProvider;
+use common\entities\PhoneSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\entities\Phone as PgPhone;
-use common\entities\PhoneSearch as PgPhoneSearch;
 
 /**
- * ContactCollectionController implements the CRUD actions for ContactCollection model.
+ * PgPhoneController implements the CRUD actions for ContactCollection model.
  */
-class ContactCollectionController extends Controller
+class PgPhoneController extends Controller
 {
     /**
      * @inheritdoc
@@ -36,43 +32,35 @@ class ContactCollectionController extends Controller
 
     /**
      * Lists all ContactCollection models.
-     *
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ContactCollectionSearch();
+        $searchModel = new PhoneSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', compact('searchModel', 'dataProvider'
-
-        ));
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
      * Displays a single ContactCollection model.
-     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-
-        $searchModel = new PhoneSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id);
-
         return $this->render('view', [
-            'modelCollections' => $this->findModel($id),
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
      * Creates a new ContactCollection model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     *
      * @return mixed
      */
     public function actionCreate()
@@ -80,18 +68,17 @@ class ContactCollectionController extends Controller
         $model = new ContactCollection();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
-        $phoneSearchModel = new PgPhoneSearch();
-        $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('create', compact('model', 'phoneSearchModel', 'phoneDataProvider'));
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
      * Updates an existing ContactCollection model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     *
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -101,12 +88,12 @@ class ContactCollectionController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
-        $phoneSearchModel =new PgPhoneSearch();
-        $phoneSearchModel->contact_collection_id=$id;
-        $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
-        return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider'));
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -115,7 +102,10 @@ class ContactCollectionController extends Controller
      *
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     * @throws \yii\web\NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
@@ -127,7 +117,6 @@ class ContactCollectionController extends Controller
     /**
      * Finds the ContactCollection model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     *
      * @param integer $id
      * @return ContactCollection the loaded model
      * @throws NotFoundHttpException if the model cannot be found
@@ -139,26 +128,5 @@ class ContactCollectionController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
-    public function actionNewPhones($id){
-        $collection = ContactCollection::findOne($id);
-        if (!$collection){
-            return 'Ошибка в запросе. Обновите страницу';
-        }
-        // TODO проверить права на коллекцию
-        $phone = new PgPhone();
-        return $phone->importText($id, $_POST['txt']);
-
-    }
-    public function actionRemovePhones($id){
-        $collection = ContactCollection::findOne($id);
-        if (!$collection){
-            return 'Ошибка в запросе. Обновите страницу';
-        }
-        // TODO проверить права на коллекцию
-        $phone = new PgPhone();
-        return $phone->removeList($id, $_POST['ids']);
-
     }
 }

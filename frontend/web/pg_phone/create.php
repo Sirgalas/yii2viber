@@ -12,8 +12,10 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contact-collection-create">
 
+    <h1><?= Html::encode($this->title) ?></h1>
 
-
-    <?= $this->render('_form',  compact('model', 'phoneSearchModel', 'phoneDataProvider')) ?>
+    <?= $this->render('_form', [
+        'model' => $model,
+    ]) ?>
 
 </div>

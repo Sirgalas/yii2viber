@@ -3,8 +3,8 @@
 namespace common\entities;
 
 
-use common\entities\mongo\Phone;
-
+//use common\entities\mongo\Phone;
+use common\entities\Phone;
 use common\entities\user\User;
 use Yii;
 
@@ -18,6 +18,8 @@ use Yii;
  * @property int $created_at
  *
  * @property User $user
+ * @property MessageContactCollection[] $messageContactCollections
+ * @property Phone[] $phones
  */
 class ContactCollection extends \yii\db\ActiveRecord
 {
@@ -82,6 +84,15 @@ class ContactCollection extends \yii\db\ActiveRecord
     public function getPhones(){
         return $this->hasMany(Phone::className(),['contact_collection_id'=>'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMessageContactCollections()
+    {
+        return $this->hasMany(MessageContactCollection::className(), ['contact_collection_id' => 'id']);
+    }
+
 
     public static function listTypes(){
         return ['viber', 'sms'];
