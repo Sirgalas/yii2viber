@@ -73,10 +73,9 @@ class Phone extends ActiveRecord
         return preg_replace('~\D+~', '', $phone);
     }
 
-    public function removeList($collection_id, $ids){
+    public function removeList($ids){
         $list=[];
         foreach ($ids as   $ind) {
-
                 $list[] = $ind;
         }
         try {
@@ -95,27 +94,36 @@ class Phone extends ActiveRecord
         $list = str_replace(["\r\n", "\r", "\n"], ',', strip_tags($txt));
         $aList = array_unique(explode(',', $list));
         $bList = [];
-        foreach ($aList as $ind => $phone) {
-            $v = static::NormalizeNumber($phone);
-            if ($v) {
-                $bList[] = $v;
+        $searcList=[];
+        foreach ($aList as  $phone) {
+           if($phone!==""){
+               if(strpos($phone,'%'))
+               {
+                   $arrExplod=explode('%',$phone);
+                   $number=static::NormalizeNumber($arrExplod[0]);
+                   $name=$arrExplod[1];
+               }else{
+                   $number=static::NormalizeNumber($phone);
+                   $name=null;
+               }
+               if ($number) {
+                   $bList[$number] =$name;
+                   $searcList[]=$number;
+               }
+
+           }
+        }
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->column();
+        if (count($oldList) > 0) {
+            foreach($oldList as $first){
+                unset($bList[$first]);
             }
         }
-
-        $oldList = self::find()->select(['phone'])->where(['contact_collection_id' => $collection_id])->andWhere([
-            'in',
-            'phone',
-            $aList,
-        ])->column();
-        if (count($oldList) > 0) {
-            $bList = array_diff($bList, $oldList);
-        }
-
         $db = Yii::$app->db;
         $transaction = $db->beginTransaction();
         $data = [];
-        foreach ($bList as $phone) {
-            $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone];
+        foreach ($bList as $phone=>$username) {
+            $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone,'username'=>$username];
         }
         try {
             if(!Yii::$app->mongodb->getCollection('phone')->batchInsert($data))

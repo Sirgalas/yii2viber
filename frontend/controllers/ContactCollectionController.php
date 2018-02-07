@@ -175,7 +175,7 @@ class ContactCollectionController extends Controller
         }
         // TODO проверить права на коллекцию
         $phone = new Phone();
-        return $phone->removeList($id, $_POST['ids']);
+        return $phone->removeList($_POST['ids']);
 
     }
 }
