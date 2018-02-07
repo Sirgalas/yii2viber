@@ -76,13 +76,11 @@ class Phone extends ActiveRecord
     public function removeList($collection_id, $ids){
         $list=[];
         foreach ($ids as   $ind) {
-            $v = static::NormalizeNumber($ind);
-            if ($v) {
-                $list[] = $v;
-            }
+
+                $list[] = $ind;
         }
         try {
-            self::deleteAll(['and',['id'=> $list,'collection_id'=>$collection_id]]);
+            self::deleteAll(['_id'=> $ids]);
         }catch (\Exception $e) {
                 return $e->getMessage();
             }
