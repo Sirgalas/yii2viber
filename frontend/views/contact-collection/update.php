@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                                 <i class="fa fa-edit" id="use_only_selected"></i> Использовать
                             </a>
                             <a class="btn btn-app" title="Импорт из файла"   data-toggle="modal" data-target="#modal-file-import">
-
                                 <i class="fa fa-download" id="import_from_file"></i>Импорт
                             </a>
                             <a class="btn btn-app" title="Импорт  других коллекций">
@@ -75,7 +74,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                          compact('model')); ?>
     <script>
         function reloadGridPhone(){
-            $.pjax({container: '#pjax-grid-view'})
+            $.pjax.reload({container: "#pjax-grid-view", async:false});
         }
         function initPage() {
            $('#btn_from_clipboard').click(function(){

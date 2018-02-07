@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
@@ -22,13 +22,32 @@ use yii\widgets\ActiveForm;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'class' => 'yii\grid\CheckboxColumn',
+                'class' => 'kartik\grid\CheckboxColumn',
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
                 // you may configure additional properties here
             ],
-            //'id',
-            //'user_id',
-            //'username',
-            'phone',
+            [
+                'class'=>'kartik\grid\EditableColumn',
+                'attribute'=>'phone',
+                'editableOptions'=> function ($model, $key, $index) {
+                    return [
+                        'header'=>Yii::t('front','edit_phohe'),
+                        'size'=>'md',
+                        'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                    ];
+                }
+            ],
+            [
+                'class'=>'kartik\grid\EditableColumn',
+                'attribute'=>'username',
+                'editableOptions'=> function ($model, $key, $index) {
+                    return [
+                        'header'=>Yii::t('front','edit_phohe'),
+                        'size'=>'md',
+                        'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                    ];
+                }
+            ],
 
 
         ],

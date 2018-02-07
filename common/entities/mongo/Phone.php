@@ -1,6 +1,8 @@
 <?php
 namespace common\entities\mongo;
 
+use Aws\CloudFront\Exception\Exception;
+use Yii;
 use common\entities\ContactCollection;
 use yii\mongodb\ActiveRecord;
 use yii\web\User;
@@ -30,30 +32,6 @@ class Phone extends ActiveRecord
     {
         return 'phone';
     }
-
-
-    /**
-     * @param int $contact_collection_id
-     * @param int $phone
-     * @param int $clients_id
-     * @param string $username
-     */
-   /* public static function createPhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
-        $phones = new static();
-        $phones->contact_collection_id=$contact_collection_id;
-        $phones->phone=$phone;
-        $phones->clients_id=$clients_id;
-        $phones->username=$username;
-        return $phones;
-    }
-
-    public function updatePhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
-        $this->contact_collection_id=$contact_collection_id;
-        $this->phone=$phone;
-        $this->clients_id=$clients_id;
-        $this->username=$username;
-    }*/
-
 
     /**
      * @return array
@@ -88,6 +66,69 @@ class Phone extends ActiveRecord
             'clients_id' => 'ID клиента собственника базы',
             'username' => 'Имя владельца номера',
         ];
+    }
+
+    public static function NormalizeNumber($phone)
+    {
+        return preg_replace('~\D+~', '', $phone);
+    }
+
+    public function removeList($collection_id, $ids){
+        $list=[];
+        foreach ($ids as   $ind) {
+            $v = static::NormalizeNumber($ind);
+            if ($v) {
+                $list[] = $v;
+            }
+        }
+        try {
+            self::deleteAll(['and',['id'=> $list,'collection_id'=>$collection_id]]);
+        }catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        return 'ok';
+    }
+
+    public function importText($collection_id, $txt, $user_id = 0)
+    {
+        if (! $user_id) {
+            $user_id = Yii::$app->user->id;
+        }
+        $list = str_replace(["\r\n", "\r", "\n"], ',', strip_tags($txt));
+        $aList = array_unique(explode(',', $list));
+        $bList = [];
+        foreach ($aList as $ind => $phone) {
+            $v = static::NormalizeNumber($phone);
+            if ($v) {
+                $bList[] = $v;
+            }
+        }
+
+        $oldList = self::find()->select(['phone'])->where(['contact_collection_id' => $collection_id])->andWhere([
+            'in',
+            'phone',
+            $aList,
+        ])->column();
+        if (count($oldList) > 0) {
+            $bList = array_diff($bList, $oldList);
+        }
+
+        $db = Yii::$app->db;
+        $transaction = $db->beginTransaction();
+        $data = [];
+        foreach ($bList as $phone) {
+            $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone];
+        }
+        try {
+            if(!Yii::$app->mongodb->getCollection('phone')->batchInsert($data))
+                throw new Exception('not save');
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return $e->getMessage();
+        }
+
+        return 'ok';
     }
 
 }
