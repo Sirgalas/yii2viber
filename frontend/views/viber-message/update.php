@@ -5,6 +5,8 @@ use yii\helpers\Html;
 /**
  * @var yii\web\View $this
  * @var common\entities\ViberMessage $model
+ * @var array $contact_collections
+ * @var array $assign_collections
  */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
@@ -16,10 +18,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="viber-message-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <?= $this->render('_form',
+        compact('model','contact_collections','assign_collections')
+    ) ?>
 
 </div>
