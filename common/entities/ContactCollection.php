@@ -93,20 +93,28 @@ class ContactCollection extends \yii\db\ActiveRecord
         return $this->hasMany(MessageContactCollection::className(), ['contact_collection_id' => 'id']);
     }
 
-
+    /**
+     * @return array
+     */
     public static function listTypes(){
         return ['viber', 'sms'];
     }
 
+    /**
+     * @return bool
+     */
     public function beforeValidate()
     {
-        if ($this->user_id){
+        if (!$this->user_id){
             $this->user_id = Yii::$app->user->id;
         }
         return parent::beforeValidate();
     }
 
-
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if ($insert){
