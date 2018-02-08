@@ -102,7 +102,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
             $('#remove_selected').click(function(){
                 var lst=$('input[name="selection[]"]:checked');
                 var ids=[];
-                lst.each(function(){ids.push($(this).closest('tr').attr('data-key'));
+                lst.each(function(){
+                    ids.push($(this).closest('tr').attr('data-key'));
                 });
                 console.log(ids);
 

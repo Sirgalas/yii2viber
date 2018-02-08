@@ -127,6 +127,33 @@ class User extends BaseUser
         }
         return false;
     }
+
+    public function getClildList(){
+        if ($this->isClient()) {
+            return Yii::$app->user->id;
+        }
+        if ($this->isAdmin()) {
+            return '';
+        }
+        if ($this->isDealer()) {
+            $sql = 'WITH RECURSIVE r AS (
+                    SELECT id, dealer_id 
+                    FROM "user"
+                    WHERE id = '.Yii::$app->user->id.'
+
+                    UNION
+
+                    SELECT "user".id, "user".dealer_id 
+                    FROM "user"
+                    JOIN r
+                    ON "user".dealer_id = r.id
+                )
+
+                SELECT id FROM r';
+        }
+        $user_ids = implode(',', Yii::$app->db->createCommand($sql)->column());
+        return -1;
+    }
     public function beforeValidate()
     {
         if (!$this->type){

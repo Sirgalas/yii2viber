@@ -118,6 +118,9 @@ class ContactCollection extends \yii\db\ActiveRecord
      */
     public function beforeSave($insert)
     {
+        if (!$this->user_id){
+            $this->user_id = Yii::$app->user->id;
+        }
         if ($insert){
             $this->created_at = time();
         }
