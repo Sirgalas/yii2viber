@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use Aws\Common\Exception\RuntimeException;
 use common\entities\mongo\Phone;
 use common\entities\mongo\PhoneSearch;
 use Yii;
@@ -96,15 +97,31 @@ class ContactCollectionController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-        $phoneSearchModel =new PgPhoneSearch();
-        $phoneSearchModel->contact_collection_id=$id;
-        $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
-        return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider'));
+         $model= $this->findModel($id);
+         try{
+             if(!Yii::$app->user->identity->amParent($model->user_id)||Yii::$app->user->identity->id!=$model->user_id)
+                 throw new NotFoundHttpException('Этот пользователь вам не пренадлижит',403);
+             if (Yii::$app->request->post('hasEditable')){
+                 try{
+                     $phone=$model->phoneSave(Yii::$app->request,$model->id);
+                     return $phone;
+                 }catch (RuntimeException $ex){
+                     Yii::$app->errorHandler->logException($ex);
+                     Yii::$app->session->setFlash('error', $ex->getMessage());
+                 }
+             }
+             if ($model->load(Yii::$app->request->post())&&$model->save())
+                 return $this->redirect(['index']);
+             $phoneSearchModel =new PhoneSearch();
+             $phoneSearchModel->contact_collection_id=$id;
+             $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
+             return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider'));
+         }catch (NotFoundHttpException $ex){
+             return $this->render('/site/error',[
+                 'name'=>$model->title,
+                 'message'=>$ex->getMessage()
+             ]);
+         }
     }
 
     /**
@@ -145,7 +162,7 @@ class ContactCollectionController extends Controller
             return 'Ошибка в запросе. Обновите страницу';
         }
         // TODO проверить права на коллекцию
-        $phone = new PgPhone();
+        $phone = new Phone();
         return $phone->importText($id, $_POST['txt']);
 
     }
@@ -155,8 +172,8 @@ class ContactCollectionController extends Controller
             return 'Ошибка в запросе. Обновите страницу';
         }
         // TODO проверить права на коллекцию
-        $phone = new PgPhone();
-        return $phone->removeList($id, $_POST['ids']);
+        $phone = new Phone();
+        return $phone->removeList($_POST['ids']);
 
     }
 }

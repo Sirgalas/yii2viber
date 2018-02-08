@@ -36,40 +36,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at',
         ],
     ]) ?>
-    <p class="col-md-12">
-        <?=Html::a(Yii::t('app', 'Create phone'), Url::to(['/phone/create','id'=>$modelCollections->id]), ['class' => 'btn btn-success'])?>
-    </p>
-    <?=GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'phone',
-            'username',
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['width' => '90'],
-                'template' => ' {create} {update}{view}{delete}',
-                'buttons' => [
-                    'update' =>function ($url,$model) {
-                        return Html::a(
-                            '<i class="glyphicon glyphicon-pencil"></i>',
-                            Url::to(['/phone/update','id'=> (string)$model['_id']]));
-                    },
-                    'views' =>function ($url,$model) {
-                        return Html::a(
-                            '<i class="fa fa-fw  fa-phone-square"></i>',
-                            Url::to(['/phone/views','id'=> (string)$model['_id']]));
-                    },
-                    'delete' =>function ($url,$model) {
-                        return Html::a(
-                            '<i class="glyphicon glyphicon-trash"></i>',
-                            Url::to(['/phone/delete','id'=> (string)$model['_id']]),
-                            ['data-method'=>"post"]);
-                    },
 
-                ],
-            ],
-        ],
-    ]);?>
 </div>

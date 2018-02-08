@@ -16,8 +16,6 @@ use yii\widgets\ActiveForm;
                 <div class="form-group">
                     <label for="filePhones">Файл с телефонами</label>
                     <input type="file" id="filePhones" name="file_phone">
-
-
                 </div>
             </div>
             <div class="modal-footer">
