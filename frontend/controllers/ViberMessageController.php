@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\entities\ContactCollection;
+use common\entities\MessageContactCollection;
 use Yii;
 use common\entities\ViberMessage;
 use common\entities\ViberMessageSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -28,6 +31,7 @@ class ViberMessageController extends Controller
 
     /**
      * Lists all ViberMessage models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,6 +47,7 @@ class ViberMessageController extends Controller
 
     /**
      * Displays a single ViberMessage model.
+     *
      * @param integer $id
      * @return mixed
      */
@@ -60,6 +65,7 @@ class ViberMessageController extends Controller
     /**
      * Creates a new ViberMessage model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -67,7 +73,7 @@ class ViberMessageController extends Controller
         $model = new ViberMessage;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -78,6 +84,7 @@ class ViberMessageController extends Controller
     /**
      * Updates an existing ViberMessage model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param integer $id
      * @return mixed
      */
@@ -85,18 +92,33 @@ class ViberMessageController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
+        $contact_collections = ContactCollection::find()
+            ->andWhere(['user_id'=>Yii::$app->user->id])
+            ->select(['id','title'])
+            ->orderBy('title')
+            ->asArray()
+            ->all();
+        $contact_collections=ArrayHelper::map($contact_collections, 'id','title');
+        $assign_collections = MessageContactCollection::find()
+            ->select(['contact_collection_id'])
+            ->andWhere(['viber_message_id'=>$id])
+            ->column();
+
+
+        return $this->render('update', compact('model','contact_collections','assign_collections'));
+
     }
 
     /**
      * Deletes an existing ViberMessage model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param integer $id
      * @return mixed
      */
@@ -110,6 +132,7 @@ class ViberMessageController extends Controller
     /**
      * Finds the ViberMessage model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
      * @return ViberMessage the loaded model
      * @throws NotFoundHttpException if the model cannot be found

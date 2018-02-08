@@ -1,6 +1,8 @@
 <?php
 namespace common\entities\mongo;
 
+use Aws\CloudFront\Exception\Exception;
+use Yii;
 use common\entities\ContactCollection;
 use yii\mongodb\ActiveRecord;
 use yii\web\User;
@@ -30,30 +32,6 @@ class Phone extends ActiveRecord
     {
         return 'phone';
     }
-
-
-    /**
-     * @param int $contact_collection_id
-     * @param int $phone
-     * @param int $clients_id
-     * @param string $username
-     */
-   /* public static function createPhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
-        $phones = new static();
-        $phones->contact_collection_id=$contact_collection_id;
-        $phones->phone=$phone;
-        $phones->clients_id=$clients_id;
-        $phones->username=$username;
-        return $phones;
-    }
-
-    public function updatePhone(int $contact_collection_id,int $phone, int $clients_id,string $username){
-        $this->contact_collection_id=$contact_collection_id;
-        $this->phone=$phone;
-        $this->clients_id=$clients_id;
-        $this->username=$username;
-    }*/
-
 
     /**
      * @return array
@@ -88,6 +66,77 @@ class Phone extends ActiveRecord
             'clients_id' => 'ID клиента собственника базы',
             'username' => 'Имя владельца номера',
         ];
+    }
+
+    public static function NormalizeNumber($phone)
+    {
+        return preg_replace('~\D+~', '', $phone);
+    }
+
+    public function removeList($ids){
+        $list=[];
+        foreach ($ids as   $ind) {
+                $list[] = $ind;
+        }
+        try {
+            self::deleteAll(['_id'=> $ids]);
+        }catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        return 'ok';
+    }
+
+    public function importText($collection_id, $txt, $user_id = 0)
+    {
+        if (! $user_id) {
+            $user_id = Yii::$app->user->id;
+        }
+        $list = str_replace(["\r\n", "\r", "\n"], ',', strip_tags($txt));
+        $aList = array_unique(explode(',', $list));
+        $bList = [];
+        $searcList=[];
+        foreach ($aList as  $phone) {
+           if($phone!==""){
+               if(strpos($phone,'%'))
+               {
+                   $arrExplod=explode('%',$phone);
+                   $number=static::NormalizeNumber($arrExplod[0]);
+                   $name=$arrExplod[1];
+               }else{
+                   $number=static::NormalizeNumber($phone);
+                   $name=null;
+               }
+               if ($number) {
+                   $bList[$number] =$name;
+                   $searcList[]=(integer)$number;
+               }
+
+           }
+        }
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->column();
+        if (count($oldList) > 0) {
+            foreach($oldList as $first){
+                unset($bList[$first]);
+            }
+        }
+        $db = Yii::$app->db;
+        $transaction = $db->beginTransaction();
+        $data = [];
+        foreach ($bList as $phone=>$username) {
+            $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone,'username'=>$username];
+        }
+        try {
+            if(empty($bList))
+                throw new \Exception(Yii::t('front','Not new user'));
+            if(!Yii::$app->mongodb->getCollection('phone')->batchInsert($data))
+                throw new Exception('not save');
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return $e->getMessage();
+        }
+
+        return 'ok';
     }
 
 }

@@ -1,9 +1,10 @@
 <?php
 namespace common\forms;
 
+use dektrium\user\Finder;
 use Yii;
 use yii\base\Model;
-use common\entities\User;
+use common\entities\user\User;
 /**
  * Login form
  */
@@ -14,7 +15,12 @@ class LoginForm extends Model
     public $rememberMe = true;
 
     private $_user;
-
+    private $finder;
+    public function __construct(array $config = [],Finder $finder)
+    {
+        $this->finder=$finder;
+        parent::__construct($config);
+    }
 
     /**
      * @inheritdoc
@@ -70,7 +76,7 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = $this->finder->findUserByUsernameOrEmail(trim($this->username));
         }
 
         return $this->_user;

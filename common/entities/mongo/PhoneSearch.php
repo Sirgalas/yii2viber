@@ -40,9 +40,9 @@ class PhoneSearch extends Phone
      *
      * @return ActiveDataProvider
      */
-    public function search($params,$id)
+    public function search($params)
     {
-        $query = Phone::find()->where(['contact_collection_id'=>$id]);
+        $query = Phone::find();
 
         // add conditions that should always apply here
 
@@ -58,6 +58,10 @@ class PhoneSearch extends Phone
             return $dataProvider;
         }
 
+        $query->andFilterWhere([
+            'clients_id' => Yii::$app->user->identity->id,
+            'contact_collection_id' => $this->contact_collection_id,
+        ]);
         $query->andFilterWhere(['like', 'phone', $this->phone])
             ->andFilterWhere(['like', 'username', $this->username]);
 

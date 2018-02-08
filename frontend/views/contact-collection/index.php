@@ -6,7 +6,9 @@ use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\entities\ContactCollectionSearch */
+
 /* @var $dataProvider yii\data\ActiveDataProvider */
+
 
 $this->title = Yii::t('app', 'Contact Collections');
 $this->params['breadcrumbs'][] = $this->title;
@@ -19,8 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?=Html::a(Yii::t('app', 'Create Contact Collection'), ['create'], ['class' => 'btn btn-success'])?>
-        <?=Html::a(Yii::t('app', 'Add Selected into New'), ['copy-new'], ['class' => 'btn btn-success'])?>
-        <?=Html::a(Yii::t('app', 'Add Selected into Exists'), ['copy'], ['class' => 'btn btn-success'])?>
+
     </p>
 
     <?=GridView::widget([
