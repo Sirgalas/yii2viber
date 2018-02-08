@@ -108,7 +108,7 @@ class Phone extends ActiveRecord
                }
                if ($number) {
                    $bList[$number] =$name;
-                   $searcList[]=$number;
+                   $searcList[]=(integer)$number;
                }
 
            }
@@ -126,6 +126,8 @@ class Phone extends ActiveRecord
             $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone,'username'=>$username];
         }
         try {
+            if(empty($bList))
+                throw new \Exception(Yii::t('front','Not new user'));
             if(!Yii::$app->mongodb->getCollection('phone')->batchInsert($data))
                 throw new Exception('not save');
             $transaction->commit();
