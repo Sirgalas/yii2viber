@@ -27,9 +27,9 @@
         "kartik-v/yii2-tree-manager": "@dev",
         "warrence/yii2-kartikgii": "dev-master",
         "kartik-v/yii2-date-range": "*",
-        "2amigos/yii2-resource-manager-component": "*",
         "moonlandsoft/yii2-phpexcel": "^1.1",
-        "kartik-v/yii2-editable": "@dev"
+        "kartik-v/yii2-editable": "@dev",
+        "kartik-v/yii2-widget-fileinput": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
