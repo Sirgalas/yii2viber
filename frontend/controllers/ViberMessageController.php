@@ -76,9 +76,14 @@ class ViberMessageController extends Controller
 
             return $this->redirect(['index']);
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            $contact_collections = ContactCollection::find()
+                ->andWhere(['user_id'=>Yii::$app->user->id])
+                ->select(['id','title'])
+                ->orderBy('title')
+                ->asArray()
+                ->all();
+            $contact_collections=ArrayHelper::map($contact_collections, 'id','title');
+            return $this->render('create',compact('model','contact_collections','assign_collections'));
         }
     }
 
