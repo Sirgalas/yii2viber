@@ -30,34 +30,7 @@ use yii\helpers\Url;
         </form>
         <?php
         $menuItems=[
-            ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
-            [
-                'label' => 'Some tools',
-                'icon' => 'share',
-                'url' => '#',
-                'items' => [
-                    ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
-                    ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
-                    [
-                        'label' => 'Level One',
-                        'icon' => 'circle-o',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => 'Level Two', 'icon' => 'circle-o', 'url' => '#',],
-                            [
-                                'label' => 'Level Two',
-                                'icon' => 'circle-o',
-                                'url' => '#',
-                                'items' => [
-                                    ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                    ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+            ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],];
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
