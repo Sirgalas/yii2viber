@@ -3324,16 +3324,16 @@
         },
         {
             "name": "yiisoft/yii2-authclient",
-            "version": "2.1.4",
+            "version": "2.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-authclient.git",
-                "reference": "22463dbfd4a53b16fec9b6286e762e31d3fdeee0"
+                "reference": "ff826241c231d8f768f4cb58577d6956fdbc5fab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/22463dbfd4a53b16fec9b6286e762e31d3fdeee0",
-                "reference": "22463dbfd4a53b16fec9b6286e762e31d3fdeee0",
+                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/ff826241c231d8f768f4cb58577d6956fdbc5fab",
+                "reference": "ff826241c231d8f768f4cb58577d6956fdbc5fab",
                 "shasum": ""
             },
             "require": {
@@ -3350,7 +3350,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "yii\\authclient\\": ""
+                    "yii\\authclient\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3372,7 +3372,7 @@
                 "oauth",
                 "yii2"
             ],
-            "time": "2017-11-03T12:32:29+00:00"
+            "time": "2018-02-07T21:12:40+00:00"
         },
         {
             "name": "yiisoft/yii2-bootstrap",

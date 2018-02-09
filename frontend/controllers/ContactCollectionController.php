@@ -99,7 +99,8 @@ class ContactCollectionController extends Controller
     {
          $model= $this->findModel($id);
          try{
-             if(!Yii::$app->user->identity->amParent($model->user_id)||Yii::$app->user->identity->id!=$model->user_id)
+             if(!Yii::$app->user->identity->amParent($model->user_id) ||
+                 Yii::$app->user->identity->id != $model->user_id) //TODO Корректировать условие
                  throw new NotFoundHttpException('Этот пользователь вам не пренадлижит',403);
              if (Yii::$app->request->post('hasEditable')){
                  try{

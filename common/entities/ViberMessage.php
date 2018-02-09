@@ -5,7 +5,7 @@ namespace common\entities;
 
 use common\entities\user\User;
 use Yii;
-
+use yii\web\UploadedFile;
 /**
 
  * This is the model class for table "viber_message".
@@ -34,6 +34,7 @@ use Yii;
  */
 class ViberMessage extends \yii\db\ActiveRecord
 {
+    public $upload_file;
     const ONLYTEXT='only_text';
     const ONLYIMAGE='only_image';
     const TEXTBUTTON='txt_btn';
@@ -67,6 +68,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
             [['image', 'url_button'], 'string', 'max' => 255],
+            [['upload_file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg, png, gif', 'mimeTypes' => 'image/jpeg, image/png',],
             [['title_button', 'alpha_name'], 'string', 'max' => 32],
 
             ['type', 'in', 'range' => array_keys(static::listTypes())],
@@ -106,6 +108,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             'limit_messages' => 'Limit Messages',
             'cost' => 'Cost',
             'balance' => 'Balance',
+            'upload_file' => 'Upload File',
         ];
     }
 
@@ -180,6 +183,31 @@ class ViberMessage extends \yii\db\ActiveRecord
          }
      }
 
+    public function uploadFile() {
+        // get the uploaded file instance
+        $image = UploadedFile::getInstance($this, 'upload_file');
+
+        // if no image was uploaded abort the upload
+        if (empty($image)) {
+            return false;
+        }
+
+        // generate random name for the file
+        $this->image = time(). '.' . $image->extension;
+
+        // the uploaded image instance
+        return $image;
+    }
+
+    public function getUploadedFile() {
+        // return a default image placeholder if your source avatar is not found
+        $pic = isset($this->image) ? $this->image : 'default.png';
+        return Yii::$app->params['fileUploadUrl'] . $pic;
+    }
+
+    /**
+     *
+     */
     public function afterFind()
     {
         $this->date_start =date('Y-m-d H:i:s', $this->date_start);

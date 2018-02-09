@@ -8,6 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $phoneSearchModel common\entities\PhoneSearch */
 /* @var $phoneDataProvider yii\data\ActiveDataProvider */
+
 ?>
 
 <div class="contact-collection-form col-md-4">

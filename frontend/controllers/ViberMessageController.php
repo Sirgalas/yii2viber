@@ -73,6 +73,7 @@ class ViberMessageController extends Controller
         $model = new ViberMessage;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
             return $this->redirect(['index']);
         } else {
             return $this->render('create', [
@@ -93,9 +94,13 @@ class ViberMessageController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-
+            $upload_file = $model->uploadFile();
             if ($model->save()) {
-                return $this->redirect(['index']);
+                if ($upload_file !== false) {
+                    $path = $model->getUploadedFile();
+                    $upload_file->saveAs($path);
+                }
+               // return $this->redirect(['index']);
             }
         }
         $contact_collections = ContactCollection::find()
@@ -144,5 +149,14 @@ class ViberMessageController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionAssignCollection($id){
+        $model= $this->findModel($id);
+        if(!Yii::$app->user->identity->amParent($model->user_id)){
+            throw new NotFoundHttpException('Этот пользователь вам не принадлежит',403);
+        }
+        return MessageContactCollection::assign($id,$model->user_id,  $_POST['data']);
+        print_r($_POST);
     }
 }
