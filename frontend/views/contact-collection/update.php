@@ -104,8 +104,29 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 lst.each(function(){
                     ids.push($(this).closest('tr').attr('data-key'));
                 });
-                console.log(ids);
+                if (ids.length) {
+                    $.ajax(
+                        {
+                            url: "<?= Url::to(['contact-collection/' .  $model->id . '/remove-phones' ])?>",
+                            type: "POST",
+                            data: {'ids':ids},
+                            success: function(data){
+                                if (data=='ok'){
 
+                                    reloadGridPhone();
+                                } else {
+                                    alert(data);
+                                }
+                            }
+                        });
+                }
+            });
+            $('#use_only_selected').click(function(){
+                var lst=$('input[name="selection[]"]:not(:checked)');
+                var ids=[];
+                lst.each(function(){
+                    ids.push($(this).closest('tr').attr('data-key'));
+                });
                 if (ids.length) {
                     $.ajax(
                         {
