@@ -83,7 +83,7 @@ class ContactCollectionController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         }
-        $phoneSearchModel = new PgPhoneSearch();
+        $phoneSearchModel = new PhoneSearch();
         $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('create', compact('model', 'phoneSearchModel', 'phoneDataProvider'));
