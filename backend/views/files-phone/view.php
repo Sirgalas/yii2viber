@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\entities\FilesPhohe */
+/* @var $model common\entities\FilesPhone */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Files Phohes', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Files Phones', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="files-phohe-view">
+<div class="files-phone-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

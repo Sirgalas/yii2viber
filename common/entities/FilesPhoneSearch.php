@@ -5,12 +5,12 @@ namespace common\entities;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\entities\FilesPhohe;
+use common\entities\FilesPhone;
 
 /**
- * FilesPhoheSearch represents the model behind the search form of `common\entities\FilesPhohe`.
+ * FilesPhoneSearch represents the model behind the search form of `common\entities\FilesPhone`.
  */
-class FilesPhoheSearch extends FilesPhohe
+class FilesPhoneSearch extends FilesPhone
 {
     /**
      * @inheritdoc
@@ -41,7 +41,7 @@ class FilesPhoheSearch extends FilesPhohe
      */
     public function search($params)
     {
-        $query = FilesPhohe::find();
+        $query = FilesPhone::find();
 
         // add conditions that should always apply here
 

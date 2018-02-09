@@ -39,8 +39,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             <a class="btn btn-app" title="Импорт из файла"   data-toggle="modal" data-target="#modal-file-import">
                                 <i class="fa fa-download" id="import_from_file"></i>Импорт
                             </a>
-                            <a class="btn btn-app" title="Импорт  других коллекций">
-                                <i class="fa fa-clone" id="import_from_other"></i>Импорт
+                            <a class="btn btn-app" title="Импорт  других коллекций" data-toggle="modal" data-target="#modal-collection-import">
+                                <i class="fa fa-clone" id="import_from_other"  ></i>Импорт
                             </a>
                             <div class="contact-collection-form ">
                                 <div class="box box-solid box-default">
@@ -69,7 +69,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         </div
     </div>
 <?php echo $this->render('modals/file-import',
-                         compact('modalForm','model','extension')); ?>
+                         compact('modalForm','model')); ?>
+<?= $this->render('modals/collection-import',compact('contactCollection','contactForm','model')) ?>
     <script>
         function reloadGridPhone(){
             $.pjax.reload({container: "#pjax-grid-view", async:false});

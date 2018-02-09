@@ -112,17 +112,23 @@ class Phone extends ActiveRecord
         $exel = \moonland\phpexcel\Excel::import($file);
         foreach ($exel as $data){
             if(array_key_exists($post['fieldPhone'],$data))
-                $searchList[]=static::NormalizeNumber($data[$post['fieldPhone']]);
+                $searchList[]=(int)static::NormalizeNumber($data[$post['fieldPhone']]);
         }
-        $exel=$this->arrayDiff($searchList,$exel);
+       $exel=$this->arrayDiff($searchList,$exel,$post['collection_id']);
+
+        if(!$exel)
+            throw new \Exception('нет уникальных телефонов');
         foreach ($exel as $data) {
             if(array_key_exists($post['fieldPhone'],$data))
-            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+
+            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>(array_key_exists($post['fieldUsername'],$data))?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
         }
        if($this->saveDate($datas)== 'ok')
             return $post['collection_id'];
         return false;
     }
+
+
 
     private function importCsv($file,$post){
         if (($handle = fopen($file, "r")) !== FALSE) {
@@ -133,7 +139,9 @@ class Phone extends ActiveRecord
                 if(array_key_exists($post['fieldPhone'],$data))
                     $searchList[]=static::NormalizeNumber($data[$post['fieldPhone']]);
             }
-            $arrForData=$this->arrayDiff($searchList,$arrForData);
+            $arrForData=$this->arrayDiff($searchList,$arrForData,$post['collection_id']);
+            if(!$arrForData)
+                throw new \Exception('нет уникальных телефонов');
             foreach ( $arrForData as $data) {
                 if(array_key_exists($post['fieldPhone'],$data))
                 $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
@@ -141,6 +149,8 @@ class Phone extends ActiveRecord
             if($this->saveDate($datas)== 'ok')
                 return $post['collection_id'];
             return false;
+        }else{
+            throw new \Exception('фаил не читаемый');
         }
     }
 
@@ -156,21 +166,18 @@ class Phone extends ActiveRecord
                 if(array_key_exists($post['fieldPhone'],$data))
                 $searchList[]=static::NormalizeNumber($data[$post['fieldPhone']]);
             }
-            $exp=$this->arrayDiff($searchList,$exp);
+            $exp=$this->arrayDiff($searchList,$exp,$post['collection_id']);
+            if(!$exp)
+                throw new \Exception('нет уникальных телефонов');
+
              foreach ($exp as $data){
                    if(array_key_exists($post['fieldPhone'],$data)){
-
                        $datas[]=['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
                    }
             }
         if($this->saveDate($datas)== 'ok')
             return $post['collection_id'];
         return false;
-    }
-
-    private function arrayDiff($search,$array){
-        $oldList = self::find()->select(['phone'])->where(['phone'=>$search])->column();
-        return array_diff($array,$oldList);
     }
 
     public function importText($collection_id, $txt, $user_id = 0)
@@ -210,6 +217,44 @@ class Phone extends ActiveRecord
             $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone,'username'=>$username];
         }
         return $this->saveDate($data);
+    }
+
+    public function importCollection($post){
+        $collection=ContactCollection::find()->select('id')->where(['id'=>$post['collection_id'],'user_id'=>Yii::$app->user->identity->id])->column();
+        if(!$collection)
+            throw new Exception('Коллекция у пользователя не обнаружена');
+        $phones=Phone::find()->where(['contact_collection_id'=>(string)$collection[0]])->all();
+        foreach ($phones as $phone){
+            $data[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['some_collection'], 'phone'=>$phone->phone,'username'=>$phone->username];
+            $phoneSearch[]=$phone->phone;
+        }
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$phoneSearch,'contact_collection_id'=>$post['some_collection']])->column();
+        if($oldList){
+            foreach ($data as $array){
+                if(!array_intersect($oldList,$array)){
+                    $result[]=$array;
+                }
+            }
+        }else{
+            $result=$data;
+        }
+        if($this->saveDate($result)== 'ok')
+            return $post['some_collection'];
+        return false;
+    }
+
+    private function arrayDiff($search,$arrays,$contact_collection_id){
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$search,'contact_collection_id'=>$contact_collection_id])->column();
+        if($oldList){
+            $result=[];
+            foreach ($arrays as $array){
+                if(!array_intersect($oldList,$array)){
+                    $result[]=$array;
+                }
+            }
+            return $result;
+        }
+        return $arrays;
     }
 
     private function saveDate($data){

@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\entities\FilesPhohe */
+/* @var $model common\entities\FilesPhone */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="files-phohe-form">
+<div class="files-phone-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
