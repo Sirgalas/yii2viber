@@ -18,6 +18,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'type')->dropDownList(['client','dealer'],['maxlength' => true]) ?>
+    <?php if ($model->isNewRecord){
+        $form->field($model, 'password')->textInput(['maxlength' => true]);
+    }?>
 
     <?= $form->field($model, 'dealer_id')->dropDownList($dealers) ?>
 

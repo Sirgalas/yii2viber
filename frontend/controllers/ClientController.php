@@ -37,7 +37,7 @@ class ClientController extends Controller
     {
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        //$dataProvider->query->d
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -67,7 +67,7 @@ class ClientController extends Controller
         $model = new Client();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
@@ -88,7 +88,7 @@ class ClientController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index',]);
         }
 
         return $this->render('update', [
@@ -124,5 +124,36 @@ class ClientController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionChangeBalance($id){
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!Yii::$app->user->identity->amParent($id)){
+            return ['output'=>'', 'message'=>'Нет доступа к этому пользователю'];
+        }
+        if (!Yii::$app->request->post('hasEditable')){
+            return ['output'=>'', 'message'=>'Плохой запрос'];
+        }
+        $db=Yii::$app->db;
+        $transaction = $db->beginTransaction();
+        try {
+
+            $user = $this->findModel($id);
+            $edidableIndex= $_POST['editableIndex'];
+            $paramName = "client-$edidableIndex-balance-disp";
+            $value= 1 * ('0'. $_POST[$paramName]) ;
+
+            $diff = $user->balance - 1*$value;
+            $user->balance = $value;
+            Yii::$app->user->identity->balance +=$diff;
+
+            $user->save();
+            Yii::$app->user->identity->save();
+            $transaction->commit();
+            return ['output' => Yii::$app->formatter->asCurrency($user->balance), 'message' => ''];
+        } catch (\Exception $e){
+            $transaction->rollBack();
+            return ['output' => '111', 'message' => 'error:: ' . $e->getMessage() ];
+        }
     }
 }

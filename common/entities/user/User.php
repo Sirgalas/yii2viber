@@ -47,7 +47,7 @@ class User extends BaseUser
         // add some rules
         $rules['fieldRequired'] = ['type', 'required'];
         $rules['typeLength'] = ['type', 'in', 'range' => ['admin', 'client', 'dealer']];
-        $rules['balance'] = ['balance', 'integer'];
+        $rules['balance'] = ['balance', 'number'];
         $rules['image'] = ['image', 'string', 'max' => 255];
         $rules['dealer_confirmed'] = ['dealer_confirmed', 'boolean'];
         $rules['dealer_id'] = ['dealer_id', 'integer'];
@@ -192,6 +192,10 @@ class User extends BaseUser
         return $this->hasMany(ViberMessage::className(), ['user_id' => 'id']);
     }
 
+    /**
+     * Возвращает список дилеров среди клиентов текущего пользователя
+     * @return array
+     */
     public function getMyDealers(){
         $dealersIds = static::getClildList('\'dealer\'');
         $dealers = static::find()->where(['in', 'id', $dealersIds])->select(['id', 'username'])->asArray()
@@ -201,5 +205,9 @@ class User extends BaseUser
             $dealersDropdown[$dealer['id']] = $dealer['username'];
         }
         return $dealersDropdown;
+    }
+
+    public function headerInfo(){
+        return $this->username . '(' . Yii::$app->formatter->asCurrency($this->balance) .  ')';
     }
 }

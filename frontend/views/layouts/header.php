@@ -231,7 +231,7 @@ use yii\helpers\Url;
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
-                        <span class="hidden-xs"><?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->username:'User not Auth'; ?></span>
+                        <span class="hidden-xs"><?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->headerInfo() :'User not Auth'; ?></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->

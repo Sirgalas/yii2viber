@@ -18,8 +18,8 @@ class ClientSearch extends Client
     public function rules()
     {
         return [
-            [['id', 'confirmed_at', 'blocked_at', 'created_at', 'updated_at', 'flags', 'last_login_at', 'dealer_id'], 'integer'],
-            [['username', 'email', 'password_hash', 'auth_key', 'unconfirmed_email', 'registration_ip', 'type', 'image'], 'safe'],
+            [['id', 'confirmed_at',  'updated_at', 'flags', 'last_login_at', 'dealer_id'], 'integer'],
+            [['username', 'email', 'password_hash', 'auth_key', 'unconfirmed_email', 'registration_ip', 'type', 'image', 'blocked_at', 'created_at'], 'safe'],
             [['balance'], 'number'],
             [['dealer_confirmed'], 'boolean'],
         ];
@@ -65,16 +65,33 @@ class ClientSearch extends Client
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'confirmed_at' => $this->confirmed_at,
-            'blocked_at' => $this->blocked_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'flags' => $this->flags,
             'last_login_at' => $this->last_login_at,
             'dealer_id' => $this->dealer_id,
             'balance' => $this->balance,
-            'dealer_confirmed' => $this->dealer_confirmed,
+
         ]);
+
+        if ($this->dealer_confirmed){
+            if ($this->dealer_confirmed==='t'){
+                $query->andFilterWhere(['dealer_confirmed','f']);
+            } else {
+                $query->andFilterWhere(['!=','dealer_confirmed','f']);
+            }
+        }
+        if (   $this->blocked_at === '0'){
+            $query->andFilterWhere(['<','blocked_at',10]);
+        } else if (  $this->blocked_at === '1'){
+            $query->andFilterWhere(['>','blocked_at',10]);
+        }
+
+        if (   $this->confirmed_at === '0'){
+            $query->andFilterWhere(['<','confirmed_at',10]);
+        } else if (  $this->confirmed_at === '1'){
+            $query->andFilterWhere(['>','confirmed_at',10]);
+        }
 
         $query->andFilterWhere(['ilike', 'username', $this->username])
             ->andFilterWhere(['ilike', 'email', $this->email])
