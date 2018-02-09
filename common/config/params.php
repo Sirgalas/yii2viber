@@ -6,4 +6,9 @@ return [
     'cookieDomain' => '.example.com',
     'frontendHostInfo' => 'http://example.com',
     'backendHostInfo' => 'http://backend.example.com',
+
+    'viber' => [
+        'login' => 'onviber1977',
+        'secret' => 'Tql5Ie9Q',
+    ],
 ];

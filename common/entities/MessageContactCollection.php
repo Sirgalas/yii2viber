@@ -82,4 +82,44 @@ class MessageContactCollection extends \yii\db\ActiveRecord
     {
         return new MessageContactCollectionQuery(get_called_class());
     }
+
+    public static function assign($viber_message_id, $user_id,  $contact_collection_ids){
+        $old_collections = self::find()->where(['viber_message_id'=>$viber_message_id])->asArray()->all();
+        $delIds=[];
+        $newIds=$contact_collection_ids;
+        if (!$newIds){
+            $newIds =[];
+        }
+        foreach($old_collections as $collection){
+            $ind = array_search($collection['contact_collection_id'], $newIds);
+            if ( $ind === false ){
+                $delIds[] = $collection['contact_collection_id'];
+            } else {
+               unset($newIds[$ind]);
+            }
+        }
+        $db=Yii::$app->db;
+        $transaction=$db->beginTransaction();
+        try {
+            if (count($delIds) > 0) {
+                self::deleteAll(['in', 'contact_collection_id', $delIds]);
+            }
+            if (count($newIds)) {
+                $sql = 'Insert into message_contact_collection( 
+                    contact_collection_id, viber_message_id,title,  created_at
+                    ) Select id, '.$viber_message_id.' , title, '.time().'
+                    From contact_collection Where user_id = '.$user_id.'
+                        And id in ('.implode(',', $newIds).')';
+
+                //TODO Выполнить операции в mongo
+
+                $db->createCommand($sql)->execute();
+            }
+            $transaction->commit();
+            return 'ok';
+        } catch(\Exception $e){
+            $transaction->rollBack();
+            return $e->getMessage();
+        }
+    }
 }

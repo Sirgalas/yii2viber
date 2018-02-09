@@ -27,6 +27,7 @@ return [
             'timeFormat' => 'php:H:i:s',
             'defaultTimeZone' => 'Europe/Moscow',
             'locale' => 'ru-RU',
+            'currencyCode' => 'руб',
         ],
         'i18n' => [
             'class' => Zelenin\yii\modules\I18n\components\I18N::className(),

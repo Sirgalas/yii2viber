@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use common\entities\ViberMessage;
 use kartik\widgets\Select2;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\entities\ViberMessage */
@@ -20,7 +21,7 @@ use kartik\widgets\Select2;
             </div><!-- /.box-header -->
             <div class="box-body">
 
-                <?php $form = ActiveForm::begin(); ?>
+                <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
                 <div class="col-md-5">
                     <div class="box box-solid box-default">
                         <div class="box-header">
@@ -76,8 +77,8 @@ use kartik\widgets\Select2;
 
                             <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text'])?>
 
-                            <?=$form->field($model, 'image')->textInput(['maxlength' => true, 'id' => 'field_image'])?>
-
+                            <img src="/uploads/<?= $model->image ?>" id="viber_image" style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
+                            <?= $form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image']) ?>
                             <?=$form->field($model, 'title_button')->textInput([
                                                                                    'maxlength' => true,
                                                                                    'id' => 'field_title_button',
@@ -98,24 +99,28 @@ use kartik\widgets\Select2;
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <?php
-
-                            echo Select2::widget([
-                                                     'id' => 'contact_collections_field',
-                                                     'name' => 'contact_collection[id]',
-                                                     'value' => $assign_collections, // initial value
-                                                     'data' => $contact_collections,
-                                                     'maintainOrder' => true,
-                                                     'options' => [
-                                                         'placeholder' => 'Выберите коллекции ...',
-                                                         'multiple' => true,
-                                                     ],
-                                                     'pluginOptions' => [
-                                                         'tags' => true,
-                                                         'maximumInputLength' => 10,
-                                                     ],
-                                                 ]);
+                            if ($model->isNewRecord){
+                                echo '<h3>Будет доступно после сохранения рассылки</h3>';
+                            }
+                            else {
+                                echo Select2::widget([
+                                                         'id' => 'contact_collections_field',
+                                                         'name' => 'contact_collection[id]',
+                                                         'value' => $assign_collections, // initial value
+                                                         'data' => $contact_collections,
+                                                         'maintainOrder' => true,
+                                                         'options' => [
+                                                             'placeholder' => 'Выберите коллекции ...',
+                                                             'multiple' => true,
+                                                         ],
+                                                         'pluginOptions' => [
+                                                             'tags' => true,
+                                                             'maximumInputLength' => 10,
+                                                         ],
+                                                     ]);
+                            }
                             ?>
-                            <button type="button" class="btn btn-block btn-primary btn-sm">Primary</button>
+                            <button type="button" class="btn btn-block btn-primary btn-sm" style="margin: 20px auto" id="assign_button">Назначить</button>
                         </div>
                     </div>
                 </div>
@@ -139,6 +144,7 @@ use kartik\widgets\Select2;
                     :
                         $('.field-filed_text').show();
                         $('.field-field_image').hide();
+                        $('#viber_image').hide();
                         $('.field-field_title_button').hide();
                         $('.field-field_url_button').hide();
                         break;
@@ -147,6 +153,7 @@ use kartik\widgets\Select2;
                     :
                         $('.field-filed_text').hide();
                         $('.field-field_image').show();
+                        $('#viber_image').show();
                         $('.field-field_title_button').hide();
                         $('.field-field_url_button').hide();
                         break;
@@ -155,6 +162,7 @@ use kartik\widgets\Select2;
                     :
                         $('.field-filed_text').show();
                         $('.field-field_image').hide();
+                        $('#viber_image').hide();
                         $('.field-field_title_button').show();
                         $('.field-field_url_button').show();
                         break
@@ -163,6 +171,7 @@ use kartik\widgets\Select2;
                     :
                         $('.field-filed_text').show();
                         $('.field-field_image').show();
+                        $('#viber_image').show();
                         $('.field-field_title_button').show();
                         $('.field-field_url_button').show();
                         break
@@ -172,6 +181,35 @@ use kartik\widgets\Select2;
 
             manageVisible();
             $('#field_type').change(manageVisible);
+
+            $('#assign_button').hide();
+            $('#assign_button').click(function(){
+                var data = $('#contact_collections_field').val();
+                $.ajax(
+                    {
+                        url: "<?= Url::to(['viber-message/' .  $model->id . '/assign-collection' ])?>",
+                        type: "POST",
+                        data: {'data':data},
+                        success: function(data){
+                            if (data=='ok'){
+                                $('#new_phones').val('');
+                                $('#assign_button').hide();
+                            } else {
+                                alert(data);
+                            }
+                        },
+                        error: function(data){
+                            alert('Произошла ошика на сервере. Пожалуйста обратитесь к администратору.');
+                        }
+                    });
+            });
+
+            /**
+             *
+             */
+            $('#contact_collections_field').change(function(){
+                $('#assign_button').show();
+            })
         }
     </script>
 <?php

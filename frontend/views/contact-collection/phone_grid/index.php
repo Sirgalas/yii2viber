@@ -5,7 +5,7 @@ use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
-/* @var $phoneSearchModel common\entities\PhoneSearch */
+/* @var $phoneSearchModel common\entities\mongo\PhoneSearch */
 /* @var $phoneDataProvider yii\data\ActiveDataProvider */
 
 
