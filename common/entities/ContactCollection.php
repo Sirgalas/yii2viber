@@ -24,6 +24,8 @@ use yii\helpers\ArrayHelper;
  */
 class ContactCollection extends \yii\db\ActiveRecord
 {
+
+    public $extension;
     /**
      * @inheritdoc
      */
@@ -112,6 +114,10 @@ class ContactCollection extends \yii\db\ActiveRecord
         return parent::beforeValidate();
     }
 
+    public function fileExel(){
+        return ['xls','xlsx'];
+    }
+
     /**
      * @param bool $insert
      * @return bool
@@ -140,6 +146,10 @@ class ContactCollection extends \yii\db\ActiveRecord
         $out = Json::encode(['output'=>$output, 'message'=>'']);
         echo $out;
         return ;
+    }
+
+    public function getExtension(){
+        return $this->extension;
     }
 
 }

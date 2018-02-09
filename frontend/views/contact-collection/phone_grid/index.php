@@ -12,13 +12,18 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="phone-index">
 
-
-    <?php Pjax::begin(['id' => 'pjax-grid-view']); ?>
-
-
     <?= GridView::widget([
         'dataProvider' => $phoneDataProvider,
         'filterModel' => $phoneSearchModel,
+        'pjax'=>true,
+        'pjaxSettings'=>[
+            'neverTimeout'=>true,
+            'loadingCssClass'=>false,
+            'options'=>[
+                    'id' => 'pjax-grid-view',
+
+            ],
+        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -52,5 +57,5 @@ use yii\widgets\ActiveForm;
 
         ],
     ]); ?>
-    <?php Pjax::end(); ?>
+
 </div>

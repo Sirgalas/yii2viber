@@ -2,6 +2,7 @@
 namespace common\entities\mongo;
 
 use Aws\CloudFront\Exception\Exception;
+use frontend\forms\FileForm;
 use Yii;
 use common\entities\ContactCollection;
 use yii\mongodb\ActiveRecord;
@@ -86,6 +87,92 @@ class Phone extends ActiveRecord
         return 'ok';
     }
 
+    public function pointer($resource,$post,$arrayPost,FileForm $form){
+        $entities= new ContactCollection();
+        $result=false;
+        if(in_array($resource->extension,$entities->fileExel())){
+            $form->scenario=FileForm::SCENARIO_EXEL;
+            if($form->load($post))
+                $result=$this->importExel($resource->tempName,$arrayPost);
+        }
+        if($resource->extension=='csv'){
+            $form->scenario=FileForm::SCENARIO_OUTHER;
+            if($form->load($post))
+                $result=$this->importCsv($resource->tempName,$arrayPost);
+        }
+        if($resource->extension=='txt'){
+            $form->scenario=FileForm::SCENARIO_OUTHER;
+            if($form->load($post))
+                $result=$this->importTxt($resource->tempName,$arrayPost);
+        }
+        return $result;
+    }
+
+    private function importExel($file,$post){
+        $exel = \moonland\phpexcel\Excel::import($file);
+        foreach ($exel as $data){
+            if(array_key_exists($post['fieldPhone'],$data))
+                $searchList[]=static::NormalizeNumber($data[$post['fieldPhone']]);
+        }
+        $exel=$this->arrayDiff($searchList,$exel);
+        foreach ($exel as $data) {
+            if(array_key_exists($post['fieldPhone'],$data))
+            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+        }
+       if($this->saveDate($datas)== 'ok')
+            return $post['collection_id'];
+        return false;
+    }
+
+    private function importCsv($file,$post){
+        if (($handle = fopen($file, "r")) !== FALSE) {
+            foreach(fgetcsv($handle,0, $post['delimiter']) as $arrExplode){
+                $arrForData[]=explode($post['first_row'],$arrExplode);
+            }
+            foreach ($arrForData as $data){
+                if(array_key_exists($post['fieldPhone'],$data))
+                    $searchList[]=static::NormalizeNumber($data[$post['fieldPhone']]);
+            }
+            $arrForData=$this->arrayDiff($searchList,$arrForData);
+            foreach ( $arrForData as $data) {
+                if(array_key_exists($post['fieldPhone'],$data))
+                $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+            }
+            if($this->saveDate($datas)== 'ok')
+                return $post['collection_id'];
+            return false;
+        }
+    }
+
+    private function importTxt($file,$post){
+            $txt=file_get_contents($file);
+            $list = str_replace(["\r\n", "\r", "\n"], ',', strip_tags($txt));
+            $aList = array_unique(explode(',', $list));
+            $searchList=array();
+            foreach ($aList as $list){
+                $exp[] = explode($post['first_row'],$list);
+            }
+            foreach ($exp as $data){
+                if(array_key_exists($post['fieldPhone'],$data))
+                $searchList[]=static::NormalizeNumber($data[$post['fieldPhone']]);
+            }
+            $exp=$this->arrayDiff($searchList,$exp);
+             foreach ($exp as $data){
+                   if(array_key_exists($post['fieldPhone'],$data)){
+
+                       $datas[]=['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+                   }
+            }
+        if($this->saveDate($datas)== 'ok')
+            return $post['collection_id'];
+        return false;
+    }
+
+    private function arrayDiff($search,$array){
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$search])->column();
+        return array_diff($array,$oldList);
+    }
+
     public function importText($collection_id, $txt, $user_id = 0)
     {
         if (! $user_id) {
@@ -110,7 +197,6 @@ class Phone extends ActiveRecord
                    $bList[$number] =$name;
                    $searcList[]=(integer)$number;
                }
-
            }
         }
         $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->column();
@@ -119,23 +205,25 @@ class Phone extends ActiveRecord
                 unset($bList[$first]);
             }
         }
-        $db = Yii::$app->db;
-        $transaction = $db->beginTransaction();
         $data = [];
         foreach ($bList as $phone=>$username) {
             $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone,'username'=>$username];
         }
+        return $this->saveDate($data);
+    }
+
+    private function saveDate($data){
+        $transaction =  Yii::$app->db->beginTransaction();
         try {
-            if(empty($bList))
+            if(empty($data))
                 throw new \Exception(Yii::t('front','Not new user'));
             if(!Yii::$app->mongodb->getCollection('phone')->batchInsert($data))
-                throw new Exception('not save');
+                throw new \Exception('not save');
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();
             return $e->getMessage();
         }
-
         return 'ok';
     }
 

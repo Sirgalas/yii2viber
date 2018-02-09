@@ -66,12 +66,10 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                     </div>
                 </div><!-- /.box-body -->
             </div>
-        </div>
-
-
+        </div
     </div>
 <?php echo $this->render('modals/file-import',
-                         compact('model')); ?>
+                         compact('modalForm','model','extension')); ?>
     <script>
         function reloadGridPhone(){
             $.pjax.reload({container: "#pjax-grid-view", async:false});
