@@ -210,9 +210,9 @@ class ContactCollectionController extends Controller
             try{
                 $result=$phone->importCollection(Yii::$app->request->post('ContactCollectionModalForm'));
                 return $this->redirect(['/contact-collection/update','id'=>$result]);
-            }catch (Exception $ex){
+            }catch (\Exception $ex){
                 Yii::$app->session->setFlash($ex->getMessage());
-                return $this->redirect(['/contact-collection/update','id'=>$post['collection_id']]);
+                return $this->redirect(['/contact-collection/update','id'=>Yii::$app->request->post('ContactCollectionModalForm')['collection_id']]);
             }
         }
     }

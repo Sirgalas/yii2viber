@@ -222,7 +222,7 @@ class Phone extends ActiveRecord
     public function importCollection($post){
         $collection=ContactCollection::find()->select('id')->where(['id'=>$post['collection_id'],'user_id'=>Yii::$app->user->identity->id])->column();
         if(!$collection)
-            throw new Exception('Коллекция у пользователя не обнаружена');
+            throw new \Exception('Коллекция у пользователя не обнаружена');
         $phones=Phone::find()->where(['contact_collection_id'=>(string)$collection[0]])->all();
         foreach ($phones as $phone){
             $data[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['some_collection'], 'phone'=>$phone->phone,'username'=>$phone->username];
@@ -238,6 +238,8 @@ class Phone extends ActiveRecord
         }else{
             $result=$data;
         }
+        if(!isset($result))
+            throw new \Exception('новые телевоны отсутствуют');
         if($this->saveDate($result)== 'ok')
             return $post['some_collection'];
         return false;
