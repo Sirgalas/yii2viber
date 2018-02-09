@@ -8,6 +8,9 @@ use common\entities\user\User;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use yii\console\Controller;
 use Yii;
+use common\components\Viber;
+use common\entities\ContactCollection;
+use common\entities\ViberMessage;
 class TestController extends Controller
 {
 
@@ -45,5 +48,17 @@ class TestController extends Controller
         $user=User::findOne(8);
         echo 'actionCheckUserRecursive 8 & 9, result= ', $user->amParent(9);
         echo "\n",'    actionCheckUserRecursive 8 & 10    result=', $user->amParent(10);
+    }
+
+    public function actionCheckViber(){
+        $vm=new ViberMessage([
+            'id'=>1,
+            'user_id'=>8,
+            'title'=>'Title',
+            'text'=>'test 2',
+            'type' => ViberMessage::ONLYTEXT
+                             ]);
+        $v=new Viber($vm);
+        $v->run();
     }
 }
