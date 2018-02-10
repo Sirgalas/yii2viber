@@ -69,7 +69,7 @@ class Viber
         // Отправка сообщения
         $data = [
             'user' => Yii::$app->params['viber']['login'],
-            'from' => $this->viber_message->user->username,
+            'from' => 'INFORM',//$this->viber_message->user->username,
             'phone' =>$this->viber_message->getPhones(),
             'sending_method' => 'viber',
             'p_transaction_id'=>'100001-' . time()

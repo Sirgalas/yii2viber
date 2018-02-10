@@ -105,7 +105,7 @@ class ViberMessageController extends Controller
                     $path = $model->getUploadedFile();
                     $upload_file->saveAs($path);
                 }
-               // return $this->redirect(['index']);
+                return $this->redirect(['index']);
             }
         }
         $contact_collections = ContactCollection::find()

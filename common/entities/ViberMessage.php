@@ -41,6 +41,11 @@ class ViberMessage extends \yii\db\ActiveRecord
     const TEXTBUTTONIMAGE='all';
 
 
+    const STATUS_NEW = 'new';
+    const STATUS_READY = 'ready';
+    const STATUS_WAIT = 'wait';
+    const STATUS_PROCESS ='process';
+
     public static $types=[
         self::ONLYTEXT          => 'Только текст (Официально)',
         self::ONLYIMAGE         => 'Только изображение (Официально)',
@@ -75,7 +80,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
             [['time_start', 'time_finish'], 'time', 'format' => 'php:H:i'],
             [['status'], 'string', 'max' => 16],
-            ['status', 'in', 'range'=>'new','ready','wait', 'process' ],
+            ['status', 'in', 'range'=>['new','ready','wait', 'process' ]],
             [
                 ['user_id'],
                 'exist',
@@ -159,6 +164,9 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function beforeValidate()
     {
+        if (!$this->status){
+            $this->status = self::STATUS_NEW;
+        }
         if (!$this->user_id){
             $this->user_id = Yii::$app->user->id;
         }
