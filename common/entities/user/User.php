@@ -16,6 +16,7 @@ use Yii;
  * @property string $balance
  * @property bool $dealer_confirmed
  * @property string $image
+ * @property integer want_dealer
  *
  * @property ContactCollection[] $contactCollections
  * @property Phone[] $phones
@@ -23,6 +24,8 @@ use Yii;
  */
 class User extends BaseUser
 {
+    const WANT=1;
+    const NOT_WANT=0;
     public function scenarios()
     {
         $scenarios = parent::scenarios();
@@ -85,6 +88,10 @@ class User extends BaseUser
     public function isDealer()
     {
         return $this->type === 'dealer';
+    }
+
+    public function getClient(){
+        return $this->type === 'client';
     }
 
 

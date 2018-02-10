@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
-
+use frontend\widgets\WantDealer;
 /* @var $this \yii\web\View */
 /* @var $content string */
 ?>
@@ -20,89 +20,9 @@ use yii\helpers\Url;
 
             <ul class="nav navbar-nav">
 
-                <!-- Messages: style can be found in dropdown.less
-                <li class="dropdown messages-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-envelope-o"></i>
-                        <span class="label label-success">4</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li class="header">You have 4 messages</li>
-                        <li>
-                            <!-- inner menu: contains the actual data
-                            <ul class="menu">
-                                <li><!-- start message
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
-                                                 alt="User Image"/>
-                                        </div>
-                                        <h4>
-                                            Support Team
-                                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <!-- end message
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user3-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            AdminLTE Design Team
-                                            <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user4-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            Developers
-                                            <small><i class="fa fa-clock-o"></i> Today</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user3-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            Sales Department
-                                            <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user4-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            Reviewers
-                                            <small><i class="fa fa-clock-o"></i> 2 days</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="footer"><a href="#">See All Messages</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown notifications-menu">
+                <!-- Messages: style can be found in dropdown.less -->
+                    <?= WantDealer::widget(); ?>
+                <!--<li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
                         <span class="label label-warning">10</span>
@@ -227,7 +147,11 @@ use yii\helpers\Url;
                     </ul>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
-
+                <li class="dropdown tasks-menu">
+                    <?php if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){ ?>
+                       <?= Html::a('Хочу стать дилиром', Url::to(['/client/want-dealer'])); ?>
+                    <?php } ?>
+                </li>
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <!--<img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/> -->

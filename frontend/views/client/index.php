@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'attribute' => 'confirmed_at',
                                     'label' => 'Confirmed',
                                     'headerOptions' => ['width' => '40'],
-                                    'value' => function () use ($model) {
+                                    'value' => function ($model) {
                                         if ($model->confirmed_at) {
                                             return 'Yes';
                                         } else {
@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'attribute' => 'blocked_at',
                                     'label' => 'Blocked',
                                     'headerOptions' => ['width' => '40'],
-                                    'value' => function () use ($model) {
+                                    'value' => function ($model) {
                                         if ($model->blocked_at) {
                                             return 'Yes';
                                         } else {
