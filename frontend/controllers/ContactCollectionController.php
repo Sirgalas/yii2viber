@@ -10,13 +10,15 @@ use Yii;
 use common\entities\ContactCollection;
 use common\entities\ContactCollectionSearch;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\entities\Phone as PgPhone;
 use common\entities\PhoneSearch as PgPhoneSearch;
 use yii\web\UploadedFile;
-
+use frontend\forms\ContactCollectionModalForm;
 /**
  * ContactCollectionController implements the CRUD actions for ContactCollection model.
  */
@@ -113,16 +115,15 @@ class ContactCollectionController extends Controller
                      Yii::$app->session->setFlash('error', $ex->getMessage());
                  }
              }
-
-
-
              if ($model->load(Yii::$app->request->post())&&$model->save())
                  return $this->redirect(['index']);
              $phoneSearchModel =new PhoneSearch();
              $phoneSearchModel->contact_collection_id=$id;
              $modalForm=new FileForm();
+             $contactCollection= ArrayHelper::map(ContactCollection::find()->asArray()->all(),'id','title');
+             $contactForm= new ContactCollectionModalForm();
              $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
-             return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider','modalForm'));
+             return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider','modalForm','contactCollection','contactForm'));
          }catch (NotFoundHttpException $ex){
              return $this->render('/site/error',[
                  'name'=>$model->title,
@@ -194,11 +195,24 @@ class ContactCollectionController extends Controller
                 $resource=UploadedFile::getInstance($form,'file');
                 $result=$phone->pointer($resource,Yii::$app->request->post(),$post,$form);
                 if(!$result)
-                    throw new \Exception(Yii::t('front','error import'));
+                    throw new \Exception('Ошибка импорта');
                     return $this->redirect(['/contact-collection/update','id'=>$result]);
             }catch (\Exception $ex){
                 Yii::$app->session->setFlash($ex->getMessage());
                 return $this->redirect(['/contact-collection/update','id'=>$post['collection_id']]);
+            }
+        }
+    }
+    public function actionImportCollection(){
+        $form = new ContactCollectionModalForm();
+        $phone=new Phone();
+        if($form->load(Yii::$app->request->post())){
+            try{
+                $result=$phone->importCollection(Yii::$app->request->post('ContactCollectionModalForm'));
+                return $this->redirect(['/contact-collection/update','id'=>$result]);
+            }catch (\Exception $ex){
+                Yii::$app->session->setFlash($ex->getMessage());
+                return $this->redirect(['/contact-collection/update','id'=>Yii::$app->request->post('ContactCollectionModalForm')['collection_id']]);
             }
         }
     }

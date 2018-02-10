@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
                 'attribute'=>'phone',
                 'editableOptions'=> function ($model, $key, $index) {
                     return [
-                        'header'=>Yii::t('front','edit_phohe'),
+                        'header'=>Yii::t('front','edit_phone'),
                         'size'=>'md',
                         'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
                     ];
@@ -47,7 +47,7 @@ use yii\widgets\ActiveForm;
                 'attribute'=>'username',
                 'editableOptions'=> function ($model, $key, $index) {
                     return [
-                        'header'=>Yii::t('front','edit_phohe'),
+                        'header'=>Yii::t('front','edit_phone'),
                         'size'=>'md',
                         'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
                     ];

@@ -39,8 +39,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             <a class="btn btn-app" title="Импорт из файла"   data-toggle="modal" data-target="#modal-file-import">
                                 <i class="fa fa-download" id="import_from_file"></i>Импорт
                             </a>
-                            <a class="btn btn-app" title="Импорт  других коллекций">
-                                <i class="fa fa-clone" id="import_from_other"></i>Импорт
+                            <a class="btn btn-app" title="Импорт  других коллекций" data-toggle="modal" data-target="#modal-collection-import">
+                                <i class="fa fa-clone" id="import_from_other"  ></i>Импорт
                             </a>
                             <div class="contact-collection-form ">
                                 <div class="box box-solid box-default">
@@ -69,7 +69,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         </div
     </div>
 <?php echo $this->render('modals/file-import',
-                         compact('modalForm','model','extension')); ?>
+                         compact('modalForm','model')); ?>
+<?= $this->render('modals/collection-import',compact('contactCollection','contactForm','model')) ?>
     <script>
         function reloadGridPhone(){
             $.pjax.reload({container: "#pjax-grid-view", async:false});
@@ -103,8 +104,29 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 lst.each(function(){
                     ids.push($(this).closest('tr').attr('data-key'));
                 });
-                console.log(ids);
+                if (ids.length) {
+                    $.ajax(
+                        {
+                            url: "<?= Url::to(['contact-collection/' .  $model->id . '/remove-phones' ])?>",
+                            type: "POST",
+                            data: {'ids':ids},
+                            success: function(data){
+                                if (data=='ok'){
 
+                                    reloadGridPhone();
+                                } else {
+                                    alert(data);
+                                }
+                            }
+                        });
+                }
+            });
+            $('#use_only_selected').click(function(){
+                var lst=$('input[name="selection[]"]:not(:checked)');
+                var ids=[];
+                lst.each(function(){
+                    ids.push($(this).closest('tr').attr('data-key'));
+                });
                 if (ids.length) {
                     $.ajax(
                         {

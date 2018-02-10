@@ -6,7 +6,7 @@ use common\entities\user\User;
 use Yii;
 
 /**
- * This is the model class for table "files_phohe".
+ * This is the model class for table "files_phone".
  *
  * @property int $id
  * @property int $user_id
@@ -14,14 +14,14 @@ use Yii;
  * @property int $month
  * @property int $years
  */
-class FilesPhohe extends \yii\db\ActiveRecord
+class FilesPhone extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'files_phohe';
+        return 'files_phone';
     }
 
     public static $PATH = 'files/phone/exel';

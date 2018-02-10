@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\entities\FilesPhohe;
-use common\entities\FilesPhoheSearch;
+use common\entities\FilesPhone;
+use common\entities\FilesPhoneSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * FilesPhoheController implements the CRUD actions for FilesPhohe model.
+ * FilesPhoneController implements the CRUD actions for FilesPhone model.
  */
-class FilesPhoheController extends Controller
+class FilesPhoneController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,12 +30,12 @@ class FilesPhoheController extends Controller
     }
 
     /**
-     * Lists all FilesPhohe models.
+     * Lists all FilesPhone models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new FilesPhoheSearch();
+        $searchModel = new FilesPhoneSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +45,7 @@ class FilesPhoheController extends Controller
     }
 
     /**
-     * Displays a single FilesPhohe model.
+     * Displays a single FilesPhone model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,13 +58,13 @@ class FilesPhoheController extends Controller
     }
 
     /**
-     * Creates a new FilesPhohe model.
+     * Creates a new FilesPhone model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new FilesPhohe();
+        $model = new FilesPhone();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -76,7 +76,7 @@ class FilesPhoheController extends Controller
     }
 
     /**
-     * Updates an existing FilesPhohe model.
+     * Updates an existing FilesPhone model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -96,7 +96,7 @@ class FilesPhoheController extends Controller
     }
 
     /**
-     * Deletes an existing FilesPhohe model.
+     * Deletes an existing FilesPhone model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -110,15 +110,15 @@ class FilesPhoheController extends Controller
     }
 
     /**
-     * Finds the FilesPhohe model based on its primary key value.
+     * Finds the FilesPhone model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return FilesPhohe the loaded model
+     * @return FilesPhone the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = FilesPhohe::findOne($id)) !== null) {
+        if (($model = FilesPhone::findOne($id)) !== null) {
             return $model;
         }
 
