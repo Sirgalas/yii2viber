@@ -38,4 +38,5 @@ params-local.php
 test-local.php
 
 composer.lock
-/composer.lock
+
+
