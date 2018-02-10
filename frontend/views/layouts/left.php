@@ -43,8 +43,7 @@ use yii\helpers\Url;
             }
             $menuItems[] =  ['label'=>'Отчеты' ,'url'=> Url::toRoute(['/reports'])];
             $menuItems[] =  ['label'=>'Статистика' ,'url'=> Url::toRoute(['/statistics'])];
-            $menuItems[] =  ['label'=>'Logout (' . Yii::$app->user->identity->username . ')','url'=>['/user/security/logout']];
-        } ?>
+            } ?>
         <?= dmstr\widgets\Menu::widget(
             [
                 'options'   => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],

@@ -3,9 +3,9 @@ return [
     'adminEmail' => 'admin@vibershop24.ru',
     'supportEmail' => 'admin@vibershop24.ru',
     'user.passwordResetTokenExpire' => 3600,
-    'cookieDomain' => '.example.com',
-    'frontendHostInfo' => 'http://example.com',
-    'backendHostInfo' => 'http://backend.example.com',
+    'cookieDomain' => '.vibershop24.ru',
+    'frontendHostInfo' => 'http://vibershop24.ru',
+    'backendHostInfo' => 'http://vibershop24.ru/admin',
 
     'viber' => [
         'login' => 'onviber1977',

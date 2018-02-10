@@ -10,7 +10,6 @@ return [
         'common\bootstrap\SetUp',
     ],
     'components' => [
-
         'resourceManager' => [
             'class' => 'common\components\FileSystemResourseManager',
             'basePath' => dirname(dirname(__DIR__)) .'/files',
