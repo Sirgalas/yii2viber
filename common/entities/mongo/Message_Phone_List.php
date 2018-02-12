@@ -39,7 +39,7 @@ class Message_Phone_List
 
     public function attributes()
     {
-        return ['_id','message_id','last_date_message','status'];
+        return ['_id','message_id','last_date_message','status','phone'];
     }
 
     public function attributeLabels()
@@ -72,5 +72,4 @@ class Message_Phone_List
     public function isRead(){
         return $this->status==self::READ;
     }
-
 }

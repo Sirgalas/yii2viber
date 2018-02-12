@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 <div class="viber-message-update">
 
     <?= $this->render('_form',
-        compact('model','contact_collections','assign_collections')
+        compact('model','contact_collections','assign_collections','clients')
     ) ?>
 
 </div>

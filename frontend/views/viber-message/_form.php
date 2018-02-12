@@ -17,7 +17,7 @@ use yii\helpers\Url;
     <div class="viber-message-form" style="margin-top: 20px">
         <div class="box box-solid box-default">
             <div class="box-header">
-                <h3 class="box-title"> Viber Рассылка </h3>
+                <h3 class="box-title"> Viber Рассылка <span id="coast" class="small"></span> </h3>
             </div><!-- /.box-header -->
             <div class="box-body">
 
@@ -49,18 +49,22 @@ use yii\helpers\Url;
                                     'autoclose' => true,
                                 ],
                             ]);?>
-
                             <?php if (! Yii::$app->user->identity->isClient()): ?>
+                                <?=$form->field($model, 'user_id')->widget(Select2::classname(), [
+                                    'data' => $clients,
+                                    'language' => 'ru',
+                                    'options' => ['placeholder' => 'Выбирите клента'],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
 
-                                <?=$form->field($model, 'user_id')->textInput()?>
-
+                                ]);?>
                             <?php endif ?>
                             <?=$form->field($model, 'status')->textInput(['maxlength' => true, 'disabled' => true])?>
 
                             <?=$form->field($model, 'limit_messages')->textInput()?>
-
-                            <? //=$form->field($model, 'cost')->textInput()?>
-                            <? //=$form->field($model, 'balance')->textInput()?>
+                            <?=$form->field($model, 'cost')->textInput() /*?>
+                            <? =$form->field($model, 'balance')->textInput()*/?>
 
                         </div>
                     </div>
@@ -117,6 +121,22 @@ use yii\helpers\Url;
                                                              'tags' => true,
                                                              'maximumInputLength' => 10,
                                                          ],
+                                                        "pluginEvents"=>[
+                                                            "change" => "function(e) {
+                                                                var id = $(this).val()
+                                                                coast=$('#vibermessage-cost').val();
+                                                                $.ajax(
+                                                                    {
+                                                                        url: '/viber-message/coast',
+                                                                        type: 'POST',
+                                                                        data: {'data': id,'coast':coast},
+                                                                        success: function (data) {
+                                                                            $('#coast').html(data);
+                                                                        },
+                                                                    });
+                                                            }",
+                                                            "select2:unselect" => "function(e) { console.log(e); }"
+                                                        ]
                                                      ]);
                             }
                             ?>
@@ -175,13 +195,10 @@ use yii\helpers\Url;
                         $('.field-field_title_button').show();
                         $('.field-field_url_button').show();
                         break
-
                 }
             }
-
             manageVisible();
             $('#field_type').change(manageVisible);
-
             $('#assign_button').hide();
             $('#assign_button').click(function(){
                 var data = $('#contact_collections_field').val();

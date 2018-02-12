@@ -17,6 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="viber-message-create">
 
-    <?= $this->render('_form',  compact('model','contact_collections','assign_collections')) ?>
+    <?= $this->render('_form',  compact('model','contact_collections','assign_collections','clients')) ?>
 
 </div>
