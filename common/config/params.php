@@ -8,7 +8,11 @@ return [
     'backendHostInfo' => 'http://vibershop24.ru/admin',
 
     'viber' => [
-        'login' => 'onviber1977',
-        'secret' => 'Tql5Ie9Q',
+
+        'login' => 'viber1804',
+        'secret' => 'NxQTivMZ',
+        'from' => 'Clickbonus',
+        'transaction_size_limit'=>999, // максимальное количество телефонов в одной транзакции
+        'min_delay' => 2, // Минимальное время между отправкой транзакций
     ],
 ];

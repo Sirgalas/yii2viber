@@ -11,6 +11,7 @@ namespace common\components;
 use common\entities\ViberMessage;
 use common\entities\ContactCollection;
 use Yii;
+
 class Viber
 {
     public $phones;
@@ -37,8 +38,12 @@ class Viber
         $this->image_id = 0;
     }
 
+    /**
+     * @return bool
+     */
     public function sendImage()
     {
+        echo '=============================Start Send Image ==================';
         $filePath = realpath($this->viber_message->getUploadedFile());
         $sign = md5(Yii::$app->params['viber']['login'].md5_file($filePath).Yii::$app->params['viber']['secret']);
         $ch = curl_init('http://media.sms-online.com/upload/');
@@ -47,7 +52,7 @@ class Viber
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
             'login' => Yii::$app->params['viber']['login'],
-            'image' => new  CURLFile(realpath($filePath)),
+            'image' => new  \CURLFile(realpath($filePath)),
             'sign' => $sign,
         ]);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -60,60 +65,61 @@ class Viber
             $imageId = $result['image_id'];
         }
         $this->image_id = $imageId;
-
+        echo '============================= End ==================';
         return $imageId !== false;
     }
 
-    public function sendMessage(){
+    /**
+     *
+     */
+    public function sendMessage()
+    {
+        $from = Yii::$app->params['viber']['from'];
+        $phones = $this->viber_message->getPhones();
 
         // Отправка сообщения
-        $data = [
-            'user' => Yii::$app->params['viber']['login'],
-            'from' => 'INFORM',//$this->viber_message->user->username,
-            'phone' =>$this->viber_message->getPhones(),
-            'sending_method' => 'viber',
-            'p_transaction_id'=>'100001-' . time()
-        ];
 
-        if ($this->viber_message->type !== ViberMessage::ONLYIMAGE){
-            $data['txt']= $this->viber_message->text;
+        $encoded = urldecode('user').'='.urldecode(Yii::$app->params['viber']['login']).'&';
+        $encoded .= urldecode('from').'='.urlencode($from).'&';
+        $encoded .= urldecode('sending_method').'='.urlencode('viber').'&';
+        $signString = Yii::$app->params['viber']['login'].$from;
+
+        foreach ($phones as $phone) {
+            $encoded .= urldecode('phone').'='.urlencode($phone).'&';
+            $signString .= $phone;
+        }
+        if ($this->viber_message->type !== ViberMessage::ONLYIMAGE) {
+            $encoded .= urldecode('txt').'='.urlencode($this->viber_message->text).'&';
+            $signString .= $this->viber_message->text;
         }
 
-        if ($this->viber_message->type === ViberMessage::ONLYIMAGE
-            || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE ) {
-            if (!$this->sendImage()){
+        if ($this->viber_message->type === ViberMessage::ONLYIMAGE || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE) {
+            if (! $this->sendImage()) {
                 throw new \RuntimeException('Sending error.');
             }
-            $data['image_id']=$this->image_id;
+
+            $encoded .= urldecode('image_id').'='.$this->image_id.'&';
         }
-        if ($this->viber_message->type === ViberMessage::TEXTBUTTON
-            || $this->viber_message->type===ViberMessage::TEXTBUTTONIMAGE ) {
 
-            $data['button_text'] = $this->viber_message->title_button;
-            $data['button_link'] = $this->viber_message->url_button;
+        if ($this->viber_message->type === ViberMessage::TEXTBUTTON || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE) {
+            $encoded .= urldecode('button_text').'='.urlencode($this->viber_message->title_button).'&';
+            $encoded .= urldecode('button_link').'='. urlencode($this->viber_message->url_button).'&';
+
         }
-        $signString=$data['user'] .
-            $data['from'] .
-            implode("\n",$data['phone']) .
-            //$data['phone'] .
-            $data['txt'] .
-            Yii::$app->params['viber']['secret'];
-        $data['sign']=md5($signString);
 
-        print_r($data);
-        echo "\n === signString $signString\n";
-        echo "\n === data['sign'] {$data['sign']}\n";
-
+        $signString .= Yii::$app->params['viber']['secret'];
+        $encoded .= urldecode('sign').'='.md5($signString);
 
         $ch = curl_init('https://bulk.sms-online.com/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
+
         $result = curl_exec($ch);
         curl_close($ch);
-echo "\n Вывод результата отправки сообщения:\n";
         print_r($result);
+        //TODO parse result
     }
 
     /**

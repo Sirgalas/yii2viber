@@ -55,8 +55,11 @@ class TestController extends Controller
             'id'=>1,
             'user_id'=>8,
             'title'=>'Title',
-            'text'=>'test 2',
-            'type' => ViberMessage::ONLYTEXT
+            'text'=>'Привет, а вто теперь рассылка на 2 номера',
+            'title_button' => 'Жми',
+            'url_button' => 'http://bernik.ru',
+            'image'=>'kanban.png',
+            'type' => ViberMessage::TEXTBUTTONIMAGE,
                              ]);
         $v=new Viber($vm);
         $v->run();
