@@ -51,10 +51,25 @@ return [
         },
         'backendUrlManager' => require  __DIR__.'/../../backend/config/urlManager.php',
     ],
+   /* 'as access' => [
+        'class' => 'yii\filters\AccessControl',
+        'except' => ['/user/security/login', 'site/error'],
+        'rules' => [
+            [
+                'allow' => true,
+                'roles' => ['@'],
+            ],
+        ],
+    ],*/
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
             'as frontend' => 'dektrium\user\filters\FrontendFilter',
+            'urlPrefix'=>'auth',
+            'modelMap' => [
+                'User' => 'frontend\entities\User',
+                'LoginForm' => 'dektrium\user\models\LoginForm',
+            ],
         ],
     ],
     'params' => $params,

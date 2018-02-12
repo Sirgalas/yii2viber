@@ -1,7 +1,7 @@
 <?php
 namespace common\bootstrap;
 
-use frontend\services\auth\PasswordResetService;
+use common\mailers\WantDealer;
 use frontend\services\contact\ContactService;
 use yii\base\BootstrapInterface;
 use Yii;
@@ -13,6 +13,9 @@ class SetUp implements BootstrapInterface
         $container->setSingleton(ContactService::class, [], [
             $app->params['adminEmail']
         ]);
+       /* $container->setSingleton(WantDealer::class, [], [
+            $app->params['adminEmail']
+        ]);*/
     }
 
 }

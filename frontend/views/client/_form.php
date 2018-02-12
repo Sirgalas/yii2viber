@@ -17,20 +17,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'type')->dropDownList(['client','dealer'],['maxlength' => true]) ?>
+    <?= $form->field($model, 'type')->dropDownList(['client'=>'client','dealer'=>'dealer'],['maxlength' => true]) ?>
     <?php if ($model->isNewRecord){
         $form->field($model, 'password')->textInput(['maxlength' => true]);
     }?>
 
     <?= $form->field($model, 'dealer_id')->dropDownList($dealers) ?>
 
-    <?//= $form->field($model, 'balance')->textInput() ?>
-
-    <?//= $form->field($model, 'confirmed_at')->textInput() ?>
-
     <?= $form->field($model, 'dealer_confirmed')->checkbox() ?>
-
-    <?//= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

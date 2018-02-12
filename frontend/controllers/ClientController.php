@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\entities\user\User;
+use common\mailers\WantDealer;
 use Yii;
 use common\entities\user\Client;
 use common\entities\user\ClientSearch;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -154,6 +157,26 @@ class ClientController extends Controller
         } catch (\Exception $e){
             $transaction->rollBack();
             return ['output' => '111', 'message' => 'error:: ' . $e->getMessage() ];
+        }
+    }
+
+    public function actionWantDealer(){
+        if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){
+            $user=User::findOne(Yii::$app->user->identity->id);
+            $dealer=User::findOne(Yii::$app->user->identity->dealer_id);
+            $user->want_dealer=User::WANT;
+            try{
+                if(!$user->save())
+                    throw new \Exception(json_encode($user->errors));
+                if((new WantDealer())->send($user,$dealer))
+                    throw new \Exception('Ошибка отправления');
+                return $this->redirect('/site/index');
+            }catch (Exception $ex){
+                Yii::$app->errorHandler->logException($ex);
+                Yii::$app->session->setFlash($ex->getMessage());
+            }
+
+
         }
     }
 }
