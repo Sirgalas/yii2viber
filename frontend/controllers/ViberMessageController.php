@@ -4,6 +4,8 @@ namespace frontend\controllers;
 
 use common\entities\ContactCollection;
 use common\entities\MessageContactCollection;
+use common\entities\mongo\Phone;
+use frontend\entities\User;
 use Yii;
 use common\entities\ViberMessage;
 use common\entities\ViberMessageSearch;
@@ -71,7 +73,7 @@ class ViberMessageController extends Controller
     public function actionCreate()
     {
         $model = new ViberMessage;
-
+        $clients=ArrayHelper::map(User::find()->where(['dealer_id'=>Yii::$app->user->identity->id])->all(),'id','username');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             return $this->redirect(['index']);
@@ -83,7 +85,7 @@ class ViberMessageController extends Controller
                 ->asArray()
                 ->all();
             $contact_collections=ArrayHelper::map($contact_collections, 'id','title');
-            return $this->render('create',compact('model','contact_collections','assign_collections'));
+            return $this->render('create',compact('model','contact_collections','assign_collections','clients'));
         }
     }
 
@@ -97,7 +99,7 @@ class ViberMessageController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $clients=ArrayHelper::map(User::find()->where(['dealer_id'=>Yii::$app->user->identity->id])->all(),'id','username');
         if ($model->load(Yii::$app->request->post())) {
             $upload_file = $model->uploadFile();
             if ($model->save()) {
@@ -121,7 +123,7 @@ class ViberMessageController extends Controller
             ->column();
 
 
-        return $this->render('update', compact('model','contact_collections','assign_collections'));
+        return $this->render('update', compact('model','contact_collections','assign_collections','clients'));
 
     }
 
@@ -137,6 +139,13 @@ class ViberMessageController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionCoast(){
+        $post=Yii::$app->request->post('data');
+        $phones=Phone::find()->select(['phone'])->where(['contact_collection_id'=>$post])->column();
+        $coast=Yii::$app->request->post('coast');
+        return count(array_unique($phones))."*".$coast."=".count(array_unique($phones))*$coast;
     }
 
     /**
