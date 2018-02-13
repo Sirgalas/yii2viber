@@ -201,7 +201,7 @@ class ViberMessage extends \yii\db\ActiveRecord
          }else{
              $arrId=[];
              foreach ($this->contactCollection as $id){
-                 $arrId=$id->id;
+                 $arrId[]=(string)$id->id;
              }
              $this->cost=$this->Coast($arrId);
          }
@@ -263,6 +263,6 @@ class ViberMessage extends \yii\db\ActiveRecord
     }
 
     public function getContactCollection(){
-        return $this->hasOne(ContactCollection::className(), ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(), ['viber_message_id' => 'id']);
+        return $this->hasMany(ContactCollection::className(), ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(), ['viber_message_id' => 'id']);
     }
 }

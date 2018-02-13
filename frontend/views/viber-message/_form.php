@@ -13,7 +13,6 @@ use yii\helpers\Url;
 /*  @var array $contact_collections */
 /* @var array $assign_collections */
 ?>
-
     <div class="viber-message-form" style="margin-top: 20px">
         <div class="box box-solid box-default">
             <div class="box-header">
