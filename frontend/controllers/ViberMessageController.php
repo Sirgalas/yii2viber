@@ -111,7 +111,7 @@ class ViberMessageController extends Controller
             }
         }
         $contact_collections = ContactCollection::find()
-            ->andWhere(['user_id'=>Yii::$app->user->id])
+            ->andWhere(['user_id'=>$model->user_id])
             ->select(['id','title'])
             ->orderBy('title')
             ->asArray()
@@ -143,9 +143,11 @@ class ViberMessageController extends Controller
 
     public function actionCoast(){
         $post=Yii::$app->request->post('data');
-        $phones=Phone::find()->select(['phone'])->where(['contact_collection_id'=>$post])->column();
-        $coast=Yii::$app->request->post('coast');
-        return count(array_unique($phones))."*".$coast."=".count(array_unique($phones))*$coast;
+        try{
+            return (new ViberMessage)->Coast($post);
+        }catch (\Exception $ex){
+            Yii::$app->errorHandler->logException($ex);
+        }
     }
 
     /**
