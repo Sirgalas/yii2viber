@@ -1,87 +1,26 @@
-Options +FollowSymLinks
-IndexIgnore */*
-RewriteEngine on
-
-# if request begins with /admin remove admin and ad /backend/web/
-RewriteCond %{REQUEST_URI} ^/admin
-RewriteRule ^admin/?(.*) /backend/web/$1
-
-# other requests add /frontend/web/$1
-RewriteCond %{REQUEST_URI} !^/(frontend/web|backend/web|admin)
-RewriteRule (.*) /frontend/web/$1
-
-# if frontend request
-RewriteCond %{REQUEST_URI} ^/frontend/web
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /frontend/web/index.php
-
-# if backend request
-RewriteCond %{REQUEST_URI} ^/backend/web
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /backend/web/index.php
-
-RewriteEngine On
-RewriteCond %{REQUEST_URI} ^//oneproduct$
-RewriteCond %{QUERY_STRING} ^id=2$
-RewriteRule . http://krymray.ru/ [R=301,L]
-
-
-Redirect 301 /firmcat/category/youtube http://krymray.ru/
-Redirect 301 /catalog/facebook http://krymray.ru/
-Redirect 301 /firmcat/category/facebook http://krymray.ru/
-Redirect 301 /firmcat/category http://krymray.ru/
-Redirect 301 /firmcat/youtube http://krymray.ru/
-Redirect 301 /firmcat/google http://krymray.ru/
-Redirect 301 /catalog/ok http://krymray.ru/
-Redirect 301 /catalog/youtube http://krymray.ru/
-Redirect 301 /firmcat/facebook http://krymray.ru/
-Redirect 301 /catalog/twitter http://krymray.ru/
-Redirect 301 /catalog/google http://krymray.ru/
-Redirect 301 /firmcat/twitter http://krymray.ru/
-Redirect 301 /firmcat/category/google http://krymray.ru/
-Redirect 301 /catalog/news http://krymray.ru/blog
-Redirect 301 /firmcat/category/twitter http://krymray.ru/
-Redirect 301 /catalog http://krymray.ru/
-Redirect 301 /ok http://krymray.ru/
-Redirect 301 /product/facebook http://krymray.ru/
-Redirect 301 /js/jquery-ui.min http://krymray.ru/
-Redirect 301 /product/youtube http://krymray.ru/
-Redirect 301 /product/ok http://krymray.ru/
-Redirect 301 /firm_products/ok http://krymray.ru/
-Redirect 301 /firm/twitter http://krymray.ru/
-Redirect 301 /firm/google http://krymray.ru/
-Redirect 301 /firm_products/ok http://krymray.ru/
-Redirect 301 /firm_products/ok http://krymray.ru/
-Redirect 301 /firm_products/twitter http://krymray.ru/
-Redirect 301 /firm_products/facebook http://krymray.ru/
-Redirect 301 /firm_products/youtube http://krymray.ru/
-Redirect 301 /firm/ok http://krymray.ru/
-Redirect 301 /firm/facebook http://krymray.ru/
-Redirect 301 /firm/youtube http://krymray.ru/
-Redirect 301 /firm_products/google http://krymray.ru/
-Redirect 301 /products http://krymray.ru/
-Redirect 301 /google http://krymray.ru/
-Redirect 301 /blog/twitter http://krymray.ru/
-Redirect 301 /blog/6 http://krymray.ru/
-Redirect 301 /blog/facebook http://krymray.ru/
-Redirect 301 /blog/youtube http://krymray.ru/
-Redirect 301 /blog/ok http://krymray.ru/
-Redirect 301 /blog/google http://krymray.ru/
-Redirect 301 /firm/twitter http://krymray.ru/
-Redirect 301 /firm_products/twitter http://krymray.ru/
-Redirect 301 /firm_products/facebook http://krymray.ru/
-Redirect 301 /firm_products/youtube http://krymray.ru/
-Redirect 301 /firm/ok http://krymray.ru/
-Redirect 301 /firm/google http://krymray.ru/
-Redirect 301 /firm/facebook http://krymray.ru/
-Redirect 301 /firm/youtube http://krymray.ru/
-Redirect 301 /firm_products/twitter http://krymray.ru/
-Redirect 301 /firm_products/facebook http://krymray.ru/
-Redirect 301 /firm_products/youtube http://krymray.ru/
-Redirect 301 /firm_products/twitter http://krymray.ru/
-Redirect 301 /firm_products/google http://krymray.ru/
-Redirect 301 /oneproduct?id=2 http://krymray.ru/
-Redirect 301 /firmcat/ok http://krymray.ru/
-
+<IfModule mod_rewrite.c>
+    Options +FollowSymlinks
+    RewriteEngine On
+</IfModule>
+ 
+<IfModule mod_rewrite.c>
+    # если /admin, то в backend
+    RewriteCond %{REQUEST_URI} ^/(admin)
+    RewriteRule ^admin/assets/(.*)$ backend/web/assets/$1 [L]
+    RewriteRule ^admin/css/(.*)$ backend/web/css/$1 [L]
+    RewriteRule ^admin/js/(.*)$ backend/web/js/$1 [L]
+    RewriteCond %{REQUEST_URI} !^/backend/web/(assets|js|css|js)/
+    RewriteCond %{REQUEST_URI} ^/(admin)
+    RewriteRule ^.*$ backend/web/index.php [L]
+    RewriteCond %{REQUEST_URI} ^/(assets|css|js|images)
+    RewriteRule ^assets/(.*)$ frontend/web/assets/$1 [L]
+    RewriteRule ^css/(.*)$ frontend/web/css/$1 [L]
+    RewriteRule ^js/(.*)$ frontend/web/js/$1 [L]
+    RewriteRule ^images/(.*)$ frontend/web/images/$1 [L]
+    RewriteRule ^(.*)$ frontend/web/$1 [L]
+    RewriteCond %{REQUEST_URI} !^/(frontend|backend)/web/(assets|css|js)/
+    RewriteCond %{REQUEST_URI} !index.php
+    RewriteCond %{REQUEST_FILENAME} !-f [OR]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^.*$ frontend/web/index.php
+</IfModule>
