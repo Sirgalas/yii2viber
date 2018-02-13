@@ -40,3 +40,7 @@ test-local.php
 composer.lock
 
 
+/*.htaccess
+/frontend/web/.htaccess
+
+/.htaccess
