@@ -13,11 +13,10 @@ use yii\helpers\Url;
 /*  @var array $contact_collections */
 /* @var array $assign_collections */
 ?>
-
     <div class="viber-message-form" style="margin-top: 20px">
         <div class="box box-solid box-default">
             <div class="box-header">
-                <h3 class="box-title"> Viber Рассылка <span id="coast" class="small"></span> </h3>
+                <h3 class="box-title"> Viber Рассылка <span class="small">стоимость рассылки <span id="coast"><?= $model->cost ?></span> vib</span></h3>
             </div><!-- /.box-header -->
             <div class="box-body">
 
@@ -123,13 +122,12 @@ use yii\helpers\Url;
                                                          ],
                                                         "pluginEvents"=>[
                                                             "change" => "function(e) {
-                                                                var id = $(this).val()
-                                                                coast=$('#vibermessage-cost').val();
+                                                                var id = $(this).val();                                                           
                                                                 $.ajax(
                                                                     {
                                                                         url: '/viber-message/coast',
                                                                         type: 'POST',
-                                                                        data: {'data': id,'coast':coast},
+                                                                        data: {'data': id},
                                                                         success: function (data) {
                                                                             $('#coast').html(data);
                                                                         },

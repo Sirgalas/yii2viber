@@ -6,7 +6,7 @@ return [
     'cookieDomain' => '.vibershop24.ru',
     'frontendHostInfo' => 'http://vibershop24.ru',
     'backendHostInfo' => 'http://vibershop24.ru/admin',
-
+    'coast'=>1,
     'viber' => [
 
         'login' => 'viber1804',

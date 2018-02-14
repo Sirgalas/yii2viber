@@ -206,7 +206,7 @@ class Phone extends ActiveRecord
                }
            }
         }
-        $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->column();
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->andWhere(['contact_collection_id'=>$collection_id])->column();
         if (count($oldList) > 0) {
             foreach($oldList as $first){
                 unset($bList[$first]);
