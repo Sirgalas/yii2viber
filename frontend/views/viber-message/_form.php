@@ -13,7 +13,7 @@ use yii\helpers\Url;
 /*  @var array $contact_collections */
 /* @var array $assign_collections */
 ?>
-    <div class="viber-message-form" style="margin-top: 20px">
+    <div class="viber-message-form" style="margin-top: 20px" data-id="<?= $model->id ?>">
         <div class="box box-solid box-default">
             <div class="box-header">
                 <h3 class="box-title"> Viber Рассылка <span class="small">стоимость рассылки <span id="coast"><?= $model->cost ?></span> vib</span></h3>
@@ -122,14 +122,18 @@ use yii\helpers\Url;
                                                          ],
                                                         "pluginEvents"=>[
                                                             "change" => "function(e) {
-                                                                var id = $(this).val();                                                           
+                                                                var cost = $(this).val(); 
+                                                                var id= $('.viber-message-form').data('id');                                                          
                                                                 $.ajax(
                                                                     {
                                                                         url: '/viber-message/coast',
                                                                         type: 'POST',
-                                                                        data: {'data': id},
+                                                                        data: {'data': cost,'id':id},
                                                                         success: function (data) {
+                                                                        if(data)
                                                                             $('#coast').html(data);
+                                                                        else
+                                                                            alert('баланс пользователя не может быть отрицательным');    
                                                                         },
                                                                     });
                                                             }",

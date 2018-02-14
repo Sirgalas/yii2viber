@@ -44,3 +44,4 @@ composer.lock
 /frontend/web/.htaccess
 
 /.htaccess
+/composer.lock

@@ -9,6 +9,7 @@ use frontend\entities\User;
 use Yii;
 use common\entities\ViberMessage;
 use common\entities\ViberMessageSearch;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -74,6 +75,7 @@ class ViberMessageController extends Controller
     {
         $model = new ViberMessage;
         $clients=ArrayHelper::map(User::find()->where(['dealer_id'=>Yii::$app->user->identity->id])->all(),'id','username');
+        $clients[Yii::$app->user->identity->id]=Yii::$app->user->identity->username;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             return $this->redirect(['index']);
@@ -100,14 +102,25 @@ class ViberMessageController extends Controller
     {
         $model = $this->findModel($id);
         $clients=ArrayHelper::map(User::find()->where(['dealer_id'=>Yii::$app->user->identity->id])->all(),'id','username');
+        $clients[Yii::$app->user->identity->id]=Yii::$app->user->identity->username;
         if ($model->load(Yii::$app->request->post())) {
             $upload_file = $model->uploadFile();
-            if ($model->save()) {
-                if ($upload_file !== false) {
-                    $path = $model->getUploadedFile();
-                    $upload_file->saveAs($path);
+            $transaction=Yii::$app->db->beginTransaction();
+            try {
+                if ($model->save()) {
+                    if ($upload_file !== false) {
+                        $path = $model->getUploadedFile();
+                        $upload_file->saveAs($path);
+                    }
+                }else{
+                    throw new \Exception(json_encode($model->errors));
                 }
+                $transaction->commit();
                 return $this->redirect(['index']);
+            }catch (\Exception $ex){
+                Yii::$app->errorHandler->logException($ex);
+                Yii::$app->session->setFlash($ex->getMessage());
+                $transaction->rollBack();
             }
         }
         $contact_collections = ContactCollection::find()
@@ -142,11 +155,17 @@ class ViberMessageController extends Controller
     }
 
     public function actionCoast(){
-        $post=Yii::$app->request->post('data');
+        $data=Yii::$app->request->post('data');
+        $entities=ViberMessage::findOne(Yii::$app->request->post('id'));
         try{
-            return (new ViberMessage)->Coast($post);
+            $cost= $entities->Cost($data);
+            $balance= $entities->userBalanse($cost);
+            if($balance<0)
+                return false;
+            return $cost;
         }catch (\Exception $ex){
             Yii::$app->errorHandler->logException($ex);
+            return $ex->getMessage();
         }
     }
 
@@ -168,7 +187,8 @@ class ViberMessageController extends Controller
     }
 
     public function actionAssignCollection($id){
-        $model= ContactCollection::findOne($id);
+
+        $model= ContactCollection::findOne(Yii::$app->request->post('data'));
         if(!Yii::$app->user->identity->amParent($model->user_id)){
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит',403);
         }
