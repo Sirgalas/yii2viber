@@ -232,8 +232,9 @@ class ViberMessage extends \yii\db\ActiveRecord
      */
     public function getPhones(){
         return ['79135701037',
+
             //'79050885202'
-            '79663396630'
+            //'79663396630'
         ];
     }
 }
