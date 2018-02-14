@@ -136,8 +136,6 @@ use yii\helpers\Url;
                                                     }
                                                 else{
                                                      alert('баланс пользователя не может быть отрицательным');
-                                                     alert(cost);
-                                                    if(cost.length>0)
                                                      $('#assign_button').hide();
                                                     }
                                                 },
@@ -145,7 +143,7 @@ use yii\helpers\Url;
                                     }",
                                     "select2:unselect" => "function(e) { 
                                         var cost = $(this).val(); 
-                                        if(cost.length>0)
+                                        if(cost.length==0)
                                               $('#assign_button').hide();
                                     }"
                                 ]
