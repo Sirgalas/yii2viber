@@ -187,7 +187,6 @@ class ViberMessageController extends Controller
     }
 
     public function actionAssignCollection($id){
-
         $model= ViberMessage::findOne($id);
         if(!Yii::$app->user->identity->amParent($model->user_id) &&
             Yii::$app->user->id != $model->user_id
@@ -196,7 +195,7 @@ class ViberMessageController extends Controller
         }
         try{
             MessageContactCollection::assign($id,$model->user_id,  $_POST['data']);
-            $model->viberMessage->save();
+            $model->save();
             return 'ok';
         }catch (\Exception $ex){
             return $ex->getMessage();
