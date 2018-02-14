@@ -192,7 +192,12 @@ class ViberMessageController extends Controller
         if(!Yii::$app->user->identity->amParent($model->user_id)){
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит',403);
         }
-        return MessageContactCollection::assign($id,$model->user_id,  $_POST['data']);
-        print_r($_POST);
+        try{
+            MessageContactCollection::assign($id,$model->user_id,  $_POST['data']);
+            $model->viberMessage->save();
+            return 'ok';
+        }catch (\Exception $ex){
+            return $ex->getMessage();
+        }
     }
 }

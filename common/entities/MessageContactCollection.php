@@ -115,6 +115,7 @@ class MessageContactCollection extends \yii\db\ActiveRecord
 
                 $db->createCommand($sql)->execute();
             }
+
             $transaction->commit();
             return 'ok';
         } catch(\Exception $e){

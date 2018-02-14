@@ -21,6 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property User $user
  * @property MessageContactCollection[] $messageContactCollections
  * @property Phone[] $phones
+ * @property ViberMessage $viberMessage
  */
 class ContactCollection extends \yii\db\ActiveRecord
 {
@@ -150,6 +151,10 @@ class ContactCollection extends \yii\db\ActiveRecord
 
     public function getExtension(){
         return $this->extension;
+    }
+
+    public function getViberMessage(){
+        return $this->hasOne(ViberMessage::className(), ['id' =>'viber_message_id'])->viaTable(MessageContactCollection::tableName(), [ 'contact_collection_id'=>'id']);
     }
 
 }
