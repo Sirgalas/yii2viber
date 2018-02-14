@@ -59,7 +59,7 @@ return [
             'class' => 'dektrium\user\Module',
             'enableUnconfirmedLogin' => true,
             'emailChangeStrategy' => 1,
-            'admins' => ['Sergalas'],
+            'admins' => ['Sergalas','kev'],
             'modelMap' => [
                 'User' => 'common\entities\user\User',
             ],

@@ -6,12 +6,17 @@ use common\entities\user\User;
 use Yii;
 class WantDealer
 {
-    public function send(User $user, User $dealer ): void
+    public function send(User $user,  $dealer ): void
     {
+        if ($dealer){
+            $to = $dealer->email;
+        } else {
+            $to = Yii::$app->params['supportEmail'];
+        }
         $sent=Yii::$app->mailer
             ->compose('dealer/wantDealer.php', ['clients' => $user])
             ->setFrom(\Yii::$app->params['adminEmail'])
-            ->setTo($dealer->email)
+            ->setTo($to)
             ->setSubject(Yii::t('mailer','You clients'.$user->username.' want dealer'))
             ->send();
 

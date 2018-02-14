@@ -46,11 +46,17 @@ class User extends BaseUser
 
     public function rules()
     {
+        if (Yii::$app->user->identity->isAdmin()){
+            $ranges= ['admin', 'client', 'dealer'];
+        } else {
+            $ranges= [  'client', 'dealer'];
+        }
         $rules = parent::rules();
         // add some rules
         $rules['fieldRequired'] = ['type', 'required'];
-        $rules['typeLength'] = ['type', 'in', 'range' => ['admin', 'client', 'dealer']];
-        $rules['balance'] = ['balance', 'number'];
+        $rules['typeLength'] = ['type', 'in', 'range' => $ranges ];
+
+        $rules['balance'] = ['balance', 'integer'];
         $rules['image'] = ['image', 'string', 'max' => 255];
         $rules['dealer_confirmed'] = ['dealer_confirmed', 'boolean'];
         $rules['dealer_id'] = ['dealer_id', 'integer'];
@@ -140,7 +146,7 @@ class User extends BaseUser
             return Yii::$app->user->id;
         }
         if ($this->isAdmin()) {
-            return '';
+            return -1;
         }
         if ($this->isDealer()) {
             $sql = 'WITH RECURSIVE r AS (
@@ -216,6 +222,6 @@ class User extends BaseUser
     }
 
     public function headerInfo(){
-        return $this->username . '(' . Yii::$app->formatter->asCurrency($this->balance) .  ')';
+        return $this->username . '( ' . number_format($this->balance) .  ' vib. )';
     }
 }

@@ -188,11 +188,14 @@ class ViberMessageController extends Controller
 
     public function actionAssignCollection($id){
 
-        $model= ContactCollection::findOne(Yii::$app->request->post('id'));
-        if(!Yii::$app->user->identity->amParent($model->user_id)){
+        $model= ViberMessage::findOne($id);
+        if(!Yii::$app->user->identity->amParent($model->user_id) &&
+            Yii::$app->user->id != $model->user_id
+        ){
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит',403);
         }
+
         return MessageContactCollection::assign($id,$model->user_id,  $_POST['data']);
-        print_r($_POST);
+
     }
 }

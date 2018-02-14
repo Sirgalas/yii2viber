@@ -137,23 +137,30 @@ class ClientController extends Controller
         if (!Yii::$app->request->post('hasEditable')){
             return ['output'=>'', 'message'=>'Плохой запрос'];
         }
+        $user = $this->findModel($id);
+        if ($user->id == Yii::$app->user->id && !Yii::$app->user->identity->isAdmin()) {
+            return ['output'=>'', 'message'=>'Вы не можете править собственный баланс'];
+        }
         $db=Yii::$app->db;
         $transaction = $db->beginTransaction();
         try {
 
-            $user = $this->findModel($id);
+
             $edidableIndex= $_POST['editableIndex'];
             $paramName = "client-$edidableIndex-balance-disp";
-            $value= 1 * ('0'. $_POST[$paramName]) ;
+            $value=$_POST['Client'][$edidableIndex]['balance'] ;
 
             $diff = $user->balance - 1*$value;
             $user->balance = $value;
             Yii::$app->user->identity->balance +=$diff;
 
-            $user->save();
-            Yii::$app->user->identity->save();
+                $user->save();
+
+            if ($user->id !== Yii::$app->user->id ) {
+                Yii::$app->user->identity->save();
+            }
             $transaction->commit();
-            return ['output' => Yii::$app->formatter->asCurrency($user->balance), 'message' => ''];
+            return ['output' => number_format($user->balance) . ' vib.' , 'message' => ''];
         } catch (\Exception $e){
             $transaction->rollBack();
             return ['output' => '111', 'message' => 'error:: ' . $e->getMessage() ];
@@ -163,14 +170,16 @@ class ClientController extends Controller
     public function actionWantDealer(){
         if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){
             $user=User::findOne(Yii::$app->user->identity->id);
-            $dealer=User::findOne(Yii::$app->user->identity->dealer_id);
+
+                $dealer = User::findOne(Yii::$app->user->identity->dealer_id);
+
             $user->want_dealer=User::WANT;
             try{
                 if(!$user->save())
                     throw new \Exception(json_encode($user->errors));
                 if((new WantDealer())->send($user,$dealer))
                     throw new \Exception('Ошибка отправления');
-                return $this->redirect('/site/index');
+                return $this->render('want-dealer');
             }catch (Exception $ex){
                 Yii::$app->errorHandler->logException($ex);
                 Yii::$app->session->setFlash($ex->getMessage());

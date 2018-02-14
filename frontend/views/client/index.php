@@ -87,12 +87,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                     'class'=>'kartik\grid\EditableColumn',
                                     'attribute'=>'balance',
-                                    'format'=>'currency',
+                                    'value'=>function($model){return number_format($model->balance) . ' vib.'; },
+
                                      'editableOptions'=> function ($model, $key, $index) {
                                         return [
                                             'header'=>Yii::t('front','edit_balance'),
                                             'size'=>'md',
-                                            'inputType'=>\kartik\editable\Editable::INPUT_MONEY,
+                                            'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
                                             'formOptions' => [
                                                 'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-balance'),
                                             ]
@@ -104,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{update}{balance}{password}{delete}',
+                                    'template' => '{update}{delete}',//{balance}{password}
                                     'buttons' => [
                                         'balance' => function ($url, $model) {
                                             return Html::a('<i class="fa fa-fw   fa-money"></i>', $url);

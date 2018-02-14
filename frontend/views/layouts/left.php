@@ -38,7 +38,7 @@ use yii\helpers\Url;
             $menuItems[] =  ['label'=>'Коллекции контактов' ,'url'=> Url::toRoute(['/contact-collection'])];
             $menuItems[] =  ['label'=>'Рассылки' ,'url'=> Url::toRoute(['/viber-message'])];
 
-            if (Yii::$app->user->identity->isDealer()){
+            if (Yii::$app->user->identity->isDealer() || Yii::$app->user->identity->isAdmin()){
                 $menuItems[] =  ['label'=>'Клиенты' ,'url'=> Url::toRoute(['/client'])];
             }
             $menuItems[] =  ['label'=>'Отчеты' ,'url'=> Url::toRoute(['/reports'])];

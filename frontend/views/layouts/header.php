@@ -165,7 +165,7 @@ use frontend\widgets\WantDealer;
 
                             <p>
                                 <?php if (is_object(Yii::$app->user->identity)):  ?>
-                                <?= Yii::$app->user->identity->username; ?>
+                                <?= Yii::$app->user->identity->username; ?>111
                                 <small>Member since Nov. <?= date('Y-m-d',Yii::$app->user->identity->created_at) ?></small>
                                 <?php else: ?>
                                 Не авторизован
