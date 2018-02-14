@@ -39,6 +39,7 @@ use common\entities\mongo\Phone;
 class ViberMessage extends \yii\db\ActiveRecord
 {
     public $upload_file;
+    public $viber_image_id;
     const ONLYTEXT ='only_text';
     const ONLYIMAGE ='only_image';
     const TEXTBUTTON ='txt_btn';
@@ -278,7 +279,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         $phones=Phone::find()->select(['phone'])->where(['contact_collection_id'=>$id_collection])->column();
         if(!$phones)
             return 0;
-        return count(array_unique($phones))*Yii::$app->params['coast'];
+        return count(array_unique($phones))*Yii::$app->params['cost'];
     }
 
     public function userBalanse($coast=false){
