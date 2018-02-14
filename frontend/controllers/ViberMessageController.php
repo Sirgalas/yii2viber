@@ -74,6 +74,7 @@ class ViberMessageController extends Controller
     {
         $model = new ViberMessage;
         $clients=ArrayHelper::map(User::find()->where(['dealer_id'=>Yii::$app->user->identity->id])->all(),'id','username');
+        $clients[Yii::$app->user->id]="I";
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             return $this->redirect(['index']);
@@ -100,6 +101,7 @@ class ViberMessageController extends Controller
     {
         $model = $this->findModel($id);
         $clients=ArrayHelper::map(User::find()->where(['dealer_id'=>Yii::$app->user->identity->id])->all(),'id','username');
+        $clients[Yii::$app->user->id]="I";
         if ($model->load(Yii::$app->request->post())) {
             $upload_file = $model->uploadFile();
             if ($model->save()) {
@@ -168,7 +170,7 @@ class ViberMessageController extends Controller
     }
 
     public function actionAssignCollection($id){
-        $model= ContactCollection::findOne($id);
+        $model= ViberMessage::findOne($id);
         if(!Yii::$app->user->identity->amParent($model->user_id)){
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит',403);
         }

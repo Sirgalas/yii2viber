@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ['class' => 'yii\grid\SerialColumn'],
 
         'id',
-        'username'=>[
+        [
             'attribute' => 'username',
             'value' => 'user.username',
         ],
@@ -38,16 +38,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'image:image',
 //            'title_button',
 //            'url_button:url',
-//            'type',
+            'type',
 //            'alpha_name',
 //            'date_start',
 //            'date_finish',
 //            'time_start',
 //            'time_finish',
         'status',
-//            'limit_messages',
+            'limit_messages',
         'cost',
-        'balance',
+        //'balance',
 
         [
             'class' => 'yii\grid\ActionColumn',

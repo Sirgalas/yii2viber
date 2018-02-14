@@ -3,7 +3,7 @@
 namespace common\entities;
 
 use Yii;
-
+use common\entities\user\User;
 /**
  * This is the model class for table "viber_transaction".
  *
@@ -85,5 +85,9 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public static function find()
     {
         return new ViberTransactionQuery(get_called_class());
+    }
+
+    public function getPhonesArray(){
+        return (array)\GuzzleHttp\json_decode($this->phones);
     }
 }

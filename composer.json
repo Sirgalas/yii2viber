@@ -32,6 +32,7 @@
         "kartik-v/yii2-widget-fileinput": "@dev",
         "kartik-v/yii2-money": "dev-master",
         "insolita/yii2-migration-generator": "~2.3"
+
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -51,5 +52,3 @@
         }
     ]
 }
-
-

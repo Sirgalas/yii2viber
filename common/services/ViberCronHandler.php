@@ -7,13 +7,13 @@
  */
 
 namespace common\services;
-
+use Yii;
 use common\components\Viber;
 use common\entities\ViberMessage;
 
 class ViberCronHandler
 {
-    const VIBER_TIME_LIMIT =290;
+    const VIBER_TIME_LIMIT =10;
     private $time_stop;
 
     /**
@@ -28,18 +28,24 @@ class ViberCronHandler
 
     public function handle(){
         while ($this->time_stop > time()){
-
+            $vm='';
             $vm = ViberMessage::find()->isProcess()->one();
+
             if (!$vm){
+                echo " Vm for process not found\n";
                 $vm = ViberMessage::find()->isNew()->one();
+                if (!$vm){
+                    echo 'Нечего отправлять!';
+                    return;
+                }
                 $v=new Viber($vm);
                 $v->prepareTransaction();
             }
             if ($vm){
                 $v=new Viber($vm);
-                $v->run();
+                $v->sendMessage();
             }
-            sleep(1);
+            sleep(Yii::$app->params['viber']['min_delay']);
         }
     }
 }

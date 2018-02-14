@@ -12,7 +12,7 @@ return [
         'login' => 'viber1804',
         'secret' => 'NxQTivMZ',
         'from' => 'Clickbonus',
-        'transaction_size_limit'=>999, // максимальное количество телефонов в одной транзакции
+        'transaction_size_limit'=>2, // максимальное количество телефонов в одной транзакции
         'min_delay' => 2, // Минимальное время между отправкой транзакций
     ],
 ];

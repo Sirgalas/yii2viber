@@ -83,6 +83,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             ['type', 'in', 'range' => array_keys(static::listTypes())],
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
             [['time_start', 'time_finish'], 'time', 'format' => 'php:H:i'],
+            [['time_finish'], 'compare', 'compareAttribute' => 'time_start', 'operator' => '>=', 'type' => 'time'],
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range'=>['new','ready','wait', 'process' ]],
             [
@@ -250,11 +251,11 @@ class ViberMessage extends \yii\db\ActiveRecord
      * @return array
      */
     public function getPhones(){
-        return ['79135701037',
+         $tVM = ViberTransaction::find()
+             ->where(['viber_message_id'=>$this->id])
+             ->andWhere(['status'=>'new'])
+             ->one();
 
-            //'79050885202'
-            //'79663396630'
-        ];
     }
 
     public function Coast($id_collection){

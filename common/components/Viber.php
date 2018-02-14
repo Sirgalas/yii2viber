@@ -11,6 +11,7 @@ namespace common\components;
 use common\entities\mongo\Phone;
 use common\entities\ViberMessage;
 use common\entities\ContactCollection;
+use common\entities\ViberTransaction;
 use Yii;
 
 class Viber
@@ -67,6 +68,7 @@ class Viber
         }
         $this->image_id = $imageId;
         echo '============================= End ==================';
+
         return $imageId !== false;
     }
 
@@ -76,12 +78,20 @@ class Viber
     public function sendMessage()
     {
 
-        if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS){
+        if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
             return;
         }
         $from = Yii::$app->params['viber']['from'];
-        $phones = $this->viber_message->getPhones();
-        if (!$phones){
+        $viber_transaction = ViberTransaction::find()->isNew($this->viber_message->id)->one();
+
+        if (!$viber_transaction){
+            $this->viber_message->status = ViberMessage::STATUS_WAIT;
+            $this->viber_message->save();
+            return;
+        }
+        $phonesArray = $viber_transaction->getPhonesArray();
+        $phones=array_keys($phonesArray);
+        if (! $phones) {
             return;
         }
         // Отправка сообщения
@@ -101,7 +111,7 @@ class Viber
         }
 
         if ($this->viber_message->type === ViberMessage::ONLYIMAGE || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE) {
-            if (!$this->viber_message->viber_image_id) {
+            if (! $this->viber_message->viber_image_id) {
                 if (! $this->sendImage()) {
                     throw new \RuntimeException('Sending error.');
                 }
@@ -113,17 +123,15 @@ class Viber
 
         if ($this->viber_message->type === ViberMessage::TEXTBUTTON || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE) {
             $encoded .= urlencode('button_text').'='.urlencode($this->viber_message->title_button).'&';
-            $encoded .= urlencode('button_link').'='. urlencode($this->viber_message->url_button).'&';
-
+            $encoded .= urlencode('button_link').'='.urlencode($this->viber_message->url_button).'&';
         }
-        $encoded .= urlencode('p_transaction_id') .'=t2' . time() . '&';
-        $encoded .= urlencode('dlr') .'=1&';
-        $encoded .= urlencode('dlr_timeout') .'=360&';
-
+        $encoded .= urlencode('p_transaction_id').'=t2_'. $viber_transaction->id .'&';
+        $encoded .= urlencode('dlr').'=1&';
+        $encoded .= urlencode('dlr_timeout').'=360&';
 
         $signString .= Yii::$app->params['viber']['secret'];
         $encoded .= urlencode('sign').'='.md5($signString);
-        echo "\n\n",$encoded, "\n";
+        //echo "\n\n", $encoded, "\n";
         $ch = curl_init('https://bulk.sms-online.com/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -132,42 +140,97 @@ class Viber
 
         $result = curl_exec($ch);
         curl_close($ch);
-        print_r($result);
-        //TODO parse result
+        //echo '===============================';
+        //print_r($result);
+
+        if ($this->parseSendResult($result, $phonesArray)) {
+            $viber_transaction->phones = \GuzzleHttp\json_encode($phonesArray);
+            $viber_transaction->status = 'sended';
+            $viber_transaction->save();
+        } else {
+
+            $viber_transaction->status = 'error';
+            Yii::error($result);
+            $viber_transaction->save();
+        }
+       return;
+
+    }
+
+    private function parseSendResult($xml, $phonesArray){
+        if (is_string($xml)) {
+            $xml = simplexml_load_string($xml);
+        } else {
+            echo 'no string';
+
+            return false;
+        }
+        if ( $xml->code == 0){
+            foreach ($xml->msg_id as $key => $msg){
+                $attr=$msg->attributes();
+                $phone =  $attr['phone'];
+                $msg = ((string)$msg);
+                $phonesArray['' . $phone] = ['status'=>'sended', 'msg_id'=>$msg];
+            }
+            return true;
+        } else {
+            echo 'error' . $xml->tech_message;
+        }
+    }
+    private function saveNewTransaction(array $phones)
+    {
+        $tVM = new ViberTransaction([
+            'user_id' => $this->viber_message->user_id,
+            'viber_message_id' => $this->viber_message->id,
+            'status' => 'new',
+            'created_at' => time(),
+            'phones' => \GuzzleHttp\json_encode($phones)]);
+        $tVM->save();
     }
 
     /**
      * Подготовка транзакций
      * генерация записей в таблице Viber_transaction :: разбиваем список телефонов входящих в рассылку на блоки
      * и для каждого блока создаем заготовку транзакции
-     * @param $vm
+     *
+     * @return bool
      */
-    public function prepareTransaction($vm){
+    public function prepareTransaction()
+    {
+        echo "prepareTransaction Start";
         $db = Yii::$app->db;
-        $transaction=$db->beginTransaction();
-        $contact_collection_ids = $vm->getMessageContactCollections()
-            ->select(['contact_collection_id'])
-            ->distinct('contact_collection_id')->column();
-        foreach ($contact_collection_ids as $k=>$v){
-            $contact_collection_ids[$k]= '' . $v;
+        $transaction = $db->beginTransaction();
+        $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
+        foreach ($contact_collection_ids as $k => $v) {
+            $contact_collection_ids[$k] = ''.$v;
         }
-        try{
-            $phones = Phone::find()->select(['phone'])
-                ->where(['in','contact_collection_id',$contact_collection_ids])
-                ->distinct('phone');
+        try {
+            $phones = Phone::find()->select(['phone'])->where([
+                    'in',
+                    'contact_collection_id',
+                    $contact_collection_ids,
+                ])->distinct('phone');
+
             $tPhones = [];
-            foreach ($phones as $phone){
-                $tPhones[$phone]=[];
+            foreach ($phones as $phone) {
+                $tPhones[$phone] = ['status' => 'new'];
+                if (count($tPhones) >= Yii::$app->params['viber']['transaction_size_limit']) {
+                    $this->saveNewTransaction($tPhones);
+                    $tPhones = [];
+                }
             }
+            if (count($tPhones) > 0) {
+                $this->saveNewTransaction($tPhones);
+            }
+            $this->viber_message->status = ViberMessage::STATUS_PROCESS;
+            $this->viber_message->save();
             $transaction->commit();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $transaction->rollback();
+            echo "\nError ", $e->getMessage();
             return false;
         }
     }
 
-    /**
-     *
-     */
 
 }
