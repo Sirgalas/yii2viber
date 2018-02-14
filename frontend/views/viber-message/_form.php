@@ -61,8 +61,8 @@ use yii\helpers\Url;
                             <?php endif ?>
                             <?=$form->field($model, 'status')->textInput(['maxlength' => true, 'disabled' => true])?>
 
-                            <?=$form->field($model, 'limit_messages')->textInput()?>
-                            <?=$form->field($model, 'cost')->textInput() /*?>
+                            <?=$form->field($model, 'limit_messages')->textInput()/*?>
+                            <?=$form->field($model, 'cost')->textInput() ?>
                             <? =$form->field($model, 'balance')->textInput()*/?>
 
                         </div>
@@ -107,39 +107,49 @@ use yii\helpers\Url;
                             }
                             else {
                                 echo Select2::widget([
-                                                         'id' => 'contact_collections_field',
-                                                         'name' => 'contact_collection[id]',
-                                                         'value' => $assign_collections, // initial value
-                                                         'data' => $contact_collections,
-                                                         'maintainOrder' => true,
-                                                         'options' => [
-                                                             'placeholder' => 'Выберите коллекции ...',
-                                                             'multiple' => true,
-                                                         ],
-                                                         'pluginOptions' => [
-                                                             'tags' => true,
-                                                             'maximumInputLength' => 10,
-                                                         ],
-                                                        "pluginEvents"=>[
-                                                            "change" => "function(e) {
-                                                                var cost = $(this).val(); 
-                                                                var id= $('.viber-message-form').data('id');                                                          
-                                                                $.ajax(
-                                                                    {
-                                                                        url: '/viber-message/coast',
-                                                                        type: 'POST',
-                                                                        data: {'data': cost,'id':id},
-                                                                        success: function (data) {
-                                                                        if(data)
-                                                                            $('#coast').html(data);
-                                                                        else
-                                                                            alert('баланс пользователя не может быть отрицательным');    
-                                                                        },
-                                                                    });
-                                                            }",
-                                                            "select2:unselect" => "function(e) { console.log(e); }"
-                                                        ]
-                                                     ]);
+                                 'id' => 'contact_collections_field',
+                                 'name' => 'contact_collection[id]',
+                                 'value' => $assign_collections, // initial value
+                                 'data' => $contact_collections,
+                                 'maintainOrder' => true,
+                                 'options' => [
+                                     'placeholder' => 'Выберите коллекции ...',
+                                     'multiple' => true,
+                                 ],
+                                 'pluginOptions' => [
+                                     'tags' => true,
+                                     'maximumInputLength' => 10,
+                                 ],
+                                "pluginEvents"=>[
+                                    "change" => "function(e) {
+                                        var cost = $(this).val(); 
+                                        var id= $('.viber-message-form').data('id');                                                          
+                                        $.ajax(
+                                            {
+                                                url: '/viber-message/coast',
+                                                type: 'POST',
+                                                data: {'data': cost,'id':id},
+                                                success: function (data) {
+                                                if(data){
+                                                    $('#coast').html(data);
+                                                    $('#assign_button').show();
+                                                    }
+                                                else{
+                                                     alert('баланс пользователя не может быть отрицательным');
+                                                     alert(cost);
+                                                    if(cost.length>0)
+                                                     $('#assign_button').hide();
+                                                    }
+                                                },
+                                            });
+                                    }",
+                                    "select2:unselect" => "function(e) { 
+                                        var cost = $(this).val(); 
+                                        if(cost.length>0)
+                                              $('#assign_button').hide();
+                                    }"
+                                ]
+                             ]);
                             }
                             ?>
                             <button type="button" class="btn btn-block btn-primary btn-sm" style="margin: 20px auto" id="assign_button">Назначить</button>
@@ -226,9 +236,9 @@ use yii\helpers\Url;
             /**
              *
              */
-            $('#contact_collections_field').change(function(){
+            /*$('#contact_collections_field').change(function(){
                 $('#assign_button').show();
-            })
+            })*/
         }
     </script>
 <?php
