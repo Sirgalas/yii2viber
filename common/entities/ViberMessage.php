@@ -15,6 +15,7 @@ use yii\web\UploadedFile;
  * @property string $title
  * @property string $text
  * @property string $image
+ * @property int $viber_image_id
  * @property string $title_button
  * @property string $url_button
  * @property string $type
@@ -70,6 +71,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             [['user_id',   'limit_messages'], 'integer'],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
+            ['viber_image_id', 'string'],
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
             [['image', 'url_button'], 'string', 'max' => 255],
@@ -115,6 +117,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             'cost' => 'Cost',
             'balance' => 'Balance',
             'upload_file' => 'Upload File',
+            'viber_image_id'=> 'Ид изображения в Viber'
         ];
     }
 

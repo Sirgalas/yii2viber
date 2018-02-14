@@ -62,6 +62,6 @@ class TestController extends Controller
             'type' => ViberMessage::TEXTBUTTONIMAGE,
                              ]);
         $v=new Viber($vm);
-        $v->run();
+        $v->sendMessage();
     }
 }

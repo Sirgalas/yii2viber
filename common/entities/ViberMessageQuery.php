@@ -31,4 +31,13 @@ class ViberMessageQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function isNew()
+    {
+        return $this->andWhere(['status'=>ViberMessage::STATUS_NEW ]);
+    }
+    public function isProcess()
+    {
+        return $this->andWhere(['status'=>ViberMessage::STATUS_PROCESS ]);
+    }
 }

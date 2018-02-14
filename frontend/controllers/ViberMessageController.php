@@ -171,6 +171,6 @@ class ViberMessageController extends Controller
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит',403);
         }
         return MessageContactCollection::assign($id,$model->user_id,  $_POST['data']);
-        print_r($_POST);
+
     }
 }

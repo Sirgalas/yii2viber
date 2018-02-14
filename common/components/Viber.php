@@ -8,6 +8,7 @@
 
 namespace common\components;
 
+use common\entities\mongo\Phone;
 use common\entities\ViberMessage;
 use common\entities\ContactCollection;
 use Yii;
@@ -74,9 +75,15 @@ class Viber
      */
     public function sendMessage()
     {
+
+        if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS){
+            return;
+        }
         $from = Yii::$app->params['viber']['from'];
         $phones = $this->viber_message->getPhones();
-
+        if (!$phones){
+            return;
+        }
         // Отправка сообщения
 
         $encoded = urlencode('user').'='.urlencode(Yii::$app->params['viber']['login']).'&';
@@ -94,10 +101,13 @@ class Viber
         }
 
         if ($this->viber_message->type === ViberMessage::ONLYIMAGE || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE) {
-            if (! $this->sendImage()) {
-                throw new \RuntimeException('Sending error.');
+            if (!$this->viber_message->viber_image_id) {
+                if (! $this->sendImage()) {
+                    throw new \RuntimeException('Sending error.');
+                }
+                $this->viber_message->viber_image_id = $this->image_id;
+                $this->viber_message->save();
             }
-
             $encoded .= urlencode('image_id').'='.$this->image_id.'&';
         }
 
@@ -127,10 +137,37 @@ class Viber
     }
 
     /**
+     * Подготовка транзакций
+     * генерация записей в таблице Viber_transaction :: разбиваем список телефонов входящих в рассылку на блоки
+     * и для каждого блока создаем заготовку транзакции
+     * @param $vm
+     */
+    public function prepareTransaction($vm){
+        $db = Yii::$app->db;
+        $transaction=$db->beginTransaction();
+        $contact_collection_ids = $vm->getMessageContactCollections()
+            ->select(['contact_collection_id'])
+            ->distinct('contact_collection_id')->column();
+        foreach ($contact_collection_ids as $k=>$v){
+            $contact_collection_ids[$k]= '' . $v;
+        }
+        try{
+            $phones = Phone::find()->select(['phone'])
+                ->where(['in','contact_collection_id',$contact_collection_ids])
+                ->distinct('phone');
+            $tPhones = [];
+            foreach ($phones as $phone){
+                $tPhones[$phone]=[];
+            }
+            $transaction->commit();
+        } catch(\Exception $e) {
+            $transaction->rollback();
+            return false;
+        }
+    }
+
+    /**
      *
      */
-    public function run()
-    {
-        $this->sendMessage();
-    }
+
 }
