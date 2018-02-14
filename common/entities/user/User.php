@@ -46,7 +46,7 @@ class User extends BaseUser
 
     public function rules()
     {
-        if (Yii::$app->user->identity->isAdmin()){
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()){
             $ranges= ['admin', 'client', 'dealer'];
         } else {
             $ranges= [  'client', 'dealer'];
