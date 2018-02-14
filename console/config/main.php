@@ -22,14 +22,7 @@ return [
           ],
     ],
     'components' => [
-        'log' => [
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
+
         'backendUrlManager' => require  __DIR__.'/../../backend/config/urlManager.php',
         'frontendUrlManager' => require  __DIR__.'/../../frontend/config/urlManager.php',
     ],

@@ -14,7 +14,7 @@ class m180213_121423_create_table_viber_transaction extends Migration
     {
 
 
-            $this->execute('
+        $this->execute('
             CREATE TABLE "public"."viber_transaction" (
                 "id" int4 DEFAULT nextval(\'user_id_seq\'::regclass) NOT NULL,
                 "user_id" int4 NOT NULL,
@@ -25,12 +25,16 @@ class m180213_121423_create_table_viber_transaction extends Migration
                 "viewed" int4 DEFAULT 0,
                 "phones" jsonb
             )
-            WITH (OIDS=FALSE)'
-            );
+            WITH (OIDS=FALSE)');
+        $this->execute('
+          ALTER TABLE "public"."viber_transaction"
+          ADD CONSTRAINT "viber_transaction_pkey" PRIMARY KEY ("id")'
+        );
 
-
-        $this->addForeignKey('{{%fk_viber_transaction_user}}', '{{%viber_transaction}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('{{%fk_viber_transaction_viber_message}}', '{{%viber_transaction}}', 'viber_message_id', '{{%viber_message}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('{{%fk_viber_transaction_user}}', '{{%viber_transaction}}', 'user_id', '{{%user}}', 'id',
+            'CASCADE', 'CASCADE');
+        $this->addForeignKey('{{%fk_viber_transaction_viber_message}}', '{{%viber_transaction}}', 'viber_message_id',
+            '{{%viber_message}}', 'id', 'CASCADE', 'CASCADE');
         
     }
 
@@ -43,7 +47,6 @@ class m180213_121423_create_table_viber_transaction extends Migration
 
         return false;
     }
-
     /*
     // Use up()/down() to run migration code without a transaction.
     public function up()

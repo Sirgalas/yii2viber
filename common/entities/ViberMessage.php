@@ -17,6 +17,7 @@ use common\entities\mongo\Phone;
  * @property string $title
  * @property string $text
  * @property string $image
+ * @property int $viber_image_id
  * @property string $title_button
  * @property string $url_button
  * @property string $type
@@ -73,6 +74,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             [['user_id',   'limit_messages'], 'integer'],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
+            ['viber_image_id', 'string'],
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
             [['image', 'url_button'], 'string', 'max' => 255],
@@ -82,6 +84,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             ['type', 'in', 'range' => array_keys(static::listTypes())],
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
             [['time_start', 'time_finish'], 'time', 'format' => 'php:H:i'],
+            [['time_finish'], 'compare', 'compareAttribute' => 'time_start', 'operator' => '>=', 'type' => 'time'],
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range'=>['new','ready','wait', 'process' ]],
             [
@@ -118,6 +121,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             'cost' => 'Cost',
             'balance' => 'Balance',
             'upload_file' => 'Upload File',
+            'viber_image_id'=> 'Ид изображения в Viber'
         ];
     }
 
@@ -261,11 +265,11 @@ class ViberMessage extends \yii\db\ActiveRecord
      * @return array
      */
     public function getPhones(){
-        return ['79135701037',
+         $tVM = ViberTransaction::find()
+             ->where(['viber_message_id'=>$this->id])
+             ->andWhere(['status'=>'new'])
+             ->one();
 
-            //'79050885202'
-            //'79663396630'
-        ];
     }
 
     public function Cost($id_collection){

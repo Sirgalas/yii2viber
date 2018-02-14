@@ -12,8 +12,8 @@ return [
     'components' => [
         'resourceManager' => [
             'class' => 'common\components\FileSystemResourseManager',
-            'basePath' => dirname(dirname(__DIR__)) .'/files',
-            'baseUrl' => '/files'
+            'basePath' => dirname(dirname(__DIR__)).'/files',
+            'baseUrl' => '/files',
         ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
@@ -34,6 +34,22 @@ return [
             'translations' => [
                 'yii' => [
                     'class' => yii\i18n\DbMessageSource::className(),
+                ],
+            ],
+        ],
+        'log' => [
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'exportInterval' => 1,
+                    'logFile' => 'viber.log',
+                    'logVars' => [],
+                    'categories'=>'Viber'
                 ],
             ],
         ],

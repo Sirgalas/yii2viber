@@ -31,4 +31,8 @@ class ViberTransactionQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+    public function isNew($viber_message_id)
+    {
+       return $this->andWhere(['status'=>'new'])->andWhere(['viber_message_id'=>$viber_message_id]);
+    }
 }
