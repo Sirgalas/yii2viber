@@ -12,9 +12,20 @@ use yii\helpers\Url;
                 <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
+                <p>
+                <?php
+                if (!Yii::$app->user->isGuest){
+                    if (Yii::$app->user->identity->isAdmin()){
+                        echo 'Админ';
+                    } elseif ( Yii::$app->user->identity->isDealer()){
+                        echo 'Дилер';
+                    }
+                }
+                ?>
+                </p>
                 <p><?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->username:'User not Auth'; ?></p>
 
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+
             </div>
         </div>
 
@@ -30,7 +41,7 @@ use yii\helpers\Url;
         </form>
         <?php
         $menuItems=[
-            ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],];
+            ['label' => 'Меню приложения', 'options' => ['class' => 'header']],];
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];

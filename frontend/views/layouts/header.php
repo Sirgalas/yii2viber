@@ -4,6 +4,11 @@ use yii\helpers\Url;
 use frontend\widgets\WantDealer;
 /* @var $this \yii\web\View */
 /* @var $content string */
+
+if (Yii::$app->user->isGuest){
+    Yii::$app->name = 'Viber рассылки';
+
+}
 ?>
 
 <header class="main-header">
@@ -160,8 +165,6 @@ use frontend\widgets\WantDealer;
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                           <!-- <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
-                                 alt="User Image"/>-->
 
                             <p>
                                 <?php if (is_object(Yii::$app->user->identity)):  ?>

@@ -4,6 +4,7 @@ return [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
     ],
+    'name'=>'Личный кабинет',
     'vendorPath' => dirname(dirname(__DIR__)).'/vendor',
     'bootstrap' => [
         'log',

@@ -39,7 +39,7 @@ use common\entities\mongo\Phone;
 class ViberMessage extends \yii\db\ActiveRecord
 {
     public $upload_file;
-    public $viber_image_id;
+
     const ONLYTEXT ='only_text';
     const ONLYIMAGE ='only_image';
     const TEXTBUTTON ='txt_btn';

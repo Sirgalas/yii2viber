@@ -101,9 +101,9 @@ a.desc:after {
     border: none;
 }
 
-@media(max-width:767px) {
+@media (max-width: 767px) {
     .nav li > form > button.logout {
-        display:block;
+        display: block;
         text-align: left;
         width: 100%;
         padding: 10px 15px;
@@ -117,4 +117,86 @@ a.desc:after {
 
 .nav > li > form > button.logout:focus {
     outline: none;
+}
+
+.main-header .logo .logo-lg {
+    display: block;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle {
+    color: #fff;
+    padding: 3px 15px;
+    font-size: 31px;
+}
+
+.navbar-nav > li > a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 30px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+aside .user-panel > .info > p {
+    font-weight: 600;
+    margin-bottom: 9px;
+    font-size: 26px;
+}
+
+.user-panel {
+    height: 85px;
+}
+
+aside .sidebar-menu li.header {
+    padding: 10px 25px 10px 15px;
+    font-size: 18px;
+}
+
+aside .sidebar-menu > li:hover > a, aside .skin-blue .sidebar-menu > li.active > a, aside .skin-blue .sidebar-menu > li.menu-open > a {
+
+    font-size: 20px;
+}
+
+aside .sidebar-menu > li > a {
+    font-size: 18px;
+}
+
+.skin-blue .content-wrapper {
+    background-color: #fff;
+}
+.skin-blue .content-header {
+
+    padding-top: 0;
+}
+.block-header{
+    background: #d2d6de;
+    background-color: #d2d6de;
+    font-size: 22px;
+    padding: 5px 10px;
+}
+.viber-test-message-form label{
+    padding: 12px 0 10px;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.viber-test-message-form select.form-control{
+    font-size: 18px;
+    padding-top: 0;
+}
+.viber-test-message-form .form-control{
+    font-size: 18px;
+}
+.viber-test-message-form input.form-control{
+    height: 30px;
+}
+.labelLess{
+    margin: 12px 0 10px;
+
+}
+
+.viber-test-message-form div.cbx-container > div > span > i{
+    color: #45be5f;
 }

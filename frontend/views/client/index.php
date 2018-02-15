@@ -87,7 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                     'class'=>'kartik\grid\EditableColumn',
                                     'attribute'=>'balance',
-                                    'value'=>function($model){return number_format($model->balance) . ' vib.'; },
+                                    'value'=>function($model){return number_format($model->balance) . ' SMS'; },
 
                                      'editableOptions'=> function ($model, $key, $index) {
                                         return [

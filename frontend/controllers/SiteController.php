@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use frontend\forms\ViberTestForm;
 use JsonSchema\Exception\RuntimeException;
 use Yii;
 use yii\web\Controller;
@@ -72,7 +73,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+
+        if (Yii::$app->user->isGuest){
+            return $this->render('index');
+        };
+        $model = new ViberTestForm();
+        if ($model->load(Yii::$app->request->post())){
+            //$model->save();
+            echo 'in job';
+        }
+        return $this->render('viberTestForm', compact('model'));
     }
 
     /**

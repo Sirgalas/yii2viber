@@ -222,6 +222,6 @@ class User extends BaseUser
     }
 
     public function headerInfo(){
-        return $this->username . '( ' . number_format($this->balance) .  ' vib. )';
+        return $this->username . '( ' . number_format($this->balance) .  ' SMS )';
     }
 }

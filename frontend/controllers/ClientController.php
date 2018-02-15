@@ -160,7 +160,7 @@ class ClientController extends Controller
                 Yii::$app->user->identity->save();
             }
             $transaction->commit();
-            return ['output' => number_format($user->balance) . ' vib.' , 'message' => ''];
+            return ['output' => number_format($user->balance) . ' SMS' , 'message' => ''];
         } catch (\Exception $e){
             $transaction->rollBack();
             return ['output' => '111', 'message' => 'error:: ' . $e->getMessage() ];
