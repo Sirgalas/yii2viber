@@ -200,3 +200,7 @@ aside .sidebar-menu > li > a {
 .viber-test-message-form div.cbx-container > div > span > i{
     color: #45be5f;
 }
+
+.block-header .small{
+    font-size: 12px;
+}

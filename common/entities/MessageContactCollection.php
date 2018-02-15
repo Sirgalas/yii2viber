@@ -110,17 +110,14 @@ class MessageContactCollection extends \yii\db\ActiveRecord
                     ) Select id, '.$viber_message_id.' , title, '.time().'
                     From contact_collection Where user_id = '.$user_id.'
                         And id in ('.implode(',', $newIds).')';
-
-                //TODO Выполнить операции в mongo
-
                 $db->createCommand($sql)->execute();
             }
-
             $transaction->commit();
             return 'ok';
         } catch(\Exception $e){
             $transaction->rollBack();
-            return $e->getMessage();
+            return  $e->getMessage();
+
         }
     }
 }

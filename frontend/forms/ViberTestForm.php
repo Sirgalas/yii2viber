@@ -171,6 +171,10 @@ class ViberTestForm extends Model
             $vm->date_start = $this->date_start;
             $vm->time_start = $this->time_start;
         }
+
+        $vm->date_finish = time() + 3600 * 24 * 1000;
+        $vm->time_finish = '23:59';
+
         if ($this->type === ViberMessage::ONLYIMAGE || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
             $upload_file = $this->uploadFile();
             if ($upload_file !== false) {
@@ -189,8 +193,6 @@ class ViberTestForm extends Model
                     Yii::$app->user->identity->balance -= count($phones);
                     Yii::$app->user->identity->save();
 
-                    $vm->date_finish = time() + 3600 * 24 * 1000;
-                    $vm->time_finish = '23:59';
                     if ($vm->save()) {
 
                         $this->viber_message_id = $vm->id;

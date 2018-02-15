@@ -16,7 +16,7 @@ use yii\helpers\Url;
     <div class="viber-message-form" style="margin-top: 20px" data-id="<?= $model->id ?>">
         <div class="box box-solid box-default">
             <div class="box-header">
-                <h3 class="box-title"> Viber Рассылка <span class="small">стоимость рассылки <span id="coast"><?= $model->cost ?></span> vib</span></h3>
+                <h3 class="box-title"> Viber Рассылка <span class="small">стоимость рассылки <span id="coast"><?= $model->cost ?></span> SMS</span></h3>
             </div><!-- /.box-header -->
             <div class="box-body">
 

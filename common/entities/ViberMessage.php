@@ -2,14 +2,13 @@
 
 namespace common\entities;
 
-
 use common\entities\user\User;
 use Yii;
 use yii\db\Exception;
 use yii\web\UploadedFile;
 use common\entities\mongo\Phone;
-/**
 
+/**
  * This is the model class for table "viber_message".
  *
  * @property int $id
@@ -40,23 +39,33 @@ class ViberMessage extends \yii\db\ActiveRecord
 {
     public $upload_file;
 
-    const ONLYTEXT ='only_text';
-    const ONLYIMAGE ='only_image';
-    const TEXTBUTTON ='txt_btn';
-    const TEXTBUTTONIMAGE ='all';
+    public $just_now;
 
+    public $assign_collections;
+
+    const ONLYTEXT = 'only_text';
+
+    const ONLYIMAGE = 'only_image';
+
+    const TEXTBUTTON = 'txt_btn';
+
+    const TEXTBUTTONIMAGE = 'all';
 
     const STATUS_NEW = 'new';
-    const STATUS_READY = 'ready';
-    const STATUS_WAIT = 'wait';
-    const STATUS_PROCESS ='process';
 
-    public static $types=[
-        self::ONLYTEXT          => 'Только текст (Официально)',
-        self::ONLYIMAGE         => 'Только изображение (Официально)',
-        self::TEXTBUTTON        => 'Текст + кнопка (Официально)',
-        self::TEXTBUTTONIMAGE   => 'Текст + кнопка + изображение (Официально)',
-        ];
+    const STATUS_READY = 'ready';
+
+    const STATUS_WAIT = 'wait';
+
+    const STATUS_PROCESS = 'process';
+
+    public static $types = [
+        self::ONLYTEXT => 'Только текст (Официально)',
+        self::ONLYIMAGE => 'Только изображение (Официально)',
+        self::TEXTBUTTON => 'Текст + кнопка (Официально)',
+        self::TEXTBUTTONIMAGE => 'Текст + кнопка + изображение (Официально)',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -72,22 +81,36 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
-            [['user_id',   'limit_messages'], 'integer'],
+            [['user_id', 'limit_messages'], 'integer'],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
             ['viber_image_id', 'string'],
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
             [['image', 'url_button'], 'string', 'max' => 255],
-            [['upload_file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg, png, gif', 'mimeTypes' => 'image/jpeg, image/png',],
+            [
+                ['upload_file'],
+                'file',
+                'skipOnEmpty' => true,
+                'extensions' => 'jpg, png, gif',
+                'mimeTypes' => 'image/jpeg, image/png',
+            ],
             [['title_button', 'alpha_name'], 'string', 'max' => 32],
-
+            ['just_now', 'boolean'],
             ['type', 'in', 'range' => array_keys(static::listTypes())],
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
             [['time_start', 'time_finish'], 'time', 'format' => 'php:H:i'],
             [['time_finish'], 'compare', 'compareAttribute' => 'time_start', 'operator' => '>=', 'type' => 'time'],
+            ['assign_collections', 'each', 'rule' => ['integer']],
+            [
+                'assign_collections',
+                function ($attribute, $params) {
+                    $this->checkBalance($attribute, $params);
+                },
+            ],
+
             [['status'], 'string', 'max' => 16],
-            ['status', 'in', 'range'=>['new','ready','wait', 'process' ]],
+            ['status', 'in', 'range' => ['new', 'ready', 'wait', 'process']],
             [
                 ['user_id'],
                 'exist',
@@ -104,26 +127,41 @@ class ViberMessage extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+
             'id' => 'ID',
             'user_id' => 'User ID',
-            'title' => 'Title',
-            'text' => 'Text',
-            'image' => 'Image',
-            'title_button' => 'Title Button',
-            'url_button' => 'Url Button',
-            'type' => 'Type',
-            'alpha_name' => 'Alpha Name',
+
+            'title' => 'Название рассылки',
+            'text' => 'Поле для ввода техта SMS',
+            'image' => 'Изображение',
+            'title_button' => 'Текст на кнопке',
+            'url_button' => 'Url по кнопке',
+            'type' => 'Тип сообщения',
+            'alpha_name' => 'Отправитель',
+            'time_start' => 'Время отправки',
+            'upload_file' => 'Картинка',
+            'just_now' => 'Прямо сейчас',
+
             'date_start' => 'Date Start',
             'date_finish' => 'Date Finish',
-            'time_start' => 'Time Start',
             'time_finish' => 'Time Finish',
             'status' => 'Status',
             'limit_messages' => 'Limit Messages',
             'cost' => 'Cost',
             'balance' => 'Balance',
-            'upload_file' => 'Upload File',
-            'viber_image_id'=> 'Ид изображения в Viber'
+            'viber_image_id' => 'Ид изображения в Viber',
+            'assign_collections' => 'Выбрать базы для рассылки',
         ];
+    }
+
+    public function checkBalance($attribute, $params)
+    {
+        $oldCost = $this->cost;
+        $new_cost = self::cost($this->$attribute);
+        if ($new_cost - $oldCost > Yii::$app->user->identity->balance) {
+            $this->addError($attribute, 'Недостаточно средств на балансе');
+        }
+
     }
 
     /**
@@ -134,7 +172,6 @@ class ViberMessage extends \yii\db\ActiveRecord
         return $this->hasMany(MessageContactCollection::className(), ['viber_message_id' => 'id']);
     }
 
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -142,8 +179,6 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
-
-
 
     /**
      * @inheritdoc
@@ -161,7 +196,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public static function getTypeText($ind)
     {
-       return self::$types[$ind];
+        return self::$types[$ind];
     }
 
     public static function getTypeComment($ind)
@@ -172,62 +207,59 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function beforeValidate()
     {
-        if (!$this->status){
+        if ($this->just_now) {
+            $this->date_start = time();
+            $this->time_start = '00:00';
+        }
+
+        $this->date_finish = time() + 3600 * 24 * 1000;
+        $this->time_finish = '23:59';
+
+        if (! $this->status) {
             $this->status = self::STATUS_NEW;
         }
-        if (!$this->user_id){
+        if (! $this->user_id) {
             $this->user_id = Yii::$app->user->id;
         }
-        if (!is_int($this->date_start)){
-            $this->date_start=strtotime($this->date_start);
+        if (! is_int($this->date_start)) {
+            $this->date_start = strtotime($this->date_start);
         }
-        if (!is_int($this->date_finish)){
-            $this->date_finish=strtotime($this->date_finish);
+        if (! is_int($this->date_finish)) {
+            $this->date_finish = strtotime($this->date_finish);
         }
+
         return parent::beforeValidate();
     }
 
-     public function afterValidate()
-     {
-         parent::afterValidate(); // TODO: Change the autogenerated stub
-         if ($this->hasErrors()){
-             if (is_int($this->date_start)) {
-                 $this->date_start = date('Y-m-d H:i:s', $this->date_start);
-             }
-             if (is_int($this->date_finish)) {
-                 $this->date_finish = date('Y-m-d H:i:s', $this->date_finish);
-             }
-         }
-     }
+    public function afterValidate()
+    {
+        parent::afterValidate(); // TODO: Change the autogenerated stub
+        if ($this->hasErrors()) {
+            if (is_int($this->date_start)) {
+                $this->date_start = date('Y-m-d H:i:s', $this->date_start);
+            }
+            if (is_int($this->date_finish)) {
+                $this->date_finish = date('Y-m-d H:i:s', $this->date_finish);
+            }
+        }
+    }
 
-     public function beforeSave($insert)
-     {
-         if($insert){
-             $this->cost=0;
-         }else{
-             $arrId=[];
-             foreach ($this->contactCollection as $id){
-                 $arrId[]=(string)$id->id;
-             }
-             $this->cost=$this->Cost($arrId);
-         }
-         return parent::beforeSave($insert); // TODO: Change the autogenerated stub
-     }
 
-     public function afterSave($insert, $changedAttributes)
-     {
-         if(!$insert){
-             if(!$this->userBalanse()<0)
-                 throw new \Exception(Yii::t('common','User balance not not null'));
-             $this->user->balance=$this->user->balance - $this->cost;
-             if($this->user->balance<0)
-                 throw new \Exception(Yii::t('common','User balance not not null'));
-             if(! $this->user->save())
-                throw new \Exception(json_encode($this->user->errors));
-         }
-     }
 
-    public function uploadFile() {
+    public function beforeSave($insert)
+    {
+        $cost=self::cost($this->assign_collections);
+        if ($this->cost != $cost) {
+            Yii::$app->user->identity->balance +=  $this->cost - $cost;
+            $this->cost = $cost;
+            Yii::$app->user->identity->save();
+        }
+        return parent::beforeSave($insert);
+    }
+
+
+    public function uploadFile()
+    {
         // get the uploaded file instance
         $image = UploadedFile::getInstance($this, 'upload_file');
 
@@ -237,7 +269,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         }
 
         // generate random name for the file
-        $this->image = time(). '.' . $image->extension;
+        $this->image = time().'.'.$image->extension;
 
         // the uploaded image instance
         return $image;
@@ -246,10 +278,12 @@ class ViberMessage extends \yii\db\ActiveRecord
     /**
      * @return string
      */
-    public function getUploadedFile() {
+    public function getUploadedFile()
+    {
         // return a default image placeholder if your source avatar is not found
         $pic = isset($this->image) ? $this->image : 'default.png';
-        return Yii::$app->params['fileUploadUrl'] . $pic;
+
+        return Yii::$app->params['fileUploadUrl'].$pic;
     }
 
     /**
@@ -265,33 +299,74 @@ class ViberMessage extends \yii\db\ActiveRecord
     /**
      * @return array
      */
-    public function getPhones(){
-         $tVM = ViberTransaction::find()
-             ->where(['viber_message_id'=>$this->id])
-             ->andWhere(['status'=>'new'])
-             ->one();
+    //public function getPhones()
+    //{
+    //    $tVM = ViberTransaction::find()->where(['viber_message_id' => $this->id])->andWhere(['status' => 'new'])->one();
+    //}
 
-    }
-
-    public function Cost($id_collection){
-        if(!$id_collection)
-            $id_collection=0;
-        $phones=Phone::find()->select(['phone'])->where(['contact_collection_id'=>$id_collection])->column();
-        if(!$phones)
+    public static function Cost($id_collection)
+    {
+        if (! $id_collection) {
+            $id_collection = 0;
+        }
+        $phones = Phone::find()->select(['phone'])->where(['contact_collection_id' => $id_collection])->column();
+        if (! $phones) {
             return 0;
-        return count(array_unique($phones))*Yii::$app->params['cost'];
+        }
+
+        return count(array_unique($phones)) * Yii::$app->params['cost'];
     }
 
-    public function userBalanse($coast=false){
-        if($coast)
-            $cost=$coast;
-        else
-            $cost=$this->cost;
-        $result=$this->user->balance-$cost;
+    public function userBalanse($cost = false)
+    {
+        if (! $cost) {
+            $cost = $this->cost;
+        }
+        $result = $this->user->balance - $cost;
+
         return $result;
     }
 
-    public function getContactCollection(){
-        return $this->hasMany(ContactCollection::className(), ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(), ['viber_message_id' => 'id']);
+    public function getContactCollection()
+    {
+        return $this->hasMany(ContactCollection::className(),
+            ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(),
+            ['viber_message_id' => 'id']);
+    }
+
+    public function delete()
+    {
+        if ($this->cost) {
+            Yii::$app->user->identity->balance += 0 + $this->cost;
+            Yii::$app->user->identity->save();
+        }
+        return parent::delete(); // TODO: Change the autogenerated stub
+    }
+
+    public function send(){
+        $upload_file = $this->uploadFile();
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $result = MessageContactCollection::assign($this->id, $this->user_id, $this->assign_collections);
+            if ($result !== 'ok') {
+                $this->addError('assign_collections', $result);
+                return false;
+            }
+            if ($this->save()) {
+                if ($upload_file !== false) {
+                    $path = $this->getUploadedFile();
+                    $upload_file->saveAs($path);
+                }
+            } else {
+               return false;
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $ex) {
+            Yii::$app->errorHandler->logException($ex);
+            Yii::$app->session->setFlash($ex->getMessage());
+            $transaction->rollBack();
+            return false;
+        }
     }
 }

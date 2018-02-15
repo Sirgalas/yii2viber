@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
  * @var common\entities\ViberMessageSearch $searchModel
  */
 
-$this->title = Yii::t('app', 'Viber Messages');
+$this->title = Yii::t('app', 'Viber Рассылки');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="viber-message-index">
@@ -72,9 +72,9 @@ $this->params['breadcrumbs'][] = $this->title;
                               'panel' => [
                                   'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
                                   'type' => 'info',
-                                  'before' => Html::a('<i class="glyphicon glyphicon-plus"></i> Add', ['create'],
+                                  'before' => Html::a('<i class="glyphicon glyphicon-plus"></i> Новая рассылка', ['update'],
                                                       ['class' => 'btn btn-success']),
-                                  'after' => Html::a('<i class="glyphicon glyphicon-repeat"></i> Reset List', ['index'],
+                                  'after' => Html::a('<i class="glyphicon glyphicon-repeat"></i> Обновить', ['index'],
                                                      ['class' => 'btn btn-info']),
                                   'showFooter' => false,
                               ],
