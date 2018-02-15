@@ -144,6 +144,7 @@ class ViberTestForm extends Model
         }
         if (count($phones) > \Yii::$app->user->identity->balance) {
             $this->addError('phone1', 'Недостаточно средств, для отправки сообщения');
+            return false;
         }
         $cc = new ContactCollection([
             'user_id' => \Yii::$app->user->id,
