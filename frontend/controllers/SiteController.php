@@ -79,8 +79,12 @@ class SiteController extends Controller
         };
         $model = new ViberTestForm();
         if ($model->load(Yii::$app->request->post())){
-            //$model->save();
-            echo 'in job';
+           if ($model->validate()){
+             if ($model->send()){
+                 return $this->render('viberSuccess' ,compact('model'));
+             }
+           }
+
         }
         return $this->render('viberTestForm', compact('model'));
     }

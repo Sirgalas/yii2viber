@@ -8,8 +8,16 @@
 
 namespace frontend\forms;
 
+use common\components\Viber;
+use common\entities\ContactCollection;
+use common\entities\MessageContactCollection;
+use common\entities\mongo\Phone;
 use common\entities\ViberMessage;
+use yii\db\Exception;
+use yii\web\UploadedFile;
+use Yii;
 use yii\base\Model;
+
 class ViberTestForm extends Model
 {
     public $title;
@@ -27,6 +35,7 @@ class ViberTestForm extends Model
     public $alpha_name;
 
     public $time_start;
+
     public $date_start;
 
     public $just_now;
@@ -39,6 +48,8 @@ class ViberTestForm extends Model
 
     public $phone3;
 
+    public $viber_message_id;
+
     public function rules()
     {
         return [
@@ -46,12 +57,12 @@ class ViberTestForm extends Model
             [
                 ['phone1', 'phone2', 'phone3'],
                 function ($attribute, $params) {
-                    if (strlen(''.$this->$attribute) !== 1) {
+                    if (strlen(''.$this->$attribute) < 11) {
                         $this->addError($attribute, 'Неправильная длина номера');
                     }
                 },
             ],
-            [['title'], 'required'],
+            [['phone1', 'title'], 'required'],
             [['title'], 'string', 'max' => 50],
             [['text'], 'string', 'max' => 120],
             [['image', 'url_button'], 'string', 'max' => 255],
@@ -89,5 +100,132 @@ class ViberTestForm extends Model
             'just_now' => 'Прямо сейчас',
 
         ];
+    }
+
+    public function uploadFile()
+    {
+        // get the uploaded file instance
+        $image = UploadedFile::getInstance($this, 'upload_file');
+
+        // if no image was uploaded abort the upload
+        if (empty($image)) {
+            return false;
+        }
+
+        // generate random name for the file
+        $this->image = time().'.'.$image->extension;
+
+        // the uploaded image instance
+        return $image;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadedFile()
+    {
+        // return a default image placeholder if your source avatar is not found
+        $pic = isset($this->image) ? $this->image : 'default.png';
+
+        return Yii::$app->params['fileUploadUrl'].$pic;
+    }
+
+    public function send()
+    {
+        $phones = [];
+        if ($this->phone1) {
+            $phones[] = $this->phone1;
+        }
+        if ($this->phone2) {
+            $phones[] = $this->phone2;
+        }
+        if ($this->phone3) {
+            $phones[] = $this->phone3;
+        }
+        if (count($phones) > \Yii::$app->user->identity->balance) {
+            $this->addError('phone1', 'Недостаточно средств, для отправки сообщения');
+        }
+        $cc = new ContactCollection([
+            'user_id' => \Yii::$app->user->id,
+            'title' => 'База для рассылки '.$this->title,
+            'type' => 'viber',
+            'created_at' => time(),
+        ]);
+        $vm = new ViberMessage([
+            'user_id' => \Yii::$app->user->id,
+            'title' => $this->title,
+            'type' => $this->type,
+            'text' => $this->text,
+            'image' => $this->image,
+            'title_button' => $this->title_button,
+            'url_button' => $this->url_button,
+            'status' => ViberMessage::STATUS_NEW,
+            'cost' => count($phones),
+
+        ]);
+        if ($this->just_now) {
+            $vm->date_start = time();
+            $vm->time_start = '00:00';
+        } else {
+            $vm->date_start = $this->date_start;
+            $vm->time_start = $this->time_start;
+        }
+        if ($this->type === ViberMessage::ONLYIMAGE || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
+            $upload_file = $this->uploadFile();
+            if ($upload_file !== false) {
+                $path = $this->getUploadedFile();
+                $upload_file->saveAs($path);
+            }
+        }
+        $vm->image = $this->image;
+        $db = \Yii::$app->db;
+        $transaction = $db->beginTransaction();
+        try {
+            if ($cc->save()) {
+                $phone = new Phone();
+                if ($phone->importText($cc->id, implode(',', $phones)) == 'ok') {
+
+                    Yii::$app->user->identity->balance -= count($phones);
+                    Yii::$app->user->identity->save();
+
+                    $vm->date_finish = time() + 3600 * 24 * 1000;
+                    $vm->time_finish = '23:59';
+                    if ($vm->save()) {
+
+                        $this->viber_message_id = $vm->id;
+                        $vm_cc = new MessageContactCollection([
+                            'contact_collection_id' => $cc->id,
+                            'viber_message_id' => $vm->id,
+                            'title' => $this->title.time(),
+                        ]);
+                        if ($vm_cc->save()) {
+                            $transaction->commit();
+                        } else {
+                            throw new Exception('VMCC: '.print_r($vm_cc->getErrors(), 1));
+                        }
+                    } else {
+                        throw new Exception('VM: '.print_r($vm->getErrors(), 1));
+                    }
+                } else {
+
+                    throw new Exception('Phone:'.print_r($phone->getErrors(), 1));
+                }
+            } else {
+
+                throw new Exception('Contacts:'.print_r($cc->getErrors(), 1));
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            $this->addError('title', $e->getMessage());
+
+            return false;
+        }
+        if ($this->just_now) {
+            $v = new Viber($vm, $phones);
+            $v->prepareTransaction();
+            $v->sendMessage();
+        }
+
+        return true;
     }
 }

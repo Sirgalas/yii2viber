@@ -31,13 +31,14 @@ class Viber
      *
      * @param $viber_message_id
      */
-    public function __construct(ViberMessage $viber_message)
+    public function __construct(ViberMessage $viber_message, array $phones=[])
     {
         $this->viber_message = $viber_message;
         if ($this->viber_message == null) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested messages does not exist.'));
         }
         $this->image_id = 0;
+        $this->phones = $phones;
     }
 
     /**
@@ -205,12 +206,15 @@ class Viber
             $contact_collection_ids[$k] = ''.$v;
         }
         try {
-            $phones = Phone::find()->select(['phone'])->where([
+            if (count($this->phones)>0){
+                $phones=$this->phones;
+            } else {
+                $phones = Phone::find()->select(['phone'])->where([
                     'in',
                     'contact_collection_id',
                     $contact_collection_ids,
                 ])->distinct('phone');
-
+            }
             $tPhones = [];
             foreach ($phones as $phone) {
                 $tPhones[$phone] = ['status' => 'new'];
