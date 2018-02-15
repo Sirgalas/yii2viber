@@ -8,6 +8,6 @@ $this->title = 'My Yii Application';
 
     <div class="jumbotron">
         <h1>Поздравляем!</h1>
-        <p class="lead">Вы вошли в систему потпраки сообшений vibershop24.ru</p>
+        <p class="lead">Вы вошли в систему по отправке  сообшений vibershop24.ru</p>
     </div>
 </div>

@@ -149,7 +149,7 @@ use frontend\widgets\WantDealer;
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown tasks-menu">
                     <?php if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){ ?>
-                       <?= Html::a('Хочу стать дилиром', Url::to(['/client/want-dealer'])); ?>
+                       <?= Html::a('Хочу стать дилером', Url::to(['/client/want-dealer'])); ?>
                     <?php } ?>
                 </li>
                 <li class="dropdown user user-menu">
