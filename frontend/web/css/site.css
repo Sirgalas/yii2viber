@@ -214,3 +214,12 @@ aside .sidebar-menu > li > a {
     position: absolute;
     bottom: 5px;
 }
+
+.wrapper .main-footer{
+    background: #3C8DBC;
+    color: #fff;
+}
+
+.wrapper .main-footer a,.wrapper .main-footer a:hover{
+    color: #fff;
+}

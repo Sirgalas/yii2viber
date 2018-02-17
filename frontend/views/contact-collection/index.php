@@ -32,10 +32,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'headerOptions' => ['width' => '40'],
             ],
-            [
+            /*[
                 'attribute' => 'id',
                 'headerOptions' => ['width' => '40'],
-            ],
+            ],*/
 
             //'user_id',
             [
