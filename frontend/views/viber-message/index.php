@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'time_start',
 //            'time_finish',
         'status',
-            'limit_messages',
+            //'limit_messages',
         'cost',
         //'balance',
 
