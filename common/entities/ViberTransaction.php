@@ -22,17 +22,37 @@ use common\entities\user\User;
 class ViberTransaction extends \yii\db\ActiveRecord
 {
 
-    public $titleSearh;
+    public $titleSearch;
     public $contactCollection;
     public $status;
     public $dateFrom;
     public $dateTo;
+
+    const NEWSEND='new';
+    const SENDED='sended';
+    const DELIVERED='delevired';
+    const  VIEWED='viewed';
+
+    public static $statusSend = [
+        self::NEWSEND=>'Новое',
+        self::SENDED=>'Отправленно',
+        self::DELIVERED=>'Доставлено',
+        self::VIEWED=>'Просмотрено',
+    ];
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'viber_transaction';
+    }
+
+    const SCENARIO_SEARCH = 'search';
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_SEARCH] = [];
+        return $scenarios;
     }
         //new =>new
         //
@@ -97,4 +117,9 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function getPhonesArray(){
         return (array)\GuzzleHttp\json_decode($this->phones);
     }
+
+    public function Phone($json){
+        return json_encode($json);
+    }
+
 }

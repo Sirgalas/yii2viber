@@ -223,3 +223,12 @@ aside .sidebar-menu > li > a {
 .wrapper .main-footer a,.wrapper .main-footer a:hover{
     color: #fff;
 }
+
+#vibertransaction-titlesearh{
+    height: 40px;
+    border-radius: 10px;
+    font-weight: bolder;
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTBweCIgaGVpZ2h0PSI1MHB4IiB2aWV3Qm94PSIwIDAgNTAgNTAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUwIDUwOyIgZmlsbD0iI2JmYmZiZiIgPjxwYXRoIGQ9Ik00Ni45MTQsNDQuMDg2TDMzLjg4NiwzMS4wNThDMzYuNDQzLDI4LjA4MiwzOCwyNC4yMjMsMzgsMjBjMC05LjM3NC03LjYyNi0xNy0xNy0xN1M0LDEwLjYyNiw0LDIwczcuNjI2LDE3LDE3LDE3CWMzLjcxMSwwLDcuMTM4LTEuMjA5LDkuOTM3LTMuMjM1bDEzLjE0OSwxMy4xNDlMNDYuOTE0LDQ0LjA4NnogTTYsMjBjMC04LjI3MSw2LjcyOS0xNSwxNS0xNWM4LjI3MSwwLDE1LDYuNzI5LDE1LDE1CWMwLDguMjcxLTYuNzI5LDE1LTE1LDE1QzEyLjcyOSwzNSw2LDI4LjI3MSw2LDIweiI+PC9wYXRoPjwvc3ZnPg==") 0% 50% no-repeat;
+    padding-left: 50px;
+    background-size: 35px;
+}

@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\entities\ViberTransaction;
-use frontend\entities\ReportSearch;
+use frontend\entities\StatisticsSearch;
 use common\entities\ContactCollection;
 use frontend\entities\User;
 use yii\helpers\ArrayHelper;
@@ -31,15 +31,15 @@ class StatisticsController extends Controller
     }
 
     public function actionIndex(){
-        $model= new ViberTransaction();
-        $searchModel = new ReportSearch();
+        $model= new ViberTransaction(['scenario' => ViberTransaction::SCENARIO_SEARCH]);
+        $searchModel = new StatisticsSearch();
         $contact_collections = ContactCollection::find()->andWhere(['user_id' => Yii::$app->user->identity->id])->select([
             'id',
             'title',
         ])->orderBy('title')->asArray()->all();
         $contact_collections = ArrayHelper::map($contact_collections, 'id', 'title');
-        $clients=ArrayHelper::map(User::find()->select('id','username')->where(['dealer_id'=>Yii::$app->user->identity->id])->orderBy('username')->asArray()->all(),'id','username');
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $clients=ArrayHelper::map(User::find()->select(['id','username'])->where(['dealer_id'=>Yii::$app->user->identity->id])->orderBy('username')->asArray()->all(),'id','username');
+        $dataProvider = $searchModel->search(Yii::$app->request->post());
         return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients'));
     }
 

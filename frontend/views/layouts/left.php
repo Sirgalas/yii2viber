@@ -62,7 +62,7 @@ use yii\helpers\Url;
             ]
         ) ?>
         <?php 
-        if(!Yii::$app->user->isGuest&&!Yii::$app->user->identity->dealer_id)
+        if(Yii::$app->user->isGuest||!Yii::$app->user->identity->dealer_id)
             $id=Yii::$app->params['defaultDealer'];
             else
                 $id=Yii::$app->user->identity->dealer_id;
