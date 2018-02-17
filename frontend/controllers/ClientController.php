@@ -17,6 +17,8 @@ use yii\filters\VerbFilter;
  */
 class ClientController extends Controller
 {
+    const ORIGINAL_USER_SESSION_KEY = 'original_user';
+    const ORIGINAL_USER_URL = 'original_user_url';
     /**
      * @inheritdoc
      */
@@ -185,4 +187,33 @@ class ClientController extends Controller
 
         }
     }
+
+    public function actionSwitch($id = null){
+        if(!$id && Yii::$app->session->has(self::ORIGINAL_USER_SESSION_KEY)) {
+            $user = $this->findModel(Yii::$app->session->get(self::ORIGINAL_USER_SESSION_KEY));
+            $url = Yii::$app->session->get(self::ORIGINAL_USER_URL);
+
+            Yii::$app->session->remove(self::ORIGINAL_USER_SESSION_KEY);
+            Yii::$app->session->remove(self::ORIGINAL_USER_URL);
+            Yii::$app->user->switchIdentity($user, 3600);
+            return $this->redirect($url);
+        }
+        if ($id && !Yii::$app->session->has(self::ORIGINAL_USER_SESSION_KEY)){
+            if (Yii::$app->user->identity->isClient()){
+                throw new ForbiddenHttpException('У Вас нет доступа');
+            }
+            if (!Yii::$app->user->identity->amParent($id)){
+                return ['output'=>'', 'message'=>'Нет доступа к этому пользователю'];
+            }
+
+            $user = $this->findModel($id);
+            Yii::$app->session->set(self::ORIGINAL_USER_SESSION_KEY, Yii::$app->user->id);
+            Yii::$app->session->set(self::ORIGINAL_USER_URL, $_SERVER['HTTP_REFERER']);
+            Yii::$app->user->switchIdentity($user, 3600);
+            return $this->goHome();
+        }
+
+    }
+
+
 }

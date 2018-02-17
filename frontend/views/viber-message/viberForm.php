@@ -32,9 +32,9 @@ use kartik\datetime\DateTimePicker;
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
             </div>
-            <div class="col-md-5" style="    z-index: 9999;">
+            <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
-                <img src="/images/banner.png">
+                <a href="https://hyperhost.ua/ru" target="_blank"><img src="/images/banner.png" style="margin: 10px auto;   "></a>
             </div>
             <div class="col-md-12" style="margin-top:-55px">
                 <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text', 'rows' => 10])?>

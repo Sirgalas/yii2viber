@@ -145,10 +145,10 @@ class ViberMessage extends \yii\db\ActiveRecord
             'date_start' => 'Date Start',
             'date_finish' => 'Date Finish',
             'time_finish' => 'Time Finish',
-            'status' => 'Status',
+            'status' => 'Статус',
             'limit_messages' => 'Limit Messages',
-            'cost' => 'Cost',
-            'balance' => 'Balance',
+            'cost' => 'Стоимость',
+            'balance' => 'Баланс',
             'viber_image_id' => 'Ид изображения в Viber',
             'assign_collections' => 'Выбрать базы для рассылки',
         ];

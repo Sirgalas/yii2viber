@@ -161,6 +161,7 @@ class ViberMessageController extends Controller
 
     public function actionAssignCollection($id)
     {
+
         $model = ViberMessage::findOne($id);
         if (! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит', 403);

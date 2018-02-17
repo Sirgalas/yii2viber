@@ -152,6 +152,13 @@ if (Yii::$app->user->isGuest){
                     </ul>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
+                <li>
+                    <?php
+                    if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USER_SESSION_KEY)){
+                        echo Html::a('Вернуться в свой аккаунт', '/client/switch',['class'=>'btn btn-block btn-info btn-lg']);
+                    }
+                    ?>
+                </li>
                 <li class="dropdown tasks-menu">
                     <?php if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){ ?>
                        <?= Html::a('Хочу стать дилером', Url::to(['/client/want-dealer'])); ?>

@@ -11,6 +11,11 @@ use yii\widgets\Pjax;
 
 $this->title = Yii::t('app', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
+if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USER_SESSION_KEY)){
+    $template = '{update} {delete} {switch}';
+} else {
+    $template = '{update} {delete}';
+}
 ?>
 <div class="user-index">
 
@@ -105,12 +110,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{update}{delete}',//{balance}{password}
+                                    'template' => '{update}{delete}{switch}',//{balance}{password}
                                     'buttons' => [
                                         'balance' => function ($url, $model) {
                                             return Html::a('<i class="fa fa-fw   fa-money"></i>', $url);
                                         },
-                                        'password' => function ($url, $model) {
+
+                                        'switch' => function ($url, $model) {
                                             return Html::a('<i class="fa fa-fw  fa-user-secret"></i>', $url);
                                         },
                                     ],
