@@ -24,23 +24,23 @@ class ViberController extends \yii\web\Controller
         }
         try {
             if (isset($_POST)) {
-                file_put_contents($path .'/post_'.time().'.txt',
+                file_put_contents($path .'/post_'.date('Ymd_His').'.txt',
                     print_r($_POST, 1));
                     print_r($_POST);
             } else {
-                file_put_contents($path .'/post_'.time().'.txt', 'NO DATA');
+                file_put_contents($path .'/post_'.date('Ymd_His').'.txt', 'NO DATA');
                 echo 'POST: NO DATA';
             }
             if (isset($_GET)) {
-                file_put_contents($path .'/get_'.time().'.txt',
+                file_put_contents($path .'/get_'.date('Ymd_His').'.txt',
                     print_r($_GET, 1));
                 print_r($_GET);
             } else {
-                file_put_contents($path .'/get_'.time().'.txt', 'NO DATA');
+                file_put_contents($path .'/get_'.date('Ymd_His').'.txt', 'NO DATA');
                 echo 'GET: NO DATA';
             }
         } catch(\Exception $e) {
-            file_put_contents($path .'/error_'.time().'.txt', $e->getMessage());
+            file_put_contents($path .'/error_'.date('Ymd_His').'.txt', $e->getMessage());
             echo "Error", $e->getMessage();
         }
 

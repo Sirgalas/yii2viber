@@ -140,12 +140,10 @@ class Viber
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
 
         $result = curl_exec($ch);
-        curl_close($ch);
+        //curl_close($ch);
         //echo '===============================';
-        //print_r($result);
-
         if ($this->parseSendResult($result, $phonesArray)) {
-            $viber_transaction->phones = \GuzzleHttp\json_encode($phonesArray);
+            $viber_transaction->phones = \GuzzleHttp\json_encode($this->phones);
             $viber_transaction->status = 'sended';
             $viber_transaction->save();
         } else {
@@ -173,9 +171,11 @@ class Viber
                 $msg = ((string)$msg);
                 $phonesArray['' . $phone] = ['status'=>'sended', 'msg_id'=>$msg];
             }
+            $this->phones =$phonesArray;
             return true;
         } else {
             echo 'error' . $xml->tech_message;
+            return false;
         }
     }
     private function saveNewTransaction(array $phones)
@@ -184,6 +184,7 @@ class Viber
             'user_id' => $this->viber_message->user_id,
             'viber_message_id' => $this->viber_message->id,
             'status' => 'new',
+            'size'=>count($phones),
             'created_at' => time(),
             'phones' => \GuzzleHttp\json_encode($phones)]);
         $tVM->save();
