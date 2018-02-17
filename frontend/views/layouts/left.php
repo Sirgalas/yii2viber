@@ -61,8 +61,12 @@ use yii\helpers\Url;
                 'items'     => $menuItems
             ]
         ) ?>
-        <?php if(!Yii::$app->user->isGuest&&Yii::$app->user->identity->dealer_id)
-            echo \frontend\widgets\DealerViews::widget(['id'=>Yii::$app->user->identity->dealer_id]) ?>
+        <?php 
+        if(!Yii::$app->user->isGuest&&!Yii::$app->user->identity->dealer_id)
+            $id=Yii::$app->params['defaultDealer'];
+            else
+                $id=Yii::$app->user->identity->dealer_id;
+            echo \frontend\widgets\DealerViews::widget(['id'=>$id]) ?>
     </section>
 
 </aside>

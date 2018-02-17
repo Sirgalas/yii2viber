@@ -167,11 +167,13 @@ class ClientController extends Controller
     }
 
     public function actionWantDealer(){
-        if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){
+        if(!Yii::$app->user->isGuest&&Yii::$app->user->identity->isClient()){
             $user=User::findOne(Yii::$app->user->identity->id);
-
-                $dealer = User::findOne(Yii::$app->user->identity->dealer_id);
-
+            if(Yii::$app->user->identity->dealer_id)
+                $id=Yii::$app->user->identity->dealer_id;
+            else
+                $id=Yii::$app->params['defaultDealer'];
+            $dealer = User::findOne($id);
             $user->want_dealer=User::WANT;
             try{
                 if(!$user->save())
