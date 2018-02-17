@@ -54,7 +54,6 @@ class m180214_133042_userDataInsert extends Migration
                     'type' => 'admin',
                     'dealer_id' => 0,
                     'balance' => 1000,
-
                 ],
             ]
         );
