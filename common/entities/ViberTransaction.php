@@ -21,6 +21,12 @@ use common\entities\user\User;
  */
 class ViberTransaction extends \yii\db\ActiveRecord
 {
+
+    public $titleSearh;
+    public $contactCollection;
+    public $status;
+    public $dateFrom;
+    public $dateTo;
     /**
      * @inheritdoc
      */
@@ -28,7 +34,8 @@ class ViberTransaction extends \yii\db\ActiveRecord
     {
         return 'viber_transaction';
     }
-
+        //new =>new
+        //
     /**
      * @inheritdoc
      */

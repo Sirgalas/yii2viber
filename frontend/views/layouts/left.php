@@ -46,14 +46,14 @@ use yii\helpers\Url;
             $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
-            $menuItems[] =  ['label'=>'Коллекции контактов' ,'url'=> Url::toRoute(['/contact-collection'])];
-            $menuItems[] =  ['label'=>'Рассылки' ,'url'=> Url::toRoute(['/viber-message'])];
+            $menuItems[] =  ['label'=>'Базы номеров' ,'url'=> Url::toRoute(['/contact-collection'])];
+            $menuItems[] =  ['label'=>'Создать рассылки' ,'url'=> Url::toRoute(['/viber-message'])];
 
             if (Yii::$app->user->identity->isDealer() || Yii::$app->user->identity->isAdmin()){
-                $menuItems[] =  ['label'=>'Клиенты' ,'url'=> Url::toRoute(['/client'])];
+                $menuItems[] =  ['label'=>'Все клиенты' ,'url'=> Url::toRoute(['/client'])];
             }
-            $menuItems[] =  ['label'=>'Отчеты' ,'url'=> Url::toRoute(['/reports'])];
-            $menuItems[] =  ['label'=>'Статистика' ,'url'=> Url::toRoute(['/statistics'])];
+            $menuItems[] =  ['label'=>'Все отчеты' ,'url'=> Url::toRoute(['/report'])];
+            $menuItems[] =  ['label'=>'Вся статистика' ,'url'=> Url::toRoute(['/statistics'])];
             } ?>
         <?= dmstr\widgets\Menu::widget(
             [
@@ -61,7 +61,8 @@ use yii\helpers\Url;
                 'items'     => $menuItems
             ]
         ) ?>
-
+        <?php if(!Yii::$app->user->isGuest&&Yii::$app->user->identity->dealer_id)
+            echo \frontend\widgets\DealerViews::widget(['id'=>Yii::$app->user->identity->dealer_id]) ?>
     </section>
 
 </aside>

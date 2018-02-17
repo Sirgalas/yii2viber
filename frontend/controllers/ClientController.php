@@ -144,17 +144,14 @@ class ClientController extends Controller
         $db=Yii::$app->db;
         $transaction = $db->beginTransaction();
         try {
-
-
             $edidableIndex= $_POST['editableIndex'];
             $paramName = "client-$edidableIndex-balance-disp";
             $value=$_POST['Client'][$edidableIndex]['balance'] ;
-
             $diff = $user->balance - 1*$value;
             $user->balance = $value;
             Yii::$app->user->identity->balance +=$diff;
-
-                $user->save();
+                if(!$user->save())
+                    throw new \Exception(json_encode($user->getErrors()));
 
             if ($user->id !== Yii::$app->user->id ) {
                 Yii::$app->user->identity->save();

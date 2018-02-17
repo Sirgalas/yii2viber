@@ -17,7 +17,9 @@ use Yii;
  * @property bool $dealer_confirmed
  * @property string $image
  * @property integer want_dealer
- *
+ * @property  float coast
+ * @property  string tel
+ * @property  string time_work
  * @property ContactCollection[] $contactCollections
  * @property Phone[] $phones
  * @property ViberMessage[] $viberMessages
@@ -67,7 +69,9 @@ class User extends BaseUser
             'targetClass' => self::className(),
             'targetAttribute' => ['dealer_id' => 'id'],
         ];
-
+        $rules['coast']=['coast','double'];
+        $rules['tel']=['tel','string'];
+        $rules['time_work']=['time_work','string'];
         return $rules;
     }
 
@@ -79,6 +83,9 @@ class User extends BaseUser
         $labels['dealer_confirmed'] = 'Статус дилера';
         $labels['dealer_id'] = 'Родительский дилер';
         $labels['image'] = 'Аватар';
+        $labels['coast'] = 'Цена за сообщение';
+        $labels['tel'] = 'Телефон';
+        $labels['time_work'] = 'Время работы';
     }
 
     public function isAdmin()

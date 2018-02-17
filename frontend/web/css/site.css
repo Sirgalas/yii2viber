@@ -204,3 +204,13 @@ aside .sidebar-menu > li > a {
 .block-header .small{
     font-size: 12px;
 }
+
+.main-sidebar .sidebar{
+    padding-bottom: 250px;
+}
+
+.dealer_widget{
+    color: #fff;
+    position: absolute;
+    bottom: 5px;
+}

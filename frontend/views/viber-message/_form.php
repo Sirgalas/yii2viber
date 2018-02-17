@@ -31,6 +31,7 @@ use yii\helpers\Url;
                             <?=$form->field($model, 'date_start')->widget(DateTimePicker::classname(), [
                                 'options' => ['placeholder' => 'Enter event time ...'],
                                 'pluginOptions' => [
+                                    'startDate'=>date('d-M-Y g:i',time()),
                                     'autoclose' => true,
                                 ],
                             ]);?>
@@ -104,8 +105,7 @@ use yii\helpers\Url;
                             <?php
                             if ($model->isNewRecord){
                                 echo '<h3>Будет доступно после сохранения рассылки</h3>';
-                            }
-                            else {
+                            } else {
                                 echo Select2::widget([
                                  'id' => 'contact_collections_field',
                                  'name' => 'contact_collection[id]',
