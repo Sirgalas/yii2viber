@@ -195,7 +195,7 @@ class ContactCollectionController extends Controller
             try{
                 $resource=UploadedFile::getInstance($form,'file');
                 $result=$phone->pointer($resource,Yii::$app->request->post(),$post,$form);
-                if(!$result)
+                    if(!$result)
                     throw new \Exception('Ошибка импорта');
                     return $this->redirect(['/contact-collection/update','id'=>$result]);
             }catch (\Exception $ex){

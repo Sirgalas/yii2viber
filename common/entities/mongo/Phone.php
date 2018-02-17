@@ -1,7 +1,7 @@
 <?php
 namespace common\entities\mongo;
 
-use Aws\CloudFront\Exception\Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use frontend\forms\FileForm;
 use Yii;
 use common\entities\ContactCollection;
@@ -24,10 +24,14 @@ use common\entities\ViberMessage;
 
 class Phone extends ActiveRecord
 {
-   /* public $contact_collection_id;
-    public $phone;
-    public $clients_id;
-    public $username;*/
+
+    const EXEL2007='xlsx';
+    const EXEL='xls';
+
+    public static $Reader=[
+        self::EXEL2007=> 'Xlsx',
+        self::EXEL=>'Xls'
+    ];
 
     public static function collectionName()
     {
@@ -93,7 +97,7 @@ class Phone extends ActiveRecord
         if(in_array($resource->extension,$entities->fileExel())){
             $form->scenario=FileForm::SCENARIO_EXEL;
             if($form->load($post))
-                $result=$this->importExel($resource->tempName,$arrayPost);
+                $result=$this->importExel($resource->tempName,$arrayPost,$resource->getExtension());
         }
         if($resource->extension=='csv'){
             $form->scenario=FileForm::SCENARIO_OUTHER;
@@ -108,22 +112,29 @@ class Phone extends ActiveRecord
         return $result;
     }
 
-    private function importExel($file,$post){
-        $exel = \moonland\phpexcel\Excel::import($file);
-        foreach ($exel as $data){
-            if(array_key_exists($post['fieldPhone'],$data))
-                $searchList[]=(int)static::NormalizeNumber($data[$post['fieldPhone']]);
+    private function importExel($file,$post,$extension){
+        $reader=IOFactory::createReader(self::$Reader[$extension]);
+        $reader->setReadDataOnly(true);
+        $objPHPExcel = $reader->load($file);
+        if(!$post['fieldPhone'])
+            throw new \Exception('не указано поле телефонов');
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            for ($row = 1; $row <= $worksheet->getHighestRow(); ++ $row)
+            {
+                $phone[$worksheet->getCell($post['fieldPhone'].$row)->getValue()]=$worksheet->getCell($post['fieldUsername'].$row)->getValue();
+            }
         }
-       $exel=$this->arrayDiff($searchList,$exel,$post['collection_id']);
-
-        if(!$exel)
+        $phoneNumber=Phone::find()->select(['phone'])->where(['contact_collection_id'=>$post['collection_id']])->column();
+        foreach ($phoneNumber as $numberPhone){
+            unset($phone[$numberPhone]);
+        }
+        if(!$phone)
             throw new \Exception('нет уникальных телефонов');
-        foreach ($exel as $data) {
-            if(array_key_exists($post['fieldPhone'],$data))
-
-            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>(array_key_exists($post['fieldUsername'],$data))?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+        foreach ($phone as $key=>$val) {
+            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($key),'username'=>($val)?htmlspecialchars(trim($val)):''];
         }
-       if($this->saveDate($datas)== 'ok')
+        unset($phone);
+        if($this->saveDate($datas)== 'ok')
             return $post['collection_id'];
         return false;
     }

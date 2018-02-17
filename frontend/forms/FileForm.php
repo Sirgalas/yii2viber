@@ -24,7 +24,7 @@ class FileForm extends Model
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios[self::SCENARIO_EXEL] = ['file', 'fieldPhone','fieldUsername','colection_id','first_row'];
+        $scenarios[self::SCENARIO_EXEL] = ['file', 'fieldPhone','fieldUsername','collection_id','first_row'];
         $scenarios[self::SCENARIO_OUTHER] = ['file', 'field','colection_id','delimiter'];
         return $scenarios;
     }
