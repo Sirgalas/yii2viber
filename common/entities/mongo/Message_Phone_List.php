@@ -22,9 +22,10 @@ use yii\mongodb\ActiveRecord;
 class Message_Phone_List extends ActiveRecord
 {
 
-    const QUEUED = 0;
-    const POSTED = 1;
-    const READ = 2;
+    const NEW='new';
+    const SENDED = 'ended';
+    const DELIVERED = 'delevired';
+    const VIEWED = 'viewed';
 
     public $_id;
     public $message_id;
@@ -36,9 +37,10 @@ class Message_Phone_List extends ActiveRecord
     public $date_viewed;
     public static $statusMessage=
         [
-            self::QUEUED=>"Отправлено",
-            self::POSTED=>"Получено",
-            self::READ=>"Прочитано",
+            self::NEW=>'Новое',
+            self::SENDED=>"Отправлено",
+            self::DELIVERED=>"Получено",
+            self::VIEWED=>"Прочитано",
         ];
 
     public static function collectionName()
