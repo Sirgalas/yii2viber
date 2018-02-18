@@ -31,13 +31,12 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="form-group">
                 <?= DatePicker::widget([
                     'name' => 'ViberTransaction[dateFrom]',
-                    'value' => date('d-M-Y',time()),
                     'type' => DatePicker::TYPE_RANGE,
                     'name2' => 'ViberTransaction[dateTo]',
-                    'value2' => date('d-M-Y',time()),
+                    'layout' => '<span class="input-group-addon"> С </span>{input1}<span class="input-group-addon"> по </span>{input2}',
                     'pluginOptions' => [
                         'autoclose'=>true,
-                        'format' => 'dd-M-yyyy'
+                        'format' => 'yyyy-mm-dd'
                     ]
                 ]);?>
             </div>
@@ -64,78 +63,25 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <div class="col-md-5">
-            <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_1">Новое</label>';
-                echo CheckboxX::widget([
-                    'name'=>'ViberTransaction[status][]',
-                    'options'=>['id'=>'s_1'],
-                    'value'=>$messagePhoneList::NEWMESSAGE,
-                    'pluginOptions'=>['threeState'=>false]
-                ]); ?>
-            </div>
-            <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_2">Отправлено</label>';
-                echo CheckboxX::widget([
-                'name'=>'ViberTransaction[status][]',
-                'options'=>['id'=>'s_2'],
-                 'value'=>$messagePhoneList::SENDED,
-                'pluginOptions'=>['threeState'=>false]
-                ]); ?>
-            </div>
-            <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_3">Получено</label>';
-                echo CheckboxX::widget([
-                'name'=>'ViberTransaction[status][]',
-                'options'=>['id'=>'s_3'],
-                    'value'=>$messagePhoneList::DELIVERED,
-                'pluginOptions'=>['threeState'=>false]
-                ]); ?>
-            </div>
-            <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_4">Прочитано</label>';
-                echo CheckboxX::widget([
-                'name'=>'ViberTransaction[status][]',
-                'options'=>['id'=>'s_4'],
-                    'value'=>$messagePhoneList::VIEWED,
-                'pluginOptions'=>['threeState'=>false]
-                ]); ?>
+            <div class="form-group ">
+                <?= $form->field($model, 'status')->checkboxList([$messagePhoneList::NEWMESSAGE=>$messagePhoneList::$statusMessage[$messagePhoneList::NEWMESSAGE],$messagePhoneList::SENDED=>$messagePhoneList::$statusMessage[$messagePhoneList::SENDED],$messagePhoneList::DELIVERED=>$messagePhoneList::$statusMessage[$messagePhoneList::DELIVERED],$messagePhoneList::VIEWED=>$messagePhoneList::$statusMessage[$messagePhoneList::VIEWED]]);
+?>
             </div>
         </div>
-        <div class="form-group col-md-12">
-            <?= Html::submitButton("<i class='glyphicon glyphicon-search'></i>Поиск", ['class' => 'btn btn-success']) ?>
-            <?= Html::submitButton("<i class='fa fa-file-excel-o'></i> Скачать отчет", ['class' => 'btn btn-primary']) ?>
+        <div class="form-group col-md-12 bottom-center">
+            <?= Html::submitButton("<i class='glyphicon glyphicon-search'></i>Поиск", ['class' => 'btn btn-success center']) ?>
         </div>
         <?php ActiveForm::end(); ?>
      </div>
 
     <div class="col-md-12">
-    <?=GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute'=>'created_at',
-                'value'=> function($model){
-                    return date('d:m:Y',$model->created_at);
-                }
-            ],
-            [
-                'attribute'=>'telephones',
-                'header'=>'Телефоны',
-                'format'=>'raw',
-                'value'=>function($model)use($post){
-                    return $model->Phone($model,$post);;
-                }
-            ],
-            [
-                'attribute'=>'viber_message_id',
-                'value'=>function($model){
-                    return $model->viberMessage->text;
-                }
-            ],
-        ],
-    ]);?>
+        <?php
+        if(preg_match('%(\d)+%',($post['titleSearch']))||is_array($post['status']))
+            echo $this->render('_mongo',compact('dataProvider','searchModel','post'));
+        else
+            echo $this->render('_postgris',compact('dataProvider','searchModel'));
+            
+        ?>
     </div>
     <?php Pjax::end(); ?>
 </div>

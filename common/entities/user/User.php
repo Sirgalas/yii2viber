@@ -179,6 +179,11 @@ class User extends BaseUser
         return $user_ids;
     }
 
+    public function whoDealer(){
+        if($this->dealer_id)
+            return $this->dealer_id;
+        return false;
+    }
 
     public function beforeValidate()
     {

@@ -232,3 +232,6 @@ aside .sidebar-menu > li > a {
     padding-left: 50px;
     background-size: 35px;
 }
+.form-group.bottom-center{
+    text-align: center;
+}

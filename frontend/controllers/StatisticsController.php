@@ -8,7 +8,7 @@ use frontend\search\StatisticsSearch;
 use common\entities\ContactCollection;
 use frontend\entities\User;
 use yii\helpers\ArrayHelper;
-use common\entities\MessageContactCollection;
+use frontend\search\StatisticsMongoSearch;
 use Yii;
 use common\entities\mongo\Phone;
 use yii\web\Controller;
@@ -33,18 +33,23 @@ class StatisticsController extends Controller
 
     public function actionIndex(){
         $model= new ViberTransaction(['scenario' => ViberTransaction::SCENARIO_SEARCH]);
-        $searchModel = new StatisticsSearch();
+
         $contact_collections = ContactCollection::find()->andWhere(['user_id' => Yii::$app->user->identity->id])->select([
             'id',
             'title',
         ])->orderBy('title')->asArray()->all();
         $contact_collections = ArrayHelper::map($contact_collections, 'id', 'title');
         $clients=ArrayHelper::map(User::find()->select(['id','username'])->where(['dealer_id'=>Yii::$app->user->identity->id])->orderBy('username')->asArray()->all(),'id','username');
-        $dataProvider = $searchModel->search(Yii::$app->request->post('ViberTransaction'));
         $messagePhoneList= new Message_Phone_List();
         $post=false;
         if(Yii::$app->request->isPost)
             $post=Yii::$app->request->post('ViberTransaction');
+
+        $searchModel = new StatisticsSearch();
+        if(preg_match('%(\d)+%',($post['titleSearch']))||is_array($post['status'])){
+            $searchModel = new StatisticsMongoSearch();
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->post('ViberTransaction'));
         return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients','post','messagePhoneList'));
     }
 
