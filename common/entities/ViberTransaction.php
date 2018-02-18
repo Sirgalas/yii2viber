@@ -2,6 +2,7 @@
 
 namespace common\entities;
 
+use common\entities\mongo\Message_Phone_List;
 use frontend\forms\ViberNotification;
 use Yii;
 use common\entities\user\User;
@@ -22,6 +23,7 @@ use common\entities\user\User;
  *
  * @property User $user
  * @property ViberMessage $viberMessage
+ * @property Message_Phone_List messagePhoneList
  */
 class ViberTransaction extends \yii\db\ActiveRecord
 {
@@ -181,6 +183,10 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     public function Phone($json){
         return json_encode($json);
+    }
+    
+    public function getMessagePhoneList(){
+        $this->hasMany(Message_Phone_List::className(),['transaction_id'=>'id']);
     }
 
 }

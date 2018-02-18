@@ -2,6 +2,7 @@
 
 namespace common\entities;
 
+use common\entities\mongo\Message_Phone_List;
 use common\entities\user\User;
 use Yii;
 use yii\db\Exception;
@@ -32,8 +33,9 @@ use common\entities\mongo\Phone;
  * @property ContactCollection $contactCollection
  * @property MessageContactCollection[] $messageContactCollections
  * @property User $user
- *
+ * @property Message_Phone_List messagePhoneList
  * @property user/User $user
+ * @property 
  */
 class ViberMessage extends \yii\db\ActiveRecord
 {
@@ -371,5 +373,9 @@ class ViberMessage extends \yii\db\ActiveRecord
             $transaction->rollBack();
             return false;
         }
+    }
+    
+    public function getMessagePhoneList(){
+        return $this->hasMany(Message_Phone_List::className(),['message_id'=>'id']);
     }
 }
