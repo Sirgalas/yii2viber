@@ -24,19 +24,11 @@ class Message_Phone_List extends ActiveRecord
 {
 
     const NEW='new';
-    const SENDED = 'ended';
+    const SENDED = 'sended';
     const DELIVERED = 'delivered';
     const VIEWED = 'viewed';
 
-    public $_id;
-    public $message_id;
-    public $last_date_message;
-    public $status;
-    public $transaction_id;
-    public $phone;
-    public $date_delivered;
-    public $date_viewed;
-    public $msg_id;
+
     public static $statusMessage=
         [
             self::NEW=>'Новое',

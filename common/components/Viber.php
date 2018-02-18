@@ -9,6 +9,7 @@
 namespace common\components;
 
 use common\entities\mongo\Phone;
+use common\entities\mongo\Message_Phone_List;
 use common\entities\ViberMessage;
 use common\entities\ContactCollection;
 use common\entities\ViberTransaction;
@@ -90,8 +91,14 @@ class Viber
             $this->viber_message->save();
             return;
         }
-        $phonesArray = $viber_transaction->getPhonesArray();
-        $phones=array_keys($phonesArray);
+        $phonesArray = Message_Phone_List::find()
+            ->indexBy('phone')
+            ->where(['transaction_id'=>$viber_transaction->id])->all();
+        $phones=[];
+        foreach ($phonesArray as $phone){
+            $phones[] =$phone->phone;
+        }
+
         if (! $phones) {
             return;
         }
@@ -144,11 +151,9 @@ class Viber
         //echo '===============================';
         if ($this->parseSendResult($result, $phonesArray)) {
             $viber_transaction->date_send = time();
-            $viber_transaction->phones = \GuzzleHttp\json_encode($this->phones);
             $viber_transaction->status = 'sended';
             $viber_transaction->save();
         } else {
-
             $viber_transaction->status = 'error';
             Yii::error($result);
             $viber_transaction->save();
@@ -162,7 +167,7 @@ class Viber
      * @param $phonesArray
      * @return bool
      */
-    private function parseSendResult($xml, $phonesArray){
+    private function parseSendResult($xml,  $phonesArray){
         if (is_string($xml)) {
             $xml = simplexml_load_string($xml);
         } else {
@@ -175,11 +180,11 @@ class Viber
                 $attr=$msg->attributes();
                 $phone =  $attr['phone'];
                 $msg = ((string)$msg);
-                $phonesArray['' . $phone] = ['status'=>'sended'];
-                $phonesArray['' . $msg ] ='' . $phone;
+                $mPhone = $phonesArray['' . $phone];
+                $mPhone['status']='sended';
+                $mPhone['msg_id' ] = $msg;
+                $mPhone->save();
             }
-            $this->phones =$phonesArray;
-
             return true;
         } else {
             echo 'error' . $xml->tech_message;
@@ -189,6 +194,7 @@ class Viber
 
     /**
      * @param array $phones
+     * @throws \Exception
      */
     private function saveNewTransaction(array $phones)
     {
@@ -197,9 +203,18 @@ class Viber
             'viber_message_id' => $this->viber_message->id,
             'status' => 'new',
             'size'=>count($phones),
-            'created_at' => time(),
-            'phones' => \GuzzleHttp\json_encode($phones)]);
+            'created_at' => time()]);
         $tVM->save();
+        Message_Phone_List::deleteAll(['transaction_id'=>$tVM->id]);
+
+        foreach ($phones as $i=>$P){
+            $phones[$i]['transaction_id'] = $tVM->id;
+        }
+        if (!Yii::$app->mongodb
+            ->getCollection(Message_Phone_List::collectionName())
+            ->batchInsert($phones)) {
+            throw new \Exception('not save');
+        }
     }
 
     /**
@@ -216,7 +231,12 @@ class Viber
         $transaction = $db->beginTransaction();
         $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
         foreach ($contact_collection_ids as $k => $v) {
-            $contact_collection_ids[$k] = ''.$v;
+            if (is_integer($v)){
+                $contact_collection_ids[] = ''.$v;
+            } else {
+                $contact_collection_ids[] = 1*$v;
+            }
+
         }
         try {
             if (count($this->phones)>0){
@@ -230,7 +250,7 @@ class Viber
             }
             $tPhones = [];
             foreach ($phones as $phone) {
-                $tPhones[$phone] = ['status' => 'new'];
+                $tPhones[] = ['phone'=>$phone, 'status'=>'new', 'message_id'=>$this->viber_message->id];
                 if (count($tPhones) >= Yii::$app->params['viber']['transaction_size_limit']) {
                     $this->saveNewTransaction($tPhones);
                     $tPhones = [];

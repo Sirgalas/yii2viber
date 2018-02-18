@@ -61,17 +61,10 @@ class TestController extends Controller
 
     public function actionCheckViber()
     {
-        $vm = new ViberMessage([
-            'id' => 1,
-            'user_id' => 8,
-            'title' => 'Title',
-            'text' => 'Привет, а вто теперь рассылка на 2 номера',
-            'title_button' => 'Жми',
-            'url_button' => 'http://bernik.ru',
-            'image' => 'kanban.png',
-            'type' => ViberMessage::TEXTBUTTONIMAGE,
-        ]);
+        $vm = ViberMessage::findOne(26);
+
         $v = new Viber($vm);
+        //$v->prepareTransaction();
         $v->sendMessage();
     }
 
