@@ -74,14 +74,17 @@ class Message_Phone_List extends ActiveRecord
         return self::$statusMessage[$this->status];
     }
 
-    public function isQueued(){
-        return $this->status==self::QUEUED;
+    public function isNew(){
+        return $this->status==self::NEW;
     }
-    public function isPosted(){
-        return $this->status==self::POSTED;
+    public function isSended(){
+        return $this->status==self::SENDED;
     }
-    public function isRead(){
-        return $this->status==self::READ;
+    public function isDelivered(){
+        return $this->status==self::DELIVERED;
+    }
+    public function isViewed(){
+        return $this->status=self::VIEWED;
     }
     public function getViberMessage(){
         return $this->hasMany(ViberMessage::className(),['id'=>'message_id']);
