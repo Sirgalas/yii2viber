@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\entities\mongo\Message_Phone_List;
 use common\entities\ViberTransaction;
 use frontend\search\StatisticsSearch;
 use common\entities\ContactCollection;
@@ -40,7 +41,11 @@ class StatisticsController extends Controller
         $contact_collections = ArrayHelper::map($contact_collections, 'id', 'title');
         $clients=ArrayHelper::map(User::find()->select(['id','username'])->where(['dealer_id'=>Yii::$app->user->identity->id])->orderBy('username')->asArray()->all(),'id','username');
         $dataProvider = $searchModel->search(Yii::$app->request->post('ViberTransaction'));
-        return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients'));
+        $messagePhoneList= new Message_Phone_List();
+        $post=false;
+        if(Yii::$app->request->isPost)
+            $post=Yii::$app->request->post('ViberTransaction');
+        return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients','post','messagePhoneList'));
     }
 
 

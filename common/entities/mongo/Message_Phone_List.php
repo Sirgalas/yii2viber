@@ -23,7 +23,7 @@ use yii\mongodb\ActiveRecord;
 class Message_Phone_List extends ActiveRecord
 {
 
-    const NEW='new';
+    const NEWMESSAGE='new';
     const SENDED = 'sended';
     const DELIVERED = 'delivered';
     const VIEWED = 'viewed';
@@ -31,7 +31,7 @@ class Message_Phone_List extends ActiveRecord
 
     public static $statusMessage=
         [
-            self::NEW=>'Новое',
+            self::NEWMESSAGE=>"Новое",
             self::SENDED=>"Отправлено",
             self::DELIVERED=>"Получено",
             self::VIEWED=>"Прочитано",
@@ -67,7 +67,7 @@ class Message_Phone_List extends ActiveRecord
     }
 
     public function isNew(){
-        return $this->status==self::NEW;
+        return $this->status==self::NEWMESSAGE;
     }
     public function isSended(){
         return $this->status==self::SENDED;

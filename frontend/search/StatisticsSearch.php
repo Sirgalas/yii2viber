@@ -2,6 +2,7 @@
 
 namespace frontend\search;
 
+use common\entities\mongo\Message_Phone_List;
 use common\entities\user\User;
 use common\entities\MessageContactCollection;
 use common\entities\ViberMessage;
@@ -49,7 +50,7 @@ class StatisticsSearch extends ViberTransaction
 
         if(isset($params['titleSearch'])){
             if(is_int($params['titleSearch'])){
-                $titleId=ViberTransaction::find()->andFilterWhere(['?|','phones',$params['titleSearch']])->one();
+                $titleId=Message_Phone_List::find()->where(['phone'=>$params['titleSearch']])->one();
             }
             else{
                 $idMessageViber=ViberMessage::find()->andFilterWhere(['like','title',$params['titleSearch']])->select(['id'])->column();
@@ -94,7 +95,7 @@ class StatisticsSearch extends ViberTransaction
             'status'=>$this->status
             ]);
         if(isset($titleId))
-            $query->andFilterWhere(['=','id', $this->username]);
+            $query->andFilterWhere(['=','id', $this->username->transaction_id]);
         if(!empty($idMessageViber))
             $query->andFilterWhere(['in','viber_message_id',$idMessageViber]);
         if(!empty($id_messageFromCollection))

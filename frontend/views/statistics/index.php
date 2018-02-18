@@ -13,6 +13,7 @@ use kartik\checkbox\CheckboxX;
 * @var $searchModel common\entities\ViberTransaction
 * @var $dataProvider yii\data\ActiveDataProvider
 * @var $model common\entities\ViberTransaction
+ * @var $messagePhoneList common\entities\mongo\Message_Phone_List
  **/
 
 
@@ -64,26 +65,38 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="col-md-5">
             <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_1">Доствлено</label>';
+                <?php echo '<label class="cbx-label col-md-5" for="s_1">Новое</label>';
                 echo CheckboxX::widget([
-                    'name'=>'ViberTransaction[status]',
+                    'name'=>'ViberTransaction[status][]',
                     'options'=>['id'=>'s_1'],
+                    'value'=>$messagePhoneList::NEWMESSAGE,
                     'pluginOptions'=>['threeState'=>false]
                 ]); ?>
             </div>
             <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_2">В процессе</label>';
+                <?php echo '<label class="cbx-label col-md-5" for="s_2">Отправлено</label>';
                 echo CheckboxX::widget([
-                'name'=>'ViberTransaction[status]',
+                'name'=>'ViberTransaction[status][]',
                 'options'=>['id'=>'s_2'],
+                 'value'=>$messagePhoneList::SENDED,
                 'pluginOptions'=>['threeState'=>false]
                 ]); ?>
             </div>
             <div class="form-group">
-                <?php echo '<label class="cbx-label col-md-5" for="s_3">Не доставлено</label>';
+                <?php echo '<label class="cbx-label col-md-5" for="s_3">Получено</label>';
                 echo CheckboxX::widget([
-                'name'=>'ViberTransaction[status]',
+                'name'=>'ViberTransaction[status][]',
                 'options'=>['id'=>'s_3'],
+                    'value'=>$messagePhoneList::DELIVERED,
+                'pluginOptions'=>['threeState'=>false]
+                ]); ?>
+            </div>
+            <div class="form-group">
+                <?php echo '<label class="cbx-label col-md-5" for="s_4">Прочитано</label>';
+                echo CheckboxX::widget([
+                'name'=>'ViberTransaction[status][]',
+                'options'=>['id'=>'s_4'],
+                    'value'=>$messagePhoneList::VIEWED,
                 'pluginOptions'=>['threeState'=>false]
                 ]); ?>
             </div>
@@ -108,14 +121,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-              'attribute'=>'phones',
-              'value'=>function($model){
-                  return $model->Phone($model->phones);
-              }
+                'attribute'=>'telephones',
+                'header'=>'Телефоны',
+                'format'=>'raw',
+                'value'=>function($model)use($post){
+                    return $model->Phone($model,$post);;
+                }
             ],
             [
-                'class' => 'yii\grid\ActionColumn',
-
+                'attribute'=>'viber_message_id',
+                'value'=>function($model){
+                    return $model->viberMessage->text;
+                }
             ],
         ],
     ]);?>

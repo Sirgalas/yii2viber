@@ -107,7 +107,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
             'user_id' => Yii::t('app', 'User ID'),
             'viber_message_id' => Yii::t('app', 'Viber Message ID'),
             'status' => Yii::t('app', 'Status'),
-            'created_at' => Yii::t('app', 'Created At'),
+            'created_at' => Yii::t('app', 'Дата рассылки'),
             'delivered' => Yii::t('app', 'Delivered'),
             'viewed' => Yii::t('app', 'Viewed'),
             'phones' => Yii::t('app', 'Phones'),
@@ -185,9 +185,27 @@ class ViberTransaction extends \yii\db\ActiveRecord
         }
     }
 
-    public function Phone($json)
+    /**
+     * @param ViberTransaction $model
+     */
+
+    public function Phone($model,$post)
     {
-        return json_encode($json);
+        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$model->id]);
+        if(is_int($post['titleSearch']))
+            $phoneList->andWhere(['phone'=>$post['titleSearch']]);
+        if(!empty($post['status']))
+            $phoneList->andWhere(['status'=>$post['status']]);
+        $phoneList->all();
+        return var_dump($phoneList);
+        foreach ($phoneList as $messagePhoneList){
+            if(isset($messagePhoneList->date_delivered))
+                $phone[]='телефон: <strong>'.$messagePhoneList->phone.'</strong> статус <strong>'.$messagePhoneList::$statusMessage[$messagePhoneList->status].'</strong> время доставки <strong>'.date('d:m:Y',$messagePhoneList->date_delivered).'</strong>';
+            else
+                $phone[]='телефон: <strong>'.$messagePhoneList->phone.'</strong> статус <strong>'.$messagePhoneList::$statusMessage[$messagePhoneList->status].'</strong> время доставки <strong>сообшение не доставлено</strong>';
+
+        }
+        return implode(',</br>',$phone);;
     }
 
     public function getMessagePhoneList()
