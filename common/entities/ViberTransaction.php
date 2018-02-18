@@ -30,7 +30,6 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     public $titleSearch;
     public $contactCollection;
-    public $status;
     public $dateFrom;
     public $dateTo;
 

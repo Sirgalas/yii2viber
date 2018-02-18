@@ -1,8 +1,8 @@
 <?php
 
-namespace frontend\entities;
+namespace frontend\search;
 
-use common\entities\ContactCollection;
+use common\entities\user\User;
 use common\entities\MessageContactCollection;
 use common\entities\ViberMessage;
 use Yii;
@@ -52,7 +52,7 @@ class StatisticsSearch extends ViberTransaction
                 $titleId=ViberTransaction::find()->andFilterWhere(['?|','phones',$params['titleSearch']])->one();
             }
             else{
-                $idMessageViber=ViberMessage::find()->andFilterWhere(['like','title',$params['titleSearch']])->select(['id'])->one();
+                $idMessageViber=ViberMessage::find()->andFilterWhere(['like','title',$params['titleSearch']])->select(['id'])->column();
             }
         }
 
@@ -95,8 +95,8 @@ class StatisticsSearch extends ViberTransaction
             ]);
         if(isset($titleId))
             $query->andFilterWhere(['=','id', $this->username]);
-        if(isset($idMessageViber))
-            $query->andFilterWhere(['=','viber_message_id',$idMessageViber->id]);
+        if(!empty($idMessageViber))
+            $query->andFilterWhere(['in','viber_message_id',$idMessageViber]);
         if(!empty($id_messageFromCollection))
             $query->andFilterWhere(['in','viber_message_id',$id_messageFromCollection]);
 

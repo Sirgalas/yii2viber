@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\entities\ViberTransaction;
-use frontend\entities\StatisticsSearch;
+use frontend\search\StatisticsSearch;
 use common\entities\ContactCollection;
 use frontend\entities\User;
 use yii\helpers\ArrayHelper;
