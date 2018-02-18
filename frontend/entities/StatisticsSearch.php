@@ -46,7 +46,7 @@ class StatisticsSearch extends ViberTransaction
     public function search($params)
     {
         $query = ViberTransaction::find();
-        
+
         if(isset($params['titleSearch'])){
             if(is_int($params['titleSearch'])){
                 $titleId=ViberTransaction::find()->andFilterWhere(['?|','phones',$params['titleSearch']])->one();
@@ -56,7 +56,7 @@ class StatisticsSearch extends ViberTransaction
             }
         }
 
-        if(isset($params['user_id'])){
+        if($params['user_id']!=""){
             $user=User::find()->select('id')->where(['id_dealer'=>Yii::$app->user->identity->id,'id'=>$params['user_id']])->one();
             if($user)
                 $user_id=$user->id;
@@ -66,7 +66,7 @@ class StatisticsSearch extends ViberTransaction
             $user_id=Yii::$app->user->identity->id;
         }
         $id_messageFromCollection=[];
-        if(isset($params['contactCollection'])){
+        if($params['contactCollection']!=""){
             $collections=MessageContactCollection::find()
             ->where(['contact_collection_id'=>$params['contactCollection']])
             ->select('viber_message_id')

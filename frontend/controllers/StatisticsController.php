@@ -39,7 +39,7 @@ class StatisticsController extends Controller
         ])->orderBy('title')->asArray()->all();
         $contact_collections = ArrayHelper::map($contact_collections, 'id', 'title');
         $clients=ArrayHelper::map(User::find()->select(['id','username'])->where(['dealer_id'=>Yii::$app->user->identity->id])->orderBy('username')->asArray()->all(),'id','username');
-        $dataProvider = $searchModel->search(Yii::$app->request->post());
+        $dataProvider = $searchModel->search(Yii::$app->request->post('ViberTransaction'));
         return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients'));
     }
 
