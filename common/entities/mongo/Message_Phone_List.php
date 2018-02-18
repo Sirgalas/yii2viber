@@ -11,6 +11,7 @@ namespace common\entities\mongo;
  * @property int $status;
  * @property int $date_delivered;
  * @property int $date_viewed;
+ * @property string $msg_id;
  * @property ViberMessage viberMessage
  * @property ViberTransaction viberTransaction
  */
@@ -34,6 +35,7 @@ class Message_Phone_List extends ActiveRecord
     public $phone;
     public $date_delivered;
     public $date_viewed;
+    public $msg_id;
     public static $statusMessage=
         [
             self::QUEUED=>"Отправлено",
@@ -48,7 +50,7 @@ class Message_Phone_List extends ActiveRecord
 
     public function attributes()
     {
-        return ['_id','message_id','last_date_message','status','phone','date_viewed','date_delivered','transaction_id'];
+        return ['_id','message_id','last_date_message','status','phone','date_viewed','date_delivered','transaction_id','msg_id'];
     }
 
     public function attributeLabels()
@@ -61,7 +63,8 @@ class Message_Phone_List extends ActiveRecord
             'phone'=> 'Телефоны',
             'date_viewed'=>'Дата просмотра',
             'date_delivered'=>'Дата доставки',
-            'transaction_id'=> 'Транзанкция'
+            'transaction_id'=> 'Транзанкция',
+            'msg_id'=>'id сообщения в вайбере'
         ];
     }
 
