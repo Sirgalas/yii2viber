@@ -147,18 +147,21 @@ class ViberTransaction extends \yii\db\ActiveRecord
                 if ($vb_Note->type == 'delivered') {
                     $this->delivered += 1;
                     $phone['status'] = 'delivered';
+                    $phone['date_delivered'] =time();
                     $changed = true;
                 }
                 if ($vb_Note->type == 'seen') {
                     $this->delivered += 1;
                     $this->viewed += 1;
                     $phone['status'] = 'viewed';
+                    $phone['date_viewed'] =time();
                     $changed = true;
                 }
             } elseif ($phone['status'] === 'delivered') {
                 if ($vb_Note->type == 'seen') {
                     $this->viewed += 1;
                     $phone['status'] = 'viewed';
+                    $phone['date_viewed'] =time();
                     $changed = true;
                 }
             }
