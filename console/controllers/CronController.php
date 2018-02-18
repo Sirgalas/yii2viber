@@ -1,0 +1,48 @@
+<?php
+
+namespace console\controllers;
+
+
+use yii\console\Controller;
+use Yii;
+use common\components\Viber;
+use common\entities\ViberMessage;
+
+class CronController extends Controller
+{
+
+    const VIBER_TIME_LIMIT =10;
+    private $time_stop;
+
+    /**
+     * ViberCronHandler constructor.
+     *
+     */
+    public function __construct()
+    {
+        $this->time_stop = time() + self::VIBER_TIME_LIMIT;
+    }
+
+    public function actionViberQueueHandle(){
+        while ($this->time_stop > time()){
+            $vm='';
+            $vm = ViberMessage::find()->isProcess()->one();
+
+            if (!$vm){
+                echo " Vm for process not found\n";
+                $vm = ViberMessage::find()->isNew()->one();
+                if (!$vm){
+                    echo 'Нечего отправлять!';
+                    return;
+                }
+                $v=new Viber($vm);
+                $v->prepareTransaction();
+            }
+            if ($vm){
+                $v=new Viber($vm);
+                $v->sendMessage();
+            }
+            sleep(Yii::$app->params['viber']['min_delay']);
+        }
+    }
+}
