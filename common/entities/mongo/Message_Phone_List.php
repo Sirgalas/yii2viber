@@ -4,14 +4,18 @@ namespace common\entities\mongo;
 /**
  * This is the model class for table "phone".
  *
- * @property string $_id
+ * @property string phone
  * @property int $message_id
+ * @property int $transaction_id
  * @property int $last_date_message
  * @property int $status;
- *
- * @property User $user
- * @property ViberMessage $currentMessage
+ * @property int $date_delivered;
+ * @property int $date_viewed;
+ * @property ViberMessage viberMessage
+ * @property ViberTransaction viberTransaction
  */
+use common\entities\ViberMessage;
+use common\entities\ViberTransaction;
 use yii\mongodb\ActiveRecord;
 
 
@@ -26,8 +30,10 @@ class Message_Phone_List extends ActiveRecord
     public $message_id;
     public $last_date_message;
     public $status;
+    public $transaction_id;
     public $phone;
-
+    public $date_delivered;
+    public $date_viewed;
     public static $statusMessage=
         [
             self::QUEUED=>"Отправлено",
@@ -42,24 +48,21 @@ class Message_Phone_List extends ActiveRecord
 
     public function attributes()
     {
-        return ['_id','message_id','last_date_message','status','phone'];
+        return ['_id','message_id','last_date_message','status','phone','date_viewed','date_delivered','transaction_id'];
     }
 
     public function attributeLabels()
     {
         return [
             '_id' => 'ID',
-            'message_id' => 'ID рассылки',
+            'message_id' => 'Рассылка',
             'last_date_message' => 'Дата рассылки',
             'status' => 'Статус рассылки',
+            'phone'=> 'Телефоны',
+            'date_viewed'=>'Дата просмотра',
+            'date_delivered'=>'Дата доставки',
+            'transaction_id'=> 'Транзанкция'
         ];
-    }
-
-    public static function createMessagePhoneList(int $message_id,int $last_date_message, int $status){
-        $messagePhoneList = new static();
-        $messagePhoneList->message_id=$message_id;
-        $messagePhoneList->last_date_message=$last_date_message;
-        $messagePhoneList->status=$status;
     }
 
     public function getStatus(){
@@ -74,5 +77,11 @@ class Message_Phone_List extends ActiveRecord
     }
     public function isRead(){
         return $this->status==self::READ;
+    }
+    public function getViberMessage(){
+        return $this->hasMany(ViberMessage::className(),['id'=>'message_id']);
+    }
+    public function getViberTransaction(){
+        return $this->hasMany(ViberTransaction::className(),['id'=>'transaction_id']);
     }
 }
