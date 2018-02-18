@@ -5,9 +5,16 @@ namespace common\entities\mongo;
  * This is the model class for table "phone".
  *
  * @property string $_id
+ * @property string phone
  * @property int $message_id
+ * @property int $transaction_id
  * @property int $last_date_message
  * @property int $status;
+ * @property int $date_delivered;
+ * @property int $date_viewed;
+ * @property string $msg_id;
+ *
+ *
  *
  * @property User $user
  * @property ViberMessage $currentMessage
@@ -39,7 +46,12 @@ class Message_Phone_List
 
     public function attributes()
     {
-        return ['_id','message_id','last_date_message','status','phone'];
+        return [
+            '_id','message_id', 'transaction_id',
+            'last_date_message',
+            'status','phone',
+            'date_delivered' , 'date_viewed','msg_id'
+        ];
     }
 
     public function attributeLabels()
@@ -52,7 +64,8 @@ class Message_Phone_List
         ];
     }
 
-    public static function createMessagePhoneList(int $message_id,int $last_date_message, int $status){
+    public static function createMessagePhoneList(
+        int $message_id,int $last_date_message, int $status){
         $messagePhoneList = new static();
         $messagePhoneList->message_id=$message_id;
         $messagePhoneList->last_date_message=$last_date_message;
