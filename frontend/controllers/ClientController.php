@@ -146,17 +146,14 @@ class ClientController extends Controller
         $db=Yii::$app->db;
         $transaction = $db->beginTransaction();
         try {
-
-
             $edidableIndex= $_POST['editableIndex'];
             $paramName = "client-$edidableIndex-balance-disp";
             $value=$_POST['Client'][$edidableIndex]['balance'] ;
-
             $diff = $user->balance - 1*$value;
             $user->balance = $value;
             Yii::$app->user->identity->balance +=$diff;
-
-                $user->save();
+                if(!$user->save())
+                    throw new \Exception(json_encode($user->getErrors()));
 
             if ($user->id !== Yii::$app->user->id ) {
                 Yii::$app->user->identity->save();
@@ -170,11 +167,13 @@ class ClientController extends Controller
     }
 
     public function actionWantDealer(){
-        if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){
+        if(!Yii::$app->user->isGuest&&Yii::$app->user->identity->isClient()){
             $user=User::findOne(Yii::$app->user->identity->id);
-
-                $dealer = User::findOne(Yii::$app->user->identity->dealer_id);
-
+            if(Yii::$app->user->identity->dealer_id)
+                $id=Yii::$app->user->identity->dealer_id;
+            else
+                $id=Yii::$app->params['defaultDealer'];
+            $dealer = User::findOne($id);
             $user->want_dealer=User::WANT;
             try{
                 if(!$user->save())

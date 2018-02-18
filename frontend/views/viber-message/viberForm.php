@@ -66,19 +66,22 @@ use kartik\datetime\DateTimePicker;
                 'maxlength' => true,
             ])?>
             <?php
-            echo $form->field($model, 'assign_collections')->widget(Select2::classname(), [
-                'data' => $contact_collections,
-                'maintainOrder' => true,
-                'options' => [
-                    'placeholder' => 'Выберите коллекции ...',
-                    'multiple' => true,
-                ],
-                'pluginOptions' => [
-                    'tags' => true,
-                    'maximumInputLength' => 10,
-                ],
-                "pluginEvents" => [
-                    "change" => "function(e) {
+            if ($model->isNewRecord){
+                echo '<h3>Будет доступно после сохранения рассылки</h3>';
+            } else {
+                echo $form->field($model, 'assign_collections')->widget(Select2::classname(), [
+                    'data' => $contact_collections,
+                    'maintainOrder' => true,
+                    'options' => [
+                        'placeholder' => 'Выберите коллекции ...',
+                        'multiple' => true,
+                    ],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'maximumInputLength' => 10,
+                    ],
+                    "pluginEvents" => [
+                        "change" => "function(e) {
                         var cost = $(this).val();
                         var id= $('.viber-test-message-form').data('id');
                         $.ajax(
@@ -110,9 +113,9 @@ use kartik\datetime\DateTimePicker;
                                 },
                             });
                     }",
-                ],
-            ]);
-
+                    ],
+                ]);
+            }
             ?>
             <?=$form->field($model, 'date_start')->widget(DatePicker::classname(), [
                 'options' => ['placeholder' => 'Дата отправки'],

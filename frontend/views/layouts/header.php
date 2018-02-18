@@ -160,7 +160,7 @@ if (Yii::$app->user->isGuest){
                     ?>
                 </li>
                 <li class="dropdown tasks-menu">
-                    <?php if(is_object(Yii::$app->user->identity)&&Yii::$app->user->identity->isClient()){ ?>
+                    <?php if(!Yii::$app->user->isGuest){ ?>
                        <?= Html::a('Хочу стать дилером', Url::to(['/client/want-dealer'])); ?>
                     <?php } ?>
                 </li>

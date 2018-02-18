@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'id',
         [
             'attribute' => 'username',
+            'header'=>'Клиент',
             'value' => 'user.username',
         ],
         'title',

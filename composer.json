@@ -33,7 +33,9 @@
         "kartik-v/yii2-widget-fileinput": "@dev",
         "kartik-v/yii2-money": "dev-master",
         "insolita/yii2-migration-generator": "~2.3",
-        "phpoffice/phpspreadsheet": "^1.1"
+        "phpoffice/phpspreadsheet": "^1.1",
+        "kartik-v/yii2-widget-datepicker": "@dev",
+        "kartik-v/yii2-field-range": "*"
 
     },
     "require-dev": {
