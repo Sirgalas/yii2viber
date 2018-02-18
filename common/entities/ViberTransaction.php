@@ -2,8 +2,10 @@
 
 namespace common\entities;
 
+use frontend\forms\ViberNotification;
 use Yii;
 use common\entities\user\User;
+
 /**
  * This is the model class for table "viber_transaction".
  *
@@ -12,7 +14,9 @@ use common\entities\user\User;
  * @property int $viber_message_id
  * @property string $status
  * @property int $created_at
+ * @property int $date_send
  * @property int $delivered
+ * @property int $size
  * @property int $viewed
  * @property string $phones
  *
@@ -64,11 +68,23 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return [
             [['user_id', 'viber_message_id', 'status', 'created_at'], 'required'],
             [['user_id', 'viber_message_id', 'created_at', 'delivered', 'viewed'], 'default', 'value' => null],
-            [['user_id', 'viber_message_id', 'created_at', 'delivered', 'viewed'], 'integer'],
+            [['user_id', 'viber_message_id', 'size', 'created_at','date_send', 'delivered', 'viewed'], 'integer'],
             [['phones'], 'string'],
             [['status'], 'string', 'max' => 60],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-            [['viber_message_id'], 'exist', 'skipOnError' => true, 'targetClass' => ViberMessage::className(), 'targetAttribute' => ['viber_message_id' => 'id']],
+            [
+                ['user_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => User::className(),
+                'targetAttribute' => ['user_id' => 'id'],
+            ],
+            [
+                ['viber_message_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => ViberMessage::className(),
+                'targetAttribute' => ['viber_message_id' => 'id'],
+            ],
         ];
     }
 
@@ -114,8 +130,53 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return new ViberTransactionQuery(get_called_class());
     }
 
-    public function getPhonesArray(){
-        return (array)\GuzzleHttp\json_decode($this->phones);
+    public function getPhonesArray()
+    {
+        return (array)\GuzzleHttp\json_decode($this->phones,true);
+    }
+
+    public function handleViberNotification(ViberNotification $vb_Note)
+    {
+        $phonesArray = $this->getPhonesArray();
+        $changed = false;
+        print_r($phonesArray) ;
+        if (array_key_exists($vb_Note->msg_id, $phonesArray)) {
+            $phone = $phonesArray[$phonesArray[$vb_Note->msg_id]];
+            $changed = false;
+            if ($phone['status'] === 'new' || $phone['status'] === 'sended') {
+                if ($vb_Note->type == 'delivered') {
+                    $this->delivered += 1;
+                    $phone['status'] = 'delivered';
+                    $phone['date_delivered'] =time();
+                    $changed = true;
+                }
+                if ($vb_Note->type == 'seen') {
+                    $this->delivered += 1;
+                    $this->viewed += 1;
+                    $phone['status'] = 'viewed';
+                    $phone['date_viewed'] =time();
+                    $changed = true;
+                }
+            } elseif ($phone['status'] === 'delivered') {
+                if ($vb_Note->type == 'seen') {
+                    $this->viewed += 1;
+                    $phone['status'] = 'viewed';
+                    $phone['date_viewed'] =time();
+                    $changed = true;
+                }
+            }
+        }
+        if ($changed) {
+            if ($this->delivered >=$this->size && $this->status == 'new'){
+                $this->status='delivered';
+            }
+            if ($this->viewed >=$this->size && $this->status != 'ready'){
+                $this->status='ready';
+            }
+            $phonesArray[$phonesArray[$vb_Note->msg_id]] = $phone;
+            $this->phones = \GuzzleHttp\json_encode($phonesArray);
+            $this->save();
+        }
     }
 
     public function Phone($json){

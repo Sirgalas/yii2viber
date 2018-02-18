@@ -82,7 +82,7 @@ class Viber
         if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
             return;
         }
-        $from = Yii::$app->params['viber']['from'];
+        $from = $this->viber_message->alpha_name;
         $viber_transaction = ViberTransaction::find()->isNew($this->viber_message->id)->one();
 
         if (!$viber_transaction){
@@ -126,7 +126,7 @@ class Viber
             $encoded .= urlencode('button_text').'='.urlencode($this->viber_message->title_button).'&';
             $encoded .= urlencode('button_link').'='.urlencode($this->viber_message->url_button).'&';
         }
-        $encoded .= urlencode('p_transaction_id').'=t2_'. $viber_transaction->id .'&';
+        $encoded .= urlencode('p_transaction_id'). '=' . $viber_transaction->id .'&';
         $encoded .= urlencode('dlr').'=1&';
         $encoded .= urlencode('dlr_timeout').'=360&';
 
@@ -140,12 +140,11 @@ class Viber
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
 
         $result = curl_exec($ch);
-        curl_close($ch);
+        //curl_close($ch);
         //echo '===============================';
-        //print_r($result);
-
         if ($this->parseSendResult($result, $phonesArray)) {
-            $viber_transaction->phones = \GuzzleHttp\json_encode($phonesArray);
+            $viber_transaction->date_send = time();
+            $viber_transaction->phones = \GuzzleHttp\json_encode($this->phones);
             $viber_transaction->status = 'sended';
             $viber_transaction->save();
         } else {
@@ -158,6 +157,11 @@ class Viber
 
     }
 
+    /**
+     * @param $xml
+     * @param $phonesArray
+     * @return bool
+     */
     private function parseSendResult($xml, $phonesArray){
         if (is_string($xml)) {
             $xml = simplexml_load_string($xml);
@@ -171,19 +175,28 @@ class Viber
                 $attr=$msg->attributes();
                 $phone =  $attr['phone'];
                 $msg = ((string)$msg);
-                $phonesArray['' . $phone] = ['status'=>'sended', 'msg_id'=>$msg];
+                $phonesArray['' . $phone] = ['status'=>'sended'];
+                $phonesArray['' . $msg ] ='' . $phone;
             }
+            $this->phones =$phonesArray;
+
             return true;
         } else {
             echo 'error' . $xml->tech_message;
+            return false;
         }
     }
+
+    /**
+     * @param array $phones
+     */
     private function saveNewTransaction(array $phones)
     {
         $tVM = new ViberTransaction([
             'user_id' => $this->viber_message->user_id,
             'viber_message_id' => $this->viber_message->id,
             'status' => 'new',
+            'size'=>count($phones),
             'created_at' => time(),
             'phones' => \GuzzleHttp\json_encode($phones)]);
         $tVM->save();
