@@ -12,8 +12,10 @@ namespace common\entities\mongo;
  * @property User $user
  * @property ViberMessage $currentMessage
  */
+use yii\mongodb\ActiveRecord;
 
-class Message_Phone_List
+
+class Message_Phone_List extends ActiveRecord
 {
 
     const QUEUED = 0;
@@ -24,6 +26,7 @@ class Message_Phone_List
     public $message_id;
     public $last_date_message;
     public $status;
+    public $phone;
 
     public static $statusMessage=
         [
