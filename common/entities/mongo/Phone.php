@@ -271,15 +271,12 @@ class Phone extends ActiveRecord
     }
 
     private function saveDate($data){
-        $transaction =  Yii::$app->db->beginTransaction();
         try {
             if(empty($data))
                 throw new \Exception(Yii::t('front','Not new user'));
             if(!Yii::$app->mongodb->getCollection('phone')->batchInsert($data))
                 throw new \Exception('not save');
-            $transaction->commit();
         } catch (\Exception $e) {
-            $transaction->rollBack();
             return $e->getMessage();
         }
         return 'ok';

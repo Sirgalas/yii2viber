@@ -23,16 +23,18 @@ use yii\mongodb\ActiveRecord;
 class Message_Phone_List extends ActiveRecord
 {
 
-    const QUEUED = 0;
-    const POSTED = 1;
-    const READ = 2;
+    const NEW='new';
+    const SENDED = 'ended';
+    const DELIVERED = 'delivered';
+    const VIEWED = 'viewed';
 
 
     public static $statusMessage=
         [
-            self::QUEUED=>"Отправлено",
-            self::POSTED=>"Получено",
-            self::READ=>"Прочитано",
+            self::NEW=>'Новое',
+            self::SENDED=>"Отправлено",
+            self::DELIVERED=>"Получено",
+            self::VIEWED=>"Прочитано",
         ];
 
     public static function collectionName()
@@ -64,14 +66,17 @@ class Message_Phone_List extends ActiveRecord
         return self::$statusMessage[$this->status];
     }
 
-    public function isQueued(){
-        return $this->status==self::QUEUED;
+    public function isNew(){
+        return $this->status==self::NEW;
     }
-    public function isPosted(){
-        return $this->status==self::POSTED;
+    public function isSended(){
+        return $this->status==self::SENDED;
     }
-    public function isRead(){
-        return $this->status==self::READ;
+    public function isDelivered(){
+        return $this->status==self::DELIVERED;
+    }
+    public function isViewed(){
+        return $this->status=self::VIEWED;
     }
     public function getViberMessage(){
         return $this->hasMany(ViberMessage::className(),['id'=>'message_id']);
