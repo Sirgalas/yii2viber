@@ -25,7 +25,7 @@ class Message_Phone_List extends ActiveRecord
 
     const NEW='new';
     const SENDED = 'ended';
-    const DELIVERED = 'delevired';
+    const DELIVERED = 'delivered';
     const VIEWED = 'viewed';
 
     public $_id;
