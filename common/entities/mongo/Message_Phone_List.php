@@ -27,15 +27,7 @@ class Message_Phone_List extends ActiveRecord
     const POSTED = 1;
     const READ = 2;
 
-    public $_id;
-    public $message_id;
-    public $last_date_message;
-    public $status;
-    public $transaction_id;
-    public $phone;
-    public $date_delivered;
-    public $date_viewed;
-    public $msg_id;
+
     public static $statusMessage=
         [
             self::QUEUED=>"Отправлено",

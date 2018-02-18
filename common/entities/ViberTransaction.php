@@ -27,24 +27,29 @@ use common\entities\user\User;
  */
 class ViberTransaction extends \yii\db\ActiveRecord
 {
-
     public $titleSearch;
+
     public $contactCollection;
-    public $status;
+
     public $dateFrom;
+
     public $dateTo;
 
-    const NEWSEND='new';
-    const SENDED='sended';
-    const DELIVERED='delevired';
-    const  VIEWED='viewed';
+    const NEWSEND = 'new';
+
+    const SENDED = 'sended';
+
+    const DELIVERED = 'delivered';
+
+    const  VIEWED = 'viewed';
 
     public static $statusSend = [
-        self::NEWSEND=>'Новое',
-        self::SENDED=>'Отправленно',
-        self::DELIVERED=>'Доставлено',
-        self::VIEWED=>'Просмотрено',
+        self::NEWSEND => 'Новое',
+        self::SENDED => 'Отправленно',
+        self::DELIVERED => 'Доставлено',
+        self::VIEWED => 'Просмотрено',
     ];
+
     /**
      * @inheritdoc
      */
@@ -54,14 +59,16 @@ class ViberTransaction extends \yii\db\ActiveRecord
     }
 
     const SCENARIO_SEARCH = 'search';
+
     public function scenarios()
     {
         $scenarios = parent::scenarios();
         $scenarios[self::SCENARIO_SEARCH] = [];
+
         return $scenarios;
     }
-        //new =>new
-        //
+    //new =>new
+    //
     /**
      * @inheritdoc
      */
@@ -70,7 +77,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return [
             [['user_id', 'viber_message_id', 'status', 'created_at'], 'required'],
             [['user_id', 'viber_message_id', 'created_at', 'delivered', 'viewed'], 'default', 'value' => null],
-            [['user_id', 'viber_message_id', 'size', 'created_at','date_send', 'delivered', 'viewed'], 'integer'],
+            [['user_id', 'viber_message_id', 'size', 'created_at', 'date_send', 'delivered', 'viewed'], 'integer'],
             [['phones'], 'string'],
             [['status'], 'string', 'max' => 60],
             [
@@ -134,59 +141,57 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     public function getPhonesArray()
     {
-        return (array)\GuzzleHttp\json_decode($this->phones,true);
+        return (array)\GuzzleHttp\json_decode($this->phones, true);
     }
 
     public function handleViberNotification(ViberNotification $vb_Note)
     {
-        $phonesArray = $this->getPhonesArray();
+        $phone = Message_Phone_List::find()->where(['msg_id' => $vb_Note->msg_id])->one();
+
         $changed = false;
-        print_r($phonesArray) ;
-        if (array_key_exists($vb_Note->msg_id, $phonesArray)) {
-            $phone = $phonesArray[$phonesArray[$vb_Note->msg_id]];
-            $changed = false;
-            if ($phone['status'] === 'new' || $phone['status'] === 'sended') {
-                if ($vb_Note->type == 'delivered') {
-                    $this->delivered += 1;
-                    $phone['status'] = 'delivered';
-                    $phone['date_delivered'] =time();
-                    $changed = true;
-                }
-                if ($vb_Note->type == 'seen') {
-                    $this->delivered += 1;
-                    $this->viewed += 1;
-                    $phone['status'] = 'viewed';
-                    $phone['date_viewed'] =time();
-                    $changed = true;
-                }
-            } elseif ($phone['status'] === 'delivered') {
-                if ($vb_Note->type == 'seen') {
-                    $this->viewed += 1;
-                    $phone['status'] = 'viewed';
-                    $phone['date_viewed'] =time();
-                    $changed = true;
-                }
+        if ($phone & $phone->status === 'new' || $phone->status === 'sended') {
+            if ($vb_Note->type == 'delivered') {
+                $this->delivered += 1;
+                $phone->status = 'delivered';
+                $phone->date_delivered = time();
+                $changed = true;
+            }
+            if ($vb_Note->type == 'seen') {
+                $this->delivered += 1;
+                $this->viewed += 1;
+                $phone->status = 'viewed';
+                $phone->date_viewed = time();
+                $changed = true;
+            }
+        } elseif ($phone['status'] === 'delivered') {
+            if ($vb_Note->type == 'seen') {
+                $this->viewed += 1;
+                $phone->status = 'viewed';
+                $phone->date_viewed = time();
+                $changed = true;
             }
         }
+
         if ($changed) {
-            if ($this->delivered >=$this->size && $this->status == 'new'){
-                $this->status='delivered';
+            if ($this->delivered >= $this->size && $this->status == 'new') {
+                $this->status = 'delivered';
             }
-            if ($this->viewed >=$this->size && $this->status != 'ready'){
-                $this->status='ready';
+            if ($this->viewed >= $this->size && $this->status != 'ready') {
+                $this->status = 'ready';
             }
-            $phonesArray[$phonesArray[$vb_Note->msg_id]] = $phone;
-            $this->phones = \GuzzleHttp\json_encode($phonesArray);
+            $phone->save();
             $this->save();
+
         }
     }
 
-    public function Phone($json){
+    public function Phone($json)
+    {
         return json_encode($json);
     }
-    
-    public function getMessagePhoneList(){
-        $this->hasMany(Message_Phone_List::className(),['transaction_id'=>'id']);
-    }
 
+    public function getMessagePhoneList()
+    {
+        $this->hasMany(Message_Phone_List::className(), ['transaction_id' => 'id']);
+    }
 }
