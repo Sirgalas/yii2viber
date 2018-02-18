@@ -78,7 +78,7 @@ class ViberTestForm extends Model
             [['time_start'], 'time', 'format' => 'php:H:i'],
             [['date_start'], 'date', 'format' => 'php:Y-m-d'],
             ['just_now', 'boolean'],
-            [['time_start'], 'compare', 'compareValue' => date('H:i'), 'operator' => '>=', 'type' => 'time'],
+
             [['date_start'], 'compare', 'compareValue' => date('Y-m-d'), 'operator' => '>=', 'type' => 'date'],
 
         ];

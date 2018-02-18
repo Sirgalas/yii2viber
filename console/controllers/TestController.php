@@ -4,12 +4,14 @@ namespace console\controllers;
 
 use common\entities\phone\Phone;
 use common\entities\user\User;
+use frontend\forms\ViberNotification;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use yii\console\Controller;
 use Yii;
 use common\components\Viber;
 use common\entities\ContactCollection;
 use common\entities\ViberMessage;
+use common\entities\ViberTransaction;
 use  common\services\ViberCronHandler;
 use yii\httpclient\XmlParser;
 
@@ -79,44 +81,23 @@ class TestController extends Controller
         $h->handle();
     }
 
-    public function actionXML(){
-        $xml="<response>
-<code>0</code>
-<tech_message>OK</tech_message>
-<msg_id phone=\"79135701037\">7a987f56-1158-11e8-bad9-fc05600af937</msg_id>
-
-</response>
-";
-
-
-        echo $xml;
-        Yii::info($xml,'Viber');exit;
-        try {
-
-            if (is_string($xml)) {
-
-                $xml = simplexml_load_string($xml);
+    public function actionVb()
+    {
+        $data = [
+            'p_transaction_id' => '102',
+            'sending_method' => 'viber',
+            'msg_id' => '76d8e8d4-1404-11e8-947b-d66ab06d7258',
+            'type' => 'seen',
+        ];
+        $vb_Note =new ViberNotification();
+        $vb_Note->load($data,'');
+        if ($vb_Note->validate()) {
+            $viber_transaction =  ViberTransaction::findOne($vb_Note->p_transaction_id);
+            if ($viber_transaction) {
+                $viber_transaction->handleViberNotification($vb_Note);
             }
-            echo "\ncode ",$xml->code;
-            echo "\ntech_message ",$xml->tech_message;
-             foreach ($xml->msg_id as $key => $msg){
-               echo "\n-------";
-
-             foreach ($msg->attributes() as $k=>$v){
-                 echo "\n aaa[$k] == $v \n";
-             };
-             $a=$msg->attributes();
-               echo $a['phone'];
-               echo((string)$msg);
-             }
-
-             //var_dump($xml->msg_id[1]);
-            echo '=====================';
-
-            return true;
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-            return false;
+        } else {
+            print_r($vb_Note->getErrors());
         }
     }
 }
