@@ -27,8 +27,8 @@ class StatisticsSearch extends ViberTransaction
     public function rules()
     {
         return [
-            [['user_id',  'created_at'], 'integer'],
-            [['status','titleSearch','contactCollection','status','dateFrom','dateTo','viberMessage'], 'safe'],
+            [['user_id'], 'integer'],
+            [['titleSearch','contactCollection','dateFrom','dateTo','viberMessage'], 'safe'],
         ];
     }
 

@@ -7,6 +7,7 @@
  */
 namespace app\models;
 
+use common\entities\ContactCollection;
 use yii\base\Model;
 use yii\web\UploadedFile;
 

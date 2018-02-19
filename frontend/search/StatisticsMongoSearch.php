@@ -21,13 +21,13 @@ class StatisticsMongoSearch extends Message_Phone_List
     /**
      * @inheritdoc
      */
-    public function rules()
+    /*public function rules()
     {
         return [
             [['date_viewed','date_delivered'], 'integer'],
             [['status','phone','message_id',], 'safe'],
         ];
-    }
+    }*/
 
     /**
      * @inheritdoc

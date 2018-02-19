@@ -122,6 +122,9 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function getTheStatus(){
+        return $this::$statusSend[$this->status];
+    }
     /**
      * @return \yii\db\ActiveQuery
      */

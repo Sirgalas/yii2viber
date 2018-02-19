@@ -2,17 +2,15 @@
 
 namespace frontend\controllers;
 
+use common\entities\ViberMessage;
 use common\entities\ViberTransaction;
-use frontend\entities\ReportSearch;
+use frontend\search\ReportSearch;
 use common\entities\ContactCollection;
-use frontend\entities\User;
 use yii\helpers\ArrayHelper;
-use common\entities\MessageContactCollection;
+use frontend\search\ReportMongoSearch;
 use Yii;
-use common\entities\mongo\Phone;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use yii\web\NotFoundHttpException;
 
 class ReportController extends Controller
 {
@@ -22,7 +20,7 @@ class ReportController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -33,34 +31,21 @@ class ReportController extends Controller
     public function actionIndex(){
         $model= new ViberTransaction();
         $searchModel = new ReportSearch();
-        $contact_collections = ContactCollection::find()->andWhere(['user_id' => Yii::$app->user->identity->id])->select([
-            'id',
-            'title',
-        ])->orderBy('title')->asArray()->all();
-        $contact_collections = ArrayHelper::map($contact_collections, 'id', 'title');
-        $clients=ArrayHelper::map(User::find()->select('id','username')->where(['dealer_id'=>Yii::$app->user->identity->id])->orderBy('username')->asArray()->all(),'id','username');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients'));
+        $contact_collections=ArrayHelper::map(ContactCollection::find()->select(['id','title'])->where(['user_id'=>Yii::$app->user->identity->id])->asArray()->all(),'id','title');
+        $status=$model::$statusSend;
+        $viberMessage=ArrayHelper::map(ViberMessage::find()->select(['id','title'])->where(['user_id'=>Yii::$app->user->identity->id])->asArray()->all(),'id','title');
+        return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','status','viberMessage'));
     }
 
 
-    public function actionViews($id)
+    public function actionList($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $searchModel = new ReportMongoSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('list', compact('searchModel','dataProvider'));
     }
 
    
-    public function actionCreateExel($id){
-            
-    }
-
-    private function findModel($id)
-    {
-        if (($model = Phone::find()->where(['_id' => $id])->one()) != null) {
-            return $model;
-        }
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
+    
 }

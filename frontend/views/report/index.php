@@ -5,9 +5,6 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
-use kartik\select2\Select2;
-use kartik\checkbox\CheckboxX;
 /* @var $this yii\web\View */
 /* @var $searchModel common\entities\user\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -19,47 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?=Html::encode($this->title)?></h1>
     <?php $form=ActiveForm::begin(); ?>
-    <?= $form->field($model,'titleSearh')->textInput(['placeholder'=>'Выбирите телефон или название рассылки'])->label(false) ?>
-    <div class="col-md-5 col-md-offset-1">
-        <?= DatePicker::widget([
-            'name' => 'ViberTransaction[dateFrom]',
-            'value' => date('d-M-Y',time()),
-            'type' => DatePicker::TYPE_RANGE,
-            'name2' => 'ViberTransaction[dateTo]',
-            'value2' => date('d-M-Y',time()),
-            'pluginOptions' => [
-                'autoclose'=>true,
-                'format' => 'dd-M-yyyy'
-            ]
-        ]);?>
-        <?= $form->field($model, 'contactCollection')->widget(Select2::classname(), [
-            'data' => $contact_collections,
-            'maintainOrder' => true,
-            'options' => [
-            'placeholder' => 'Выберите коллекции ...',
-            ],
-        ])->label(false); ?>
-        <?php if(!Yii::$app->user->identity->isClient()){
-            echo $form->field($model, 'user_id')->widget(Select2::classname(), [
-                'data' => $clients,
-                'maintainOrder' => true,
-                'options' => [
-                    'placeholder' => 'Выберите коллекции ...',
-                ],
-            ]);
-        }
-        ?>
-    </div>
-    <div class="col-md-5">
-        <?php echo '<label class="cbx-label" for="s_1">Доствлено</label>';
-        echo CheckboxX::widget([
-        'name'=>'ViberTransaction[status]',
-        'options'=>['id'=>'s_1'],
-        'pluginOptions'=>['threeState'=>false]
-        ]); ?>
-    </div>
-    <?php ActiveForm::end(); ?>
-    <?php Pjax::begin(); /*?>
+
+    <?php Pjax::begin(); ?>
 
     <?=GridView::widget([
         'dataProvider' => $dataProvider,
@@ -67,43 +25,65 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'class' => 'yii\grid\CheckboxColumn',
-                'checkboxOptions' => function ($model, $key, $index, $column) {
-                    return ['value' => $model->id];
+                'attribute'=>'viber_message_id',
+                'value'=>function($model){
+                    return $model->viberMessage->title;
                 },
-                'headerOptions' => ['width' => '40'],
+                'filterType' => GridView::FILTER_SELECT2,
+                'filter'     => $viberMessage,
+                'filterWidgetOptions'=>[
+                    'pluginOptions'=>['allowClear'=>true],
+                ],
+                'filterInputOptions'=>['placeholder'=>'Выбирите рассылку']
             ],
             [
-                'attribute' => 'id',
-                'headerOptions' => ['width' => '40'],
+                'attribute'=>'status',
+                'value'=>function($model){
+                    return $model->theStatus;
+                },
+                'filterType' => GridView::FILTER_SELECT2,
+                'filter'     => $status,
+                'filterWidgetOptions'=>[
+                    'pluginOptions'=>['allowClear'=>true],
+                ],
+                'filterInputOptions'=>['placeholder'=>'Выбирите рассылку']
             ],
-
-            //'user_id',
             [
-                'attribute' => 'title',
-
+                'attribute'=>'created_at',
+                'value'=>function($model){
+                    return date('d:m:Y',$model->created_at);
+                },
             ],
-            //'type',
             [
-                'attribute' => 'created_at',
-                'format' => 'date',
-                'headerOptions' => ['width' => '120'],
+                'attribute'=>'collection_id',
+                'format'=>'raw',
+                'value'=>function($model){
+                    foreach ($model->viberMessage->contactCollection as $contactCollection){
+                        $arrCollection[]=$contactCollection->title;
+                    }
+                    return implode(',</br>', $arrCollection);
+                },
+                'filterType' => GridView::FILTER_SELECT2,
+                'filter'     => $contact_collections,
+                'filterWidgetOptions'=>[
+                    'pluginOptions'=>['allowClear'=>true],
+                ],
+                'filterInputOptions'=>['placeholder'=>'Выбирите базу телефонов']
             ],
-
             [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['width' => '90'],
-                'template' => ' {update} {delete}{view}{list}',
+                'template' => ' {list}',
                 'buttons' => [
                     'list' => function ($url,$model) {
                         return Html::a(
-                            '<i class="fa fa-fw  fa-phone-square"></i>',
-                            $url);
+                            'Сформировать отчет',
+                            $url,['class'=>'btn btn-primary']);
                     },
 
                 ],
             ],
         ],
-    ]);*/?>
+    ]);?>
     <?php Pjax::end(); ?>
 </div>

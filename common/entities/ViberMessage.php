@@ -61,11 +61,20 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_PROCESS = 'process';
 
+    const STATUS_SENDED = 'sended';
+
     public static $types = [
         self::ONLYTEXT => 'Только текст (Официально)',
         self::ONLYIMAGE => 'Только изображение (Официально)',
         self::TEXTBUTTON => 'Текст + кнопка (Официально)',
         self::TEXTBUTTONIMAGE => 'Текст + кнопка + изображение (Официально)',
+    ];
+
+    public static $status = [
+        self::STATUS_NEW=>'Новое',
+        self::STATUS_READY=>'Готово',
+        self::STATUS_WAIT=>'Ожидает',
+        self::STATUS_PROCESS=>'В процессе',
     ];
 
     /**
@@ -117,7 +126,7 @@ class ViberMessage extends \yii\db\ActiveRecord
                 ['user_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => User::className(),
+                'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id'],
             ],
         ];
@@ -171,7 +180,7 @@ class ViberMessage extends \yii\db\ActiveRecord
      */
     public function getMessageContactCollections()
     {
-        return $this->hasMany(MessageContactCollection::className(), ['viber_message_id' => 'id']);
+        return $this->hasMany(MessageContactCollection::class, ['viber_message_id' => 'id']);
     }
 
     /**
@@ -179,7 +188,7 @@ class ViberMessage extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     /**

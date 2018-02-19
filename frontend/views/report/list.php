@@ -38,9 +38,17 @@ $defaultExportConfig = [
             'attribute'=>'created_at',
             'header'=>'Дата рассылки',
             'value'=> function($model){
-                
                 return date('d:m:Y',$model->viberTransaction->created_at);
-            }
+            },
+            'group'=>true,
+        ],
+        [
+            'attribute'=>'transaction_name',
+            'header'=>'название рассылки',
+            'value'=>function($model){
+                return $model->viberMessage->title;
+            },
+            'group'=>true,
         ],
         [
             'attribute'=>'phone',

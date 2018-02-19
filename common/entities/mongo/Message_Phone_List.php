@@ -41,6 +41,10 @@ class Message_Phone_List extends ActiveRecord
     {
         return 'message_phone_list';
     }
+    
+    public function getStatusMessage(){
+        return $this::$statusMessage[$this->status];
+    }
 
     public function attributes()
     {
