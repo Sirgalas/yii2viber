@@ -49,6 +49,9 @@ $defaultExportConfig = [
         [
             'attribute'=>'status',
             'header'=>'Статус',
+            'value'=>function($model){
+                return $model::$statusMessage[$model->status];
+            }
         ],
         [
             'attribute'=>'date_delivered',

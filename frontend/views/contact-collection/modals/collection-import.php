@@ -17,7 +17,7 @@ use yii\helpers\Html;
             </div>
             <?php $form = ActiveForm::begin(['action'=>Url::to('/contact-collection/import-collection'),'options' => ['enctype' => 'multipart/form-data']]); ?>
             <div class="col-md-12 col-md-ofsset-1">
-                <?= $form->field($contactForm,'collection_id')->widget(Select2::classname(), [
+                <?= $form->field($contactForm,'collection_id')->widget(Select2::class(), [
                     'data' => $contactCollection,
                     'language' => 'ru',
                     'options' => ['placeholder' => 'Выбирите коллекцию'],

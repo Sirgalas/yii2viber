@@ -50,6 +50,30 @@ $defaultExportConfig = [
             }
         ],
         [
+            'attribute'=>'status',
+            'header'=>'Статус',
+            'format'=>'raw',
+            'value'=>function($model){
+                return $model->Status();
+            }
+        ],
+        [
+            'attribute'=>'dateDelivery',
+            'header'=>'Дата доставки',
+            'format'=>'raw',
+            'value'=>function($model){
+                return $model->DateDelivery();
+            }
+        ],
+        [
+            'attribute'=>'dateViewed',
+            'header'=>'Дата просмотра',
+            'format'=>'raw',
+            'value'=>function($model){
+                return $model->DateViewed();
+            }
+        ],
+        [
             'attribute'=>'viber_message_id',
             'header'=>'Текст',
             'value'=>function($model){

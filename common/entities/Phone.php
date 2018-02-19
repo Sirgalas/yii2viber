@@ -41,14 +41,14 @@ class Phone extends \yii\db\ActiveRecord
                 ['contact_collection_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => ContactCollection::className(),
+                'targetClass' => ContactCollection::class,
                 'targetAttribute' => ['contact_collection_id' => 'id'],
             ],
             [
                 ['user_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => User::className(),
+                'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id'],
             ],
         ];
@@ -73,7 +73,7 @@ class Phone extends \yii\db\ActiveRecord
      */
     public function getContactCollection()
     {
-        return $this->hasOne(ContactCollection::className(), ['id' => 'contact_collection_id']);
+        return $this->hasOne(ContactCollection::class, ['id' => 'contact_collection_id']);
     }
 
     /**

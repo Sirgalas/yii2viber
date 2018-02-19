@@ -8,6 +8,9 @@
 
 namespace common\entities\user;
 
+use common\entities\ContactCollection;
+use common\entities\Phone;
+use common\entities\ViberMessage;
 use dektrium\user\models\User as BaseUser;
 use Yii;
 /**
@@ -199,7 +202,7 @@ class User extends BaseUser
      */
     public function getContactCollections()
     {
-        return $this->hasMany(ContactCollection::className(), ['user_id' => 'id']);
+        return $this->hasMany(ContactCollection::class, ['user_id' => 'id']);
     }
 
     /**
@@ -207,7 +210,7 @@ class User extends BaseUser
      */
     public function getPhones()
     {
-        return $this->hasMany(Phone::className(), ['user_id' => 'id']);
+        return $this->hasMany(Phone::class, ['user_id' => 'id']);
     }
 
     /**
@@ -215,7 +218,7 @@ class User extends BaseUser
      */
     public function getViberMessages()
     {
-        return $this->hasMany(ViberMessage::className(), ['user_id' => 'id']);
+        return $this->hasMany(ViberMessage::class, ['user_id' => 'id']);
     }
 
     /**
@@ -234,6 +237,6 @@ class User extends BaseUser
     }
 
     public function headerInfo(){
-        return $this->username . '( ' . number_format($this->balance) .  ' SMS )';
+        return 'Ваш баланс ( ' . number_format($this->balance) .  ' SMS )';
     }
 }

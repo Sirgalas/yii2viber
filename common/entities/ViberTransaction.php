@@ -84,14 +84,14 @@ class ViberTransaction extends \yii\db\ActiveRecord
                 ['user_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => User::className(),
+                'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id'],
             ],
             [
                 ['viber_message_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => ViberMessage::className(),
+                'targetClass' => ViberMessage::class,
                 'targetAttribute' => ['viber_message_id' => 'id'],
             ],
         ];
@@ -119,7 +119,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     /**
@@ -127,7 +127,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
      */
     public function getViberMessage()
     {
-        return $this->hasOne(ViberMessage::className(), ['id' => 'viber_message_id']);
+        return $this->hasOne(ViberMessage::class, ['id' => 'viber_message_id']);
     }
 
     /**
@@ -197,17 +197,34 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function Phone()
     {
        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
-        foreach ($phoneList as $messagePhoneList){
-            if(isset($messagePhoneList->date_delivered))
-                $phone[]='телефон: <strong>'.$messagePhoneList->phone.'</strong> статус <strong>'.$messagePhoneList::$statusMessage[$messagePhoneList->status].'</strong> время доставки <strong>'.date('d:m:Y',$messagePhoneList->date_delivered).'</strong>';
-            else
-                $phone[]='телефон: <strong>'.$messagePhoneList->phone.'</strong> статус <strong>'.$messagePhoneList::$statusMessage[$messagePhoneList->status].'</strong> время доставки <strong>сообшение не доставлено</strong>';
-        }
-        return implode(',</br>',$phone);;
+        foreach ($phoneList as $messagePhoneList)
+                $phone[]=$messagePhoneList->phone;
+        return implode(',</br>',$phone);
     }
 
+    public function Status(){
+        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
+        foreach ($phoneList as $messagePhoneList)
+            $status[]=$messagePhoneList::$statusMessage[$messagePhoneList->status];
+        return implode(',</br>',$status);
+    }
+    
+    public function DateDelivery(){
+        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
+        foreach ($phoneList as $messagePhoneList)
+            $date_delivered[]=($messagePhoneList->date_delivered)?date('d:m:Y',$messagePhoneList->date_delivered):'не доставлено';
+        return implode(',</br>',$date_delivered);
+    }
+    
+    public function DateViewed(){
+        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
+        foreach ($phoneList as $messagePhoneList)
+            $date_viewed[]=($messagePhoneList->date_viewed)?date('d:m:Y',$messagePhoneList->date_viewed):'Не просмотрено';
+        return implode(',</br>',$date_viewed);
+    }
+    
     public function getMessagePhoneList()
     {
-        $this->hasMany(Message_Phone_List::className(), ['transaction_id' => 'id']);
+        $this->hasMany(Message_Phone_List::class, ['transaction_id' => 'id']);
     }
 }

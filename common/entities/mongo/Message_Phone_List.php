@@ -79,9 +79,9 @@ class Message_Phone_List extends ActiveRecord
         return $this->status=self::VIEWED;
     }
     public function getViberMessage(){
-        return $this->hasOne(ViberMessage::className(),['id'=>'message_id']);
+        return $this->hasOne(ViberMessage::class,['id'=>'message_id']);
     }
     public function getViberTransaction(){
-        return $this->hasOne(ViberTransaction::className(),['id'=>'transaction_id']);
+        return $this->hasOne(ViberTransaction::class,['id'=>'transaction_id']);
     }
 }
