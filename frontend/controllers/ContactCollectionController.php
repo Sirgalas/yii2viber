@@ -217,4 +217,32 @@ class ContactCollectionController extends Controller
             }
         }
     }
+
+    public function actionExport($id)
+    {
+        $this->layout='';
+        $blockSize=4;
+        $collection = ContactCollection::findOne($id);
+        if (! Yii::$app->user->identity->amParent($collection->user_id) && Yii::$app->user->id != $collection->user_id) {
+            throw new NotFoundHttpException('Этот пользователь вам не принадлежит', 403);
+        }
+        header('Content-type: text/csv');
+        header('Content-Disposition: attachment; filename="export_' . date('Ymd_H') . '_Phone_list.csv"');
+        $position=0;
+        while(true){
+            $data='';
+            $phones = Phone::find()->where(['contact_collection_id'=>$id])
+                ->asArray()->limit($blockSize)->offset($position)->all();
+            if (count($phones) == 0){
+                break;
+            }
+            foreach ($phones as $phone){
+                $data .= $phone['phone'] . "\r\n";
+
+            }
+            echo iconv('utf-8', 'windows-1251', $data); //Если вдруг в Windows будут кракозябры
+            $position += $blockSize;
+        }
+        return '';
+    }
 }

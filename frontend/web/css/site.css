@@ -166,65 +166,71 @@ aside .sidebar-menu > li > a {
 .skin-blue .content-wrapper {
     background-color: #fff;
 }
+
 .skin-blue .content-header {
 
     padding-top: 0;
 }
-.block-header{
+
+.block-header {
     background: #d2d6de;
     background-color: #d2d6de;
     font-size: 22px;
     padding: 5px 10px;
 }
-.viber-test-message-form label{
+
+.viber-test-message-form label {
     padding: 12px 0 10px;
     font-size: 20px;
     font-weight: normal;
 }
 
-.viber-test-message-form select.form-control{
+.viber-test-message-form select.form-control {
     font-size: 18px;
     padding-top: 0;
 }
-.viber-test-message-form .form-control{
+
+.viber-test-message-form .form-control {
     font-size: 18px;
 }
-.viber-test-message-form input.form-control{
+
+.viber-test-message-form input.form-control {
     height: 30px;
 }
-.labelLess{
+
+.labelLess {
     margin: 12px 0 10px;
 
 }
 
-.viber-test-message-form div.cbx-container > div > span > i{
+.viber-test-message-form div.cbx-container > div > span > i {
     color: #45be5f;
 }
 
-.block-header .small{
+.block-header .small {
     font-size: 12px;
 }
 
-.main-sidebar .sidebar{
+.main-sidebar .sidebar {
     padding-bottom: 250px;
 }
 
-.dealer_widget{
+.dealer_widget {
     color: #fff;
     position: absolute;
     bottom: 5px;
 }
 
-.wrapper .main-footer{
+.wrapper .main-footer {
     background: #3C8DBC;
     color: #fff;
 }
 
-.wrapper .main-footer a,.wrapper .main-footer a:hover{
+.wrapper .main-footer a, .wrapper .main-footer a:hover {
     color: #fff;
 }
 
-#vibertransaction-titlesearh{
+#vibertransaction-titlesearh {
     height: 40px;
     border-radius: 10px;
     font-weight: bolder;
@@ -232,6 +238,16 @@ aside .sidebar-menu > li > a {
     padding-left: 50px;
     background-size: 35px;
 }
-.form-group.bottom-center{
+
+.form-group.bottom-center {
     text-align: center;
+}
+
+#remaining_text {
+    position: absolute;
+    bottom: 28px;
+    right: 36px;
+    font-size: 29px;
+    opacity: .3;
+    font-weight: bold;
 }

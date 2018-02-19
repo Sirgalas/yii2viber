@@ -27,6 +27,8 @@ use common\entities\mongo\Phone;
  * @property string $time_start
  * @property string $time_finish
  * @property string $status
+ * @property string $message_type
+ * @property string $dlr_timeout
  * @property int $limit_messages Сколько сообщений отправлять?
  * @property string $cost Стоимость
  * @property string $balance Сколько средств уже потрачено
@@ -84,11 +86,12 @@ class ViberMessage extends \yii\db\ActiveRecord
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
             [['user_id', 'limit_messages'], 'integer'],
+            [ 'dlr_timeout', 'integer', 'max'=>86400 , 'min'=>0],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
             ['viber_image_id', 'string'],
             [['title'], 'string', 'max' => 50],
-            [['text'], 'string', 'max' => 120],
+            [['text'], 'string', 'max' => 1000],
             [['image', 'url_button'], 'string', 'max' => 255],
             [
                 ['upload_file'],
@@ -97,7 +100,7 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'extensions' => 'jpg, png, gif',
                 'mimeTypes' => 'image/jpeg, image/png',
             ],
-            [['title_button', 'alpha_name'], 'string', 'max' => 32],
+            [['title_button', 'alpha_name'], 'string', 'max' => 25],
             ['just_now', 'boolean'],
             ['type', 'in', 'range' => array_keys(static::listTypes())],
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
@@ -113,6 +116,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range' => ['new', 'ready', 'wait', 'process']],
+            ['message_type', 'in', 'range' => ['Реклама', 'Информация']],
             [
                 ['user_id'],
                 'exist',
@@ -153,6 +157,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             'balance' => 'Баланс',
             'viber_image_id' => 'Ид изображения в Viber',
             'assign_collections' => 'Выбрать базы для рассылки',
+            'dlr_timeout'=>'Время в секундах, в течение которого интересует доставка сообщения'
         ];
     }
 
