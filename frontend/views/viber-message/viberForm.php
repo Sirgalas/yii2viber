@@ -14,7 +14,11 @@ use kartik\datetime\DateTimePicker;
 /* @var $form yii\widgets\ActiveForm */
 /*  @var array $contact_collections */
 /* @var array $assign_collections */
+$this->registerJsFile('/js/jquery.toggleinput.js',    ['depends' => [\yii\web\JqueryAsset::className()]]);
+$this->registerCssFile('/css/jquery.toggleinput.css ');
+
 ?>
+
 
     <div class="viber-test-message-form row " data-id="<?=$model->id?>">
         <div class="col-xs-12">
@@ -31,14 +35,30 @@ use kartik\datetime\DateTimePicker;
                 </div>
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
+
+
+
+                <div class="form-group radio-toggle" style="display: none">
+                    <label class="control-label" for="field_type">Назначение сообщения</label>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="ViberMessage[message_type]" id="exampleRadios1" value="Реклама" <?= $model->message_type !='Информация'?'checked':''?>>
+                            Реклама
+                        </label>
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="ViberMessage[message_type]" id="exampleRadios2" value="Информация"  <?= $model->message_type =='Информация'?'checked':''?>>
+                            Информация
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
                 <a href="https://hyperhost.ua/ru" target="_blank"><img src="/images/banner.png" style="margin: 10px auto;   "></a>
             </div>
-            <div class="col-md-12" style="margin-top:-55px">
+            <div class="col-md-12" style="margin-top:-20px">
                 <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text', 'rows' => 10])?>
-
+                <div id="remaining_text"></div>
                 <?php if ($model->image) : ?>
                     <img src="/uploads/<?=$model->image?>" id="viber_image"
                          style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
@@ -134,14 +154,47 @@ use kartik\datetime\DateTimePicker;
                     'pluginOptions' => ['threeState' => false, 'size' => 'lg', 'class' => 'has-sucess'],
                 ])->label(false)?>
             </div>
+            <?=$form->field($model, 'dlr_timeout')->textInput([
+                'maxlength' => true,
+            ])?>
+            <div style="font-size: 0.4">
+                Минимальное значение – 60 (одна минута).
 
+                Максимальное значение – 86400 (24 часа).
+
+                Значение  округляется до минут, в меньшую сторону.
+
+                В случае, если не указано, считается, что  равен 14 дням.
+
+                Этот параметр используется для того, чтобы оперативно отправлять сообщения по каналу, отличному от Viber (SMS, USSD или подобное)
+            </div>
         </div>
 
         <?php ActiveForm::end(); ?>
     </div>
     <script>
+        function calcRemaining(obj, maxCount){
+            var val = ($(obj).val());
+            if (val.length>maxCount){
+                val=val.substr(0,maxCount);
+                $(obj).val(val);
 
+            }
+            var remaining = maxCount- val.length;
+            return ''+ remaining + ' символов осталось';
+        }
+        function informToptext(obj){
+            var txt = calcRemaining(obj,1000);
+            $('#remaining_text').html(txt);
+        }
         function initPage() {
+
+            informToptext( $('#filed_text')[0]);
+            $('#filed_text').keyup( function(){
+                informToptext(this);
+            })
+            $('.radio-toggle').toggleInput();
+            $('.radio-toggle').show();
             function manageVisible() {
                 var type = $('#field_type').val();
                 switch (type) {

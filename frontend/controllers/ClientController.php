@@ -167,7 +167,7 @@ class ClientController extends Controller
     }
 
     public function actionWantDealer(){
-        if(!Yii::$app->user->isGuest&&Yii::$app->user->identity->isClient()){
+        if(!Yii::$app->user->isGuest && Yii::$app->user->identity->isClient()){
             $user=User::findOne(Yii::$app->user->identity->id);
             if(Yii::$app->user->identity->dealer_id)
                 $id=Yii::$app->user->identity->dealer_id;

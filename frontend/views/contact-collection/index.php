@@ -52,12 +52,12 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['width' => '90'],
-                'template' => ' {update} {delete}{view}{list}',
+                'template' => ' {update} {delete}{view}{export}',
                 'buttons' => [
-                    'list' => function ($url,$model) {
+                    'export' => function ($url,$model) {
                         return Html::a(
-                            '<i class="fa fa-fw  fa-phone-square"></i>',
-                            $url);
+                            '<i class="fa fa-fw fa-download"></i>',
+                            $url, ['target'=>'_blank']);
                     },
 
                 ],

@@ -34,6 +34,9 @@ class ViberNotification extends Model
 
     public $type;
 
+    public $status;
+
+
     public function rules()
     {
         return [
@@ -41,6 +44,7 @@ class ViberNotification extends Model
             [['p_transaction_id' ], 'integer'],
             [['sending_method' ], 'in', 'range'=>[ 'viber']],
             ['type', 'in','range'=>['seen','delivered']],
+            ['status', 'string'],
             ['msg_id','string']
         ];
     }
