@@ -199,7 +199,7 @@ class User extends BaseUser
      */
     public function getContactCollections()
     {
-        return $this->hasMany(ContactCollection::className(), ['user_id' => 'id']);
+        return $this->hasMany(ContactCollection::class, ['user_id' => 'id']);
     }
 
     /**
@@ -207,7 +207,7 @@ class User extends BaseUser
      */
     public function getPhones()
     {
-        return $this->hasMany(Phone::className(), ['user_id' => 'id']);
+        return $this->hasMany(Phone::class, ['user_id' => 'id']);
     }
 
     /**

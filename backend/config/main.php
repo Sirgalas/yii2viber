@@ -22,7 +22,7 @@ return [
                 'LoginForm' => 'backend\entities\user\LoginForm',
             ],
         ],
-        'i18n' => Zelenin\yii\modules\I18n\Module::className(),
+        'i18n' => Zelenin\yii\modules\I18n\Module::class(),
     ],
     'components' => [
         'request' => [

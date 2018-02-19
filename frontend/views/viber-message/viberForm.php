@@ -69,7 +69,7 @@ use kartik\datetime\DateTimePicker;
             if ($model->isNewRecord){
                 echo '<h3>Будет доступно после сохранения рассылки</h3>';
             } else {
-                echo $form->field($model, 'assign_collections')->widget(Select2::classname(), [
+                echo $form->field($model, 'assign_collections')->widget(Select2::class(), [
                     'data' => $contact_collections,
                     'maintainOrder' => true,
                     'options' => [
@@ -117,7 +117,7 @@ use kartik\datetime\DateTimePicker;
                 ]);
             }
             ?>
-            <?=$form->field($model, 'date_start')->widget(DatePicker::classname(), [
+            <?=$form->field($model, 'date_start')->widget(DatePicker::class(), [
                 'options' => ['placeholder' => 'Дата отправки'],
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -130,7 +130,7 @@ use kartik\datetime\DateTimePicker;
             </div>
             <div style="width: 48%;float: right" class="has-success">
                 <label class="cbx-label" style="margin-bottom: 5px;">Прямо сейчас</label>
-                <?=$form->field($model, 'just_now')->widget(CheckboxX::classname(), [
+                <?=$form->field($model, 'just_now')->widget(CheckboxX::class(), [
                     'pluginOptions' => ['threeState' => false, 'size' => 'lg', 'class' => 'has-sucess'],
                 ])->label(false)?>
             </div>
