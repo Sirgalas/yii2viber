@@ -92,7 +92,7 @@ class ViberMessage extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        echo 22;
+
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
             [['user_id', 'limit_messages'], 'integer'],
