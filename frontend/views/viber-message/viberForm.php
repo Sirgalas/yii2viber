@@ -86,9 +86,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 'maxlength' => true,
             ])?>
             <?php
-            if ($model->isNewRecord){
-                echo '<h3>Будет доступно после сохранения рассылки</h3>';
-            } else {
+
                 echo $form->field($model, 'assign_collections')->widget(Select2::class, [
                     'data' => $contact_collections,
                     'maintainOrder' => true,
@@ -135,7 +133,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     }",
                     ],
                 ]);
-            }
+
             ?>
             <?=$form->field($model, 'date_start')->widget(DatePicker::class, [
                 'options' => ['placeholder' => 'Дата отправки'],
