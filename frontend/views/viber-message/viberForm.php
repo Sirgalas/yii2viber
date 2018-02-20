@@ -137,7 +137,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 ]);
             }
             ?>
-            <?=$form->field($model, 'date_start')->widget(DatePicker::class(), [
+            <?=$form->field($model, 'date_start')->widget(DatePicker::class, [
                 'options' => ['placeholder' => 'Дата отправки'],
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -150,7 +150,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
             <div style="width: 48%;float: right" class="has-success">
                 <label class="cbx-label" style="margin-bottom: 5px;">Прямо сейчас</label>
-                <?=$form->field($model, 'just_now')->widget(CheckboxX::class(), [
+                <?=$form->field($model, 'just_now')->widget(CheckboxX::class, [
                     'pluginOptions' => ['threeState' => false, 'size' => 'lg', 'class' => 'has-sucess'],
                 ])->label(false)?>
             </div>
