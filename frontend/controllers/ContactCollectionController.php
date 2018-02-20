@@ -125,7 +125,7 @@ class ContactCollectionController extends Controller
              $contactForm= new ContactCollectionModalForm();
              $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
              return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider','modalForm','contactCollection','contactForm'));
-         }catch (NotFoundHttpException $ex){
+         } catch (NotFoundHttpException $ex) {
              return $this->render('/site/error',[
                  'name'=>$model->title,
                  'message'=>$ex->getMessage()
