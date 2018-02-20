@@ -95,8 +95,10 @@ class Viber
             ->indexBy('phone')
             ->where(['transaction_id'=>$viber_transaction->id])->all();
         $phones=[];
+        $phonesA=[];
         foreach ($phonesArray as $phone){
             $phones[] =$phone->phone;
+            $phonesA[$phone->phone] = $phone;
         }
 
         if (! $phones) {
@@ -149,7 +151,7 @@ class Viber
         $result = curl_exec($ch);
         //curl_close($ch);
         //echo '===============================';
-        if ($this->parseSendResult($result, $phonesArray)) {
+        if ($this->parseSendResult($result, $phonesA)) {
             $viber_transaction->date_send = time();
             $viber_transaction->status = 'sended';
             $viber_transaction->save();
@@ -175,6 +177,7 @@ class Viber
 
             return false;
         }
+
         if ( $xml->code == 0){
             foreach ($xml->msg_id as $key => $msg){
                 $attr=$msg->attributes();
