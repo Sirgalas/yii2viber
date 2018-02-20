@@ -86,6 +86,9 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 [
                                     'attribute' => 'type',
                                     'filter' => ['dealer' => 'dealer', 'client' => 'client'],
+                                    'value'=>function($model){
+                                        return $model->theStatus;
+                                    }
                                 ],
                                 //'dealer_id',
 
