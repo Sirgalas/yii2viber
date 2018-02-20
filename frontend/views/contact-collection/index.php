@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            [
+            /*[
                 'class' => 'yii\grid\CheckboxColumn',
                 'checkboxOptions' => function ($model, $key, $index, $column) {
                     return ['value' => $model->id];
@@ -43,6 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ],
             //'type',
+            'size',
             [
                 'attribute' => 'created_at',
                 'format' => 'date',

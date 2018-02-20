@@ -65,8 +65,6 @@ class ViberMessageController extends Controller
         }
     }
 
-
-
     /**
      * Updates an existing ViberMessage model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -79,7 +77,7 @@ class ViberMessageController extends Controller
         if ($id) {
             $model = $this->findModel($id);
         } else {
-            $model=new ViberMessage();
+            $model = new ViberMessage();
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate() && $model->send()) {
@@ -98,6 +96,7 @@ class ViberMessageController extends Controller
         $clients = ArrayHelper::map(User::find()->where(['dealer_id' => Yii::$app->user->identity->id])->all(), 'id',
             'username');
         $clients[Yii::$app->user->identity->id] = Yii::$app->user->identity->username;
+
         return $this->render('viberForm', compact('model', 'contact_collections', 'clients'));
     }
 
@@ -114,14 +113,13 @@ class ViberMessageController extends Controller
         try {
             $this->findModel($id)->delete();
             $transaction->commit();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             $transaction->rollBack();
-            Yii::$app->session->setFlash(
-                'error',
-                'Ошибка удаления.'
+            Yii::$app->session->setFlash('error', 'Ошибка удаления.'
 
             );
         }
+
         return $this->redirect(['index']);
     }
 
@@ -129,10 +127,15 @@ class ViberMessageController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $data = Yii::$app->request->post('data');
-        $entities = ViberMessage::findOne(Yii::$app->request->post('id'));
         try {
-            $cost = $entities->Cost($data);
-            $balance = $entities->userBalanse($cost);
+                $cost = ViberMessage::Cost($data);
+            if (Yii::$app->request->post('id')) {
+                $entities = ViberMessage::findOne(Yii::$app->request->post('id'));
+                $balance = $entities->userBalanse($cost);
+            } else {
+                $balance = Yii::$app->user->identity->balance - $cost;
+            }
+
 
             return ['cost' => $cost, 'balance' => $balance, 'result' => 'ok'];
         } catch (\Exception $ex) {

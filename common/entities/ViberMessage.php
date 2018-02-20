@@ -333,8 +333,13 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         if (! $id_collection) {
             $id_collection = 0;
+        } else {
+            foreach($id_collection as $ind=>$val){
+                $id_collection[$ind] = (int)$val;
+            }
         }
-        $phones = Phone::find()->select(['phone'])->where(['contact_collection_id' => $id_collection])->column();
+
+        $phones = Phone::find()->select(['phone'])->where(['contact_collection_id' =>   $id_collection])->column();
         if (! $phones) {
             return 0;
         }
