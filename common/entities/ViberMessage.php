@@ -92,6 +92,7 @@ class ViberMessage extends \yii\db\ActiveRecord
      */
     public function rules()
     {
+
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
             [['user_id', 'limit_messages'], 'integer'],
@@ -125,7 +126,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range' => ['new', 'ready', 'wait', 'process']],
-            ['message_type', 'in', 'range' => ['Реклама', 'Информация']],
+            ['message_type', 'in', 'range' => ['реклама', 'информация','Реклама', 'Информация']],
             [
                 ['user_id'],
                 'exist',

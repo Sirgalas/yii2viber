@@ -50,14 +50,14 @@ class Phone extends ActiveRecord
      * @return \yii\db\ActiveQueryInterface
      */
     public function getUser(){
-        return $this->hasOne(User::class(),['id'=>'clients_id']);
+        return $this->hasOne(User::class,['id'=>'clients_id']);
     }
 
     /**
      * @return \yii\db\ActiveQueryInterface
      */
     public function getContactCollection(){
-        return $this->hasOne(ContactCollection::class(),['id'=>'contact_collection_id']);
+        return $this->hasOne(ContactCollection::class,['id'=>'contact_collection_id']);
     }
 
     /**

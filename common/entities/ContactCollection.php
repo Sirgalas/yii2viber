@@ -47,7 +47,7 @@ class ContactCollection extends \yii\db\ActiveRecord
             [['title'], 'string', 'max' => 50],
             [['type'], 'string', 'max' => 10],
             ['type', 'in', 'range'=>static::listTypes()],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class(), 'targetAttribute' => ['user_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -70,7 +70,7 @@ class ContactCollection extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::class(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     /**
@@ -86,7 +86,7 @@ class ContactCollection extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getPhones(){
-        return $this->hasMany(Phone::class(),['contact_collection_id'=>'id']);
+        return $this->hasMany(Phone::class,['contact_collection_id'=>'id']);
     }
 
     /**
@@ -94,7 +94,7 @@ class ContactCollection extends \yii\db\ActiveRecord
      */
     public function getMessageContactCollections()
     {
-        return $this->hasMany(MessageContactCollection::class(), ['contact_collection_id' => 'id']);
+        return $this->hasMany(MessageContactCollection::class, ['contact_collection_id' => 'id']);
     }
 
     /**
@@ -154,7 +154,7 @@ class ContactCollection extends \yii\db\ActiveRecord
     }
 
     public function getViberMessage(){
-        return $this->hasOne(ViberMessage::class(), ['id' =>'viber_message_id'])->viaTable(MessageContactCollection::tableName(), [ 'contact_collection_id'=>'id']);
+        return $this->hasOne(ViberMessage::class, ['id' =>'viber_message_id'])->viaTable(MessageContactCollection::tableName(), [ 'contact_collection_id'=>'id']);
     }
 
 }

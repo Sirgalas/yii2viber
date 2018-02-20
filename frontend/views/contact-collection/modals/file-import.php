@@ -16,7 +16,7 @@ use yii\helpers\Html;
             </div>
             <?php $form = ActiveForm::begin(['action'=>Url::to('/contact-collection/import-file'),'options' => ['enctype' => 'multipart/form-data']]); ?>
             <div class="col-md-12 col-md-ofsset-1">
-                <?= $form->field($modalForm,'file')->widget(FileInput::class())->label(false); ?>
+                <?= $form->field($modalForm,'file')->widget(FileInput::class)->label(false); ?>
             </div>
             <div class="col-md-12 col-md-ofsset-1">
                 <div class="col-md-6">

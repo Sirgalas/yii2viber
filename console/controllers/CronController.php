@@ -14,16 +14,10 @@ class CronController extends Controller
     const VIBER_TIME_LIMIT =10;
     private $time_stop;
 
-    /**
-     * ViberCronHandler constructor.
-     *
-     */
-    public function __construct()
-    {
-        $this->time_stop = time() + self::VIBER_TIME_LIMIT;
-    }
 
     public function actionViberQueueHandle(){
+        $this->time_stop = time() + self::VIBER_TIME_LIMIT;
+        file_put_contents(__DIR__ . '\cron_log_' . date('ymd').'log', 'started ' . date('H:i:s'). "\n" , FILE_APPEND);
         while ($this->time_stop > time()){
             $vm='';
             $vm = ViberMessage::find()->isProcess()->one();
@@ -39,6 +33,7 @@ class CronController extends Controller
                 $v->prepareTransaction();
             }
             if ($vm){
+                echo 'Отправляем ' , $vm->title , $vm->user_id ;
                 $v=new Viber($vm);
                 $v->sendMessage();
             }
