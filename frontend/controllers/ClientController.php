@@ -185,8 +185,6 @@ class ClientController extends Controller
                 Yii::$app->errorHandler->logException($ex);
                 Yii::$app->session->setFlash($ex->getMessage());
             }
-
-
         }
     }
 
@@ -214,8 +212,8 @@ class ClientController extends Controller
             Yii::$app->user->switchIdentity($user, 3600);
             return $this->goHome();
         }
-
     }
 
+   
 
 }

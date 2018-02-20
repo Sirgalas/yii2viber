@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel common\entities\user\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Users');
+$this->title = Yii::t('app', 'Клиненты');
 $this->params['breadcrumbs'][] = $this->title;
 if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USER_SESSION_KEY)){
     $template = '{update} {delete} {switch}';
@@ -46,13 +46,13 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                     'attribute' => 'id',
                                     'headerOptions' => ['width' => '40'],
                                 ],
-                                'username',
+
                                 'email:email',
                                 //'password_hash',
                                 //'auth_key',
                                 [
                                     'attribute' => 'confirmed_at',
-                                    'label' => 'Confirmed',
+                                    'label' => 'Подтвержденый',
                                     'headerOptions' => ['width' => '40'],
                                     'value' => function ($model) {
                                         if ($model->confirmed_at) {
@@ -65,7 +65,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 ],
                                 [
                                     'attribute' => 'blocked_at',
-                                    'label' => 'Blocked',
+                                    'label' => 'Заблокированный',
                                     'headerOptions' => ['width' => '40'],
                                     'value' => function ($model) {
                                         if ($model->blocked_at) {
@@ -92,6 +92,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 [
                                     'class'=>'kartik\grid\EditableColumn',
                                     'attribute'=>'balance',
+                                    'label'=>'Баланс',
                                     'value'=>function($model){return number_format($model->balance) . ' SMS'; },
 
                                      'editableOptions'=> function ($model, $key, $index) {

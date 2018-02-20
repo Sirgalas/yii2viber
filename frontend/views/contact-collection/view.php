@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $modelCollections common\entities\ContactCollection */
 
 $this->title = $modelCollections->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Contact Collections'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'База телефонов'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contact-collection-view">
