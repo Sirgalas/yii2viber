@@ -131,7 +131,7 @@ class Phone extends ActiveRecord
         if(!$phone)
             throw new \Exception('нет уникальных телефонов');
         foreach ($phone as $key=>$val) {
-            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($key),'username'=>($val)?htmlspecialchars(trim($val)):''];
+            $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>(int)$post['collection_id'], 'phone'=>static::NormalizeNumber($key),'username'=>($val)?htmlspecialchars(trim($val)):''];
         }
         unset($phone);
         if($this->saveDate($datas)== 'ok')
@@ -155,7 +155,7 @@ class Phone extends ActiveRecord
                 throw new \Exception('нет уникальных телефонов');
             foreach ( $arrForData as $data) {
                 if(array_key_exists($post['fieldPhone'],$data))
-                $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+                $datas[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>(int)$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
             }
             if($this->saveDate($datas)== 'ok')
                 return $post['collection_id'];
@@ -183,7 +183,7 @@ class Phone extends ActiveRecord
 
              foreach ($exp as $data){
                    if(array_key_exists($post['fieldPhone'],$data)){
-                       $datas[]=['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
+                       $datas[]=['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>(int)$post['collection_id'], 'phone'=>static::NormalizeNumber($data[$post['fieldPhone']]),'username'=>array_key_exists($post['fieldUsername'],$data)?htmlspecialchars(trim($data[$post['fieldUsername']])):''];
                    }
             }
         if($this->saveDate($datas)== 'ok')
@@ -217,7 +217,7 @@ class Phone extends ActiveRecord
                }
            }
         }
-        $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->andWhere(['contact_collection_id'=>$collection_id])->column();
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$searcList])->andWhere(['contact_collection_id'=>(int)$collection_id])->column();
         if (count($oldList) > 0) {
             foreach($oldList as $first){
                 unset($bList[$first]);
@@ -225,7 +225,7 @@ class Phone extends ActiveRecord
         }
         $data = [];
         foreach ($bList as $phone=>$username) {
-            $data[] = ['clients_id'=>$user_id, 'contact_collection_id' => $collection_id, 'phone'=>$phone,'username'=>$username];
+            $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>(int)$collection_id, 'phone'=>$phone,'username'=>$username];
         }
         return $this->saveDate($data);
     }
@@ -234,12 +234,12 @@ class Phone extends ActiveRecord
         $collection=ContactCollection::find()->select('id')->where(['id'=>$post['collection_id'],'user_id'=>Yii::$app->user->identity->id])->column();
         if(!$collection)
             throw new \Exception('Коллекция у пользователя не обнаружена');
-        $phones=Phone::find()->where(['contact_collection_id'=>(string)$collection[0]])->all();
+        $phones=Phone::find()->where(['contact_collection_id'=>(int)$collection[0]])->all();
         foreach ($phones as $phone){
             $data[] = ['clients_id'=>Yii::$app->user->identity->id, 'contact_collection_id'=>$post['some_collection'], 'phone'=>$phone->phone,'username'=>$phone->username];
             $phoneSearch[]=$phone->phone;
         }
-        $oldList = self::find()->select(['phone'])->where(['phone'=>$phoneSearch,'contact_collection_id'=>$post['some_collection']])->column();
+        $oldList = self::find()->select(['phone'])->where(['phone'=>$phoneSearch,'contact_collection_id'=>(int)$post['some_collection']])->column();
         if($oldList){
             foreach ($data as $array){
                 if(!array_intersect($oldList,$array)){

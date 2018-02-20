@@ -9,13 +9,12 @@ use yii\bootstrap\ActiveForm;
 /* @var $searchModel common\entities\user\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Users');
+$this->title = "Отчеты";
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
+<div class="report-index">
 
     <h1><?=Html::encode($this->title)?></h1>
-    <?php $form=ActiveForm::begin(); ?>
 
     <?php Pjax::begin(); ?>
 

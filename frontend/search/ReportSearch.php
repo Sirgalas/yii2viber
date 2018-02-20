@@ -61,6 +61,7 @@ class ReportSearch extends ViberTransaction
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'user_id'=>\Yii::$app->user->identity->id,
             'viber_message_id'=>$this->viber_message_id,
             'created_at'=>$this->created_at,
             'status'=>$this->status

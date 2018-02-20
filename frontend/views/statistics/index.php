@@ -17,11 +17,10 @@ use kartik\checkbox\CheckboxX;
  **/
 
 
-$this->title = Yii::t('app', 'Users');
+$this->title = Yii::t('app', 'Статистика');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
-
+<div class="statistics-index">
     <h1><?=Html::encode($this->title)?></h1>
     <?php Pjax::begin(); ?>
     <div class="col-md-10 col-md-offset-1">
@@ -64,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="col-md-5">
             <div class="form-group ">
-                <?= $form->field($model, 'status')->checkboxList([$messagePhoneList::NEWMESSAGE=>$messagePhoneList::$statusMessage[$messagePhoneList::NEWMESSAGE],$messagePhoneList::SENDED=>$messagePhoneList::$statusMessage[$messagePhoneList::SENDED],$messagePhoneList::DELIVERED=>$messagePhoneList::$statusMessage[$messagePhoneList::DELIVERED],$messagePhoneList::VIEWED=>$messagePhoneList::$statusMessage[$messagePhoneList::VIEWED]]);
+                <?= $form->field($model, 'status')->checkboxList([$messagePhoneList::NEWMESSAGE=>$messagePhoneList::$statusMessage[$messagePhoneList::NEWMESSAGE],$messagePhoneList::SENDED=>$messagePhoneList::$statusMessage[$messagePhoneList::SENDED],$messagePhoneList::DELIVERED=>$messagePhoneList::$statusMessage[$messagePhoneList::DELIVERED],$messagePhoneList::VIEWED=>$messagePhoneList::$statusMessage[$messagePhoneList::VIEWED]])->label('Статусы');
 ?>
             </div>
         </div>
