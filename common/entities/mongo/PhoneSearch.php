@@ -60,7 +60,7 @@ class PhoneSearch extends Phone
 
         $query->andFilterWhere([
             'clients_id' => Yii::$app->user->identity->id,
-            'contact_collection_id' => $this->contact_collection_id,
+            'contact_collection_id' => 1 * $this->contact_collection_id,
         ]);
         $query->andFilterWhere(['like', 'phone', $this->phone])
             ->andFilterWhere(['like', 'username', $this->username]);
