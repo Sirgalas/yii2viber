@@ -268,11 +268,16 @@ class ViberMessage extends \yii\db\ActiveRecord
         if (!$this->alpha_name){
             $this->alpha_name =Yii::$app->params['viber']['from'];
         }
-        $cost=self::cost($this->assign_collections);
-        if ($this->cost != $cost) {
-            Yii::$app->user->identity->balance +=  $this->cost - $cost;
-            $this->cost = $cost;
-            Yii::$app->user->identity->save();
+        if(is_a(Yii::$app,'yii\web\Application')) {
+
+            if (is_object(Yii::$app->user)) {
+                $cost = self::cost($this->assign_collections);
+                if ($this->cost != $cost) {
+                    Yii::$app->user->identity->balance += $this->cost - $cost;
+                    $this->cost = $cost;
+                    Yii::$app->user->identity->save();
+                }
+            }
         }
         return parent::beforeSave($insert);
     }
