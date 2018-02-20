@@ -54,7 +54,7 @@ class StatisticsMongoSearch extends Message_Phone_List
 
         }
 
-        if($params['user_id']!=""){
+        if(isset($params['user_id'])&&$params['user_id']!=""){
             $user=User::find()->select('id')->where(['id_dealer'=>Yii::$app->user->identity->id,'id'=>$params['user_id']])->one();
             if($user){
                 $allTransaction=ViberTransaction::find()->where(['user_id'=>$params['user_id']])->all();
@@ -77,6 +77,13 @@ class StatisticsMongoSearch extends Message_Phone_List
             $ids=Message_Phone_List::find()->where(['status'=>$params])->select(['_id'])->column();
             foreach ($ids as $id){
                 $messagePhoneListId[]=(string)$id;
+            }
+        }
+        $idsTransaction[]=0;
+        $transactionsIdFromUser=ViberTransaction::find()->where(['user_id'=>Yii::$app->user->identity->id])->all();
+        if($transactionsIdFromUser){
+            foreach ($transactionsIdFromUser as $transactionIdFromUser){
+                $idsTransaction[]=$transactionIdFromUser->id;
             }
         }
         if(isset($params['dateTo'])){
@@ -103,7 +110,7 @@ class StatisticsMongoSearch extends Message_Phone_List
         }
 
         // grid filtering conditions
-
+        $query->andFilterWhere(['in','transaction_id', $idsTransaction]);
         if(isset($transactionIds))
             $query->andFilterWhere(['in','transaction_id', $transactionIds]);
         if(!empty($messagePhoneListId))
