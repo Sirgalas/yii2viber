@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property string $title
  * @property string $type
  * @property int $created_at
+ * @property int $size
  *
  * @property User $user
  * @property MessageContactCollection[] $messageContactCollections
@@ -42,7 +43,7 @@ class ContactCollection extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'created_at'], 'default', 'value' => null],
-            [['user_id', 'created_at'], 'integer'],
+            [['user_id', 'created_at','size'], 'integer'],
             [['title'], 'required'],
             [['title'], 'string', 'max' => 50],
             [['type'], 'string', 'max' => 10],
@@ -62,6 +63,7 @@ class ContactCollection extends \yii\db\ActiveRecord
             'title' => 'Название Коллекции',
             'type' => 'Type',
             'created_at' => 'Дата создания',
+            'size'=>'Размер'
         ];
     }
 

@@ -18,7 +18,7 @@ class ContactCollectionSearch extends ContactCollection
     public function rules()
     {
         return [
-            [['id', 'user_id', 'created_at'], 'integer'],
+            [['id', 'user_id', 'created_at', 'size'], 'integer'],
             [['title', 'type'], 'safe'],
 
         ];
@@ -63,6 +63,7 @@ class ContactCollectionSearch extends ContactCollection
             'id' => $this->id,
             'user_id' => $this->user_id,
             'created_at' => $this->created_at,
+            'size' => $this->size,
         ]);
 
         $query->andFilterWhere(['ilike', 'title', $this->title])

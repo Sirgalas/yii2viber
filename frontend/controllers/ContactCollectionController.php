@@ -19,6 +19,7 @@ use common\entities\Phone as PgPhone;
 use common\entities\PhoneSearch as PgPhoneSearch;
 use yii\web\UploadedFile;
 use frontend\forms\ContactCollectionModalForm;
+
 /**
  * ContactCollectionController implements the CRUD actions for ContactCollection model.
  */
@@ -83,6 +84,11 @@ class ContactCollectionController extends Controller
         $model = new ContactCollection();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $cnt = Phone::find()->where(['contact_collection_id' => $this->id])->count();
+
+            $model->size = $cnt;
+            $model->save();
+
             return $this->redirect(['index']);
         }
         $phoneSearchModel = new PhoneSearch();
@@ -101,37 +107,45 @@ class ContactCollectionController extends Controller
      */
     public function actionUpdate($id)
     {
-         $model= $this->findModel($id);
-         try{
-             if(!Yii::$app->user->identity->amParent($model->user_id) &&
-                 Yii::$app->user->identity->id != $model->user_id) { //TODO Корректировать условие!!!
-                 throw new NotFoundHttpException('Этот пользователь вам не пренадлижит', 403);
-             }
-             if (Yii::$app->request->post('hasEditable')){
-                 try{
-                     $phone=$model->phoneSave(Yii::$app->request,$model->id);
-                     return $phone;
-                 }catch (RuntimeException $ex){
-                     Yii::$app->errorHandler->logException($ex);
-                     Yii::$app->session->setFlash('error', $ex->getMessage());
-                 }
-             }
-             if ($model->load(Yii::$app->request->post())&&$model->save())
-                 return $this->redirect(['index']);
-             $phoneSearchModel =new PhoneSearch();
-             $phoneSearchModel->contact_collection_id=$id;
-             $modalForm=new FileForm();
-             $contactCollection= ArrayHelper::map(ContactCollection::find()->asArray()->all(),'id','title');
-             $contactForm= new ContactCollectionModalForm();
-             $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
-             return $this->render('update', compact('model', 'phoneSearchModel', 'phoneDataProvider','modalForm','contactCollection','contactForm'));
-         } catch (NotFoundHttpException $ex) {
-             return $this->render('/site/error',[
-                 'name'=>$model->title,
-                 'message'=>$ex->getMessage()
+        $model = $this->findModel($id);
+        try {
+            if (! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->identity->id != $model->user_id) { //TODO Корректировать условие!!!
+                throw new NotFoundHttpException('Этот пользователь вам не пренадлижит', 403);
+            }
+            if (Yii::$app->request->post('hasEditable')) {
+                try {
+                    $phone = $model->phoneSave(Yii::$app->request, $model->id);
 
-             ]);
-         }
+                    return $phone;
+                } catch (RuntimeException $ex) {
+                    Yii::$app->errorHandler->logException($ex);
+                    Yii::$app->session->setFlash('error', $ex->getMessage());
+                }
+            }
+            if ($model->load(Yii::$app->request->post())) {
+                $cnt = Phone::find()->where(['contact_collection_id' => (int) $id])->count();
+                if ($model->size != $cnt) {
+                    $model->size = $cnt;
+                }
+
+                if ($model->save()) {
+
+                    return $this->redirect(['index']);
+                }
+            }
+            $phoneSearchModel = new PhoneSearch();
+            $phoneSearchModel->contact_collection_id = $id;
+            $modalForm = new FileForm();
+            $contactCollection = ArrayHelper::map(ContactCollection::find()->asArray()->all(), 'id', 'title');
+            $contactForm = new ContactCollectionModalForm();
+            $phoneDataProvider = $phoneSearchModel->search(Yii::$app->request->queryParams);
+
+            return $this->render('update',
+                compact('model', 'phoneSearchModel', 'phoneDataProvider', 'modalForm', 'contactCollection',
+                    'contactForm'));
+        } catch (NotFoundHttpException $ex) {
+            return $this->render('/site/error', ['name' => $model->title, 'message' => $ex->getMessage()]);
+        }
     }
 
     /**
@@ -166,83 +180,104 @@ class ContactCollectionController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionNewPhones($id){
+    public function actionNewPhones($id)
+    {
         $collection = ContactCollection::findOne($id);
-        if (!$collection){
+        if (! $collection) {
             return 'Ошибка в запросе. Обновите страницу';
         }
         // TODO проверить права на коллекцию
         $phone = new Phone();
+
         return $phone->importText($id, $_POST['txt']);
-
     }
-    public function actionRemovePhones($id){
+
+    public function actionRemovePhones($id)
+    {
         $collection = ContactCollection::findOne($id);
-        if (!$collection){
+        if (! $collection) {
             return 'Ошибка в запросе. Обновите страницу';
         }
         // TODO проверить права на коллекцию
         $phone = new Phone();
+
         return $phone->removeList($_POST['ids']);
-
     }
 
-    public function actionImportFile(){
+    public function actionImportFile()
+    {
         $form = new FileForm();
-        $phone=new Phone();
-        if(Yii::$app->request->isPost){
-            $post=Yii::$app->request->post('FileForm');
-            try{
-                $resource=UploadedFile::getInstance($form,'file');
-                $result=$phone->pointer($resource,Yii::$app->request->post(),$post,$form);
-                    if(!$result)
+        $phone = new Phone();
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('FileForm');
+            try {
+                $resource = UploadedFile::getInstance($form, 'file');
+                $result = $phone->pointer($resource, Yii::$app->request->post(), $post, $form);
+                if (! $result) {
                     throw new \Exception('Ошибка импорта');
-                    return $this->redirect(['/contact-collection/update','id'=>$result]);
-            }catch (\Exception $ex){
+                }
+
+                return $this->redirect(['/contact-collection/update', 'id' => $result]);
+            } catch (\Exception $ex) {
                 Yii::$app->session->setFlash($ex->getMessage());
-                return $this->redirect(['/contact-collection/update','id'=>$post['collection_id']]);
-            }
-        }
-    }
-    public function actionImportCollection(){
-        $form = new ContactCollectionModalForm();
-        $phone=new Phone();
-        if($form->load(Yii::$app->request->post())){
-            try{
-                $result=$phone->importCollection(Yii::$app->request->post('ContactCollectionModalForm'));
-                return $this->redirect(['/contact-collection/update','id'=>$result]);
-            }catch (\Exception $ex){
-                Yii::$app->session->setFlash($ex->getMessage());
-                return $this->redirect(['/contact-collection/update','id'=>Yii::$app->request->post('ContactCollectionModalForm')['collection_id']]);
+
+                return $this->redirect(['/contact-collection/update', 'id' => $post['collection_id']]);
             }
         }
     }
 
+    /**
+     * @return \yii\web\Response
+     */
+    public function actionImportCollection()
+    {
+        $form = new ContactCollectionModalForm();
+        $phone = new Phone();
+        if ($form->load(Yii::$app->request->post())) {
+            try {
+                $result = $phone->importCollection(Yii::$app->request->post('ContactCollectionModalForm'));
+
+                return $this->redirect(['/contact-collection/update', 'id' => $result]);
+            } catch (\Exception $ex) {
+                Yii::$app->session->setFlash($ex->getMessage());
+
+                return $this->redirect([
+                    '/contact-collection/update',
+                    'id' => Yii::$app->request->post('ContactCollectionModalForm')['collection_id'],
+                ]);
+            }
+        }
+    }
+
+    /**
+     * @param $id
+     * @return string
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionExport($id)
     {
-        $this->layout='';
-        $blockSize=4;
+        $this->layout = '';
+        $blockSize = 4;
         $collection = ContactCollection::findOne($id);
         if (! Yii::$app->user->identity->amParent($collection->user_id) && Yii::$app->user->id != $collection->user_id) {
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит', 403);
         }
         header('Content-type: text/csv');
-        header('Content-Disposition: attachment; filename="export_' . date('Ymd_H') . '_Phone_list.csv"');
-        $position=0;
-        while(true){
-            $data='';
-            $phones = Phone::find()->where(['contact_collection_id'=>$id])
-                ->asArray()->limit($blockSize)->offset($position)->all();
-            if (count($phones) == 0){
+        header('Content-Disposition: attachment; filename="export_'.date('Ymd_H').'_Phone_list.csv"');
+        $position = 0;
+        while (true) {
+            $data = '';
+            $phones = Phone::find()->where(['contact_collection_id' => $id])->asArray()->limit($blockSize)->offset($position)->all();
+            if (count($phones) == 0) {
                 break;
             }
-            foreach ($phones as $phone){
-                $data .= $phone['phone'] . "\r\n";
-
+            foreach ($phones as $phone) {
+                $data .= $phone['phone']."\r\n";
             }
             echo iconv('utf-8', 'windows-1251', $data); //Если вдруг в Windows будут кракозябры
             $position += $blockSize;
         }
+
         return '';
     }
 }

@@ -225,7 +225,7 @@ class Phone extends ActiveRecord
         }
         $data = [];
         foreach ($bList as $phone=>$username) {
-            $data[] = ['clients_id'=>$user_id, 'contact_collection_id'=>$collection_id, 'phone'=>$phone,'username'=>$username];
+            $data[] = ['clients_id'=>$user_id, 'contact_collection_id' => $collection_id, 'phone'=>$phone,'username'=>$username];
         }
         return $this->saveDate($data);
     }
