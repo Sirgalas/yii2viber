@@ -38,6 +38,16 @@ class User extends BaseUser
     const WANT=1;
     const NOT_WANT=0;
     const SCENARIO_PROFILE = 'profile';
+
+    const ADMIN='admin';
+    const CLIENT='client';
+    const DEALER='dealer';
+
+    public static $userTypes=[
+        self::ADMIN=>'Админ',
+        self::CLIENT=>'Клиент',
+        self::DEALER=>'Дилер'
+    ];
     public function scenarios()
     {
         $scenarios = parent::scenarios();
@@ -87,6 +97,10 @@ class User extends BaseUser
         $rules['family']=['family','string','max' => 100];
         $rules['avatar']=['avatar','string'];
         return $rules;
+    }
+
+    public function getTheStatus(){
+        return $this::$userTypes[$this->type];
     }
 
     public function attributeLabels()

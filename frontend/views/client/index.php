@@ -85,6 +85,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 //'last_login_at',
                                 [
                                     'attribute' => 'type',
+                                    'label'=>'Статус',
                                     'filter' => ['dealer' => 'dealer', 'client' => 'client'],
                                     'value'=>function($model){
                                         return $model->theStatus;
@@ -109,7 +110,11 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                         ];
                                     }
                                 ],
-                                'dealer_confirmed:boolean',
+                                [
+                                    'attribute'=>'dealer_confirmed',
+                                    'label'=>'подтвержденый дилер',
+                                    'format'=>'boolean',
+                                ],
                                 //'image',
 
                                 [
