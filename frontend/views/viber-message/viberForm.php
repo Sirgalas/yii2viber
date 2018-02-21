@@ -86,7 +86,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 'maxlength' => true,
             ])?>
             <?=$form->field($model, 'alpha_name')->dropDownList(ViberMessage::getAlphaNames(),
-                ['maxlength' => true, ])?>
+                ['maxlength' => true,   'options' =>ViberMessage::getAlphaNamesOptions()])?>
             <?php
 
                 echo $form->field($model, 'assign_collections')->widget(Select2::class, [
