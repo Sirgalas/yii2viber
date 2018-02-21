@@ -58,6 +58,8 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_NEW = 'new';
 
+    const STATUS_PRE = 'pre';
+
     const STATUS_READY = 'ready';
 
     const STATUS_WAIT = 'wait';
@@ -75,6 +77,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public static $status = [
         self::STATUS_NEW=>'Новое',
+        self::STATUS_PRE=>'Модер.',
         self::STATUS_READY=>'Готово',
         self::STATUS_WAIT=>'Ожидает',
         self::STATUS_PROCESS=>'В процессе',
@@ -127,7 +130,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             ],
 
             [['status'], 'string', 'max' => 16],
-            ['status', 'in', 'range' => ['new', 'ready', 'wait', 'process']],
+            ['status', 'in', 'range' => ['pre', 'new', 'ready', 'wait', 'process']],
             ['message_type', 'in', 'range' => ['реклама', 'информация','Реклама', 'Информация']],
             [
                 ['user_id'],

@@ -52,16 +52,17 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 [
                                     'attribute'=>'created_at',
                                     'value' => function ($model) {
-                                         return date('Y-m-d H:i',$model->created_at);
+                                         return date('Y-m-d',$model->created_at) .' ' .  date('H:i',$model->created_at);
                                     },
+                                    'format'=>'raw',
                                     'label'=>'Дата. Регист.'
                                 ],
                                 //'password_hash',
                                 //'auth_key',
                                 [
                                     'attribute' => 'confirmed_at',
-                                    'label' => 'Одобр.',
-                                    'headerOptions' => ['width' => '40'],
+                                    'label' => 'Одбр.',
+                                    'headerOptions' => ['width' => '30'],
                                     'value' => function ($model) {
                                         if ($model->confirmed_at) {
                                             return 'Yes';
@@ -73,8 +74,8 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 ],
                                 [
                                     'attribute' => 'blocked_at',
-                                    'label' => 'Блок.',
-                                    'headerOptions' => ['width' => '40'],
+                                    'label' => 'Блк.',
+                                    'headerOptions' => ['width' => '30'],
                                     'value' => function ($model) {
                                         if ($model->blocked_at) {
                                             return 'Yes';
@@ -103,7 +104,8 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 [
                                     'class'=>'kartik\grid\EditableColumn',
                                     'attribute'=>'cost',
-                                    'value'=>function($model){return number_format($model->cost,2) . ' руб'; },
+                                    'label'=>'Цена (руб.)',
+                                    'value'=>function($model){return number_format($model->cost,2) ; },
 
                                     'editableOptions'=> function ($model, $key, $index) {
                                         return [
@@ -119,8 +121,8 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 [
                                     'class'=>'kartik\grid\EditableColumn',
                                     'attribute'=>'balance',
-                                    'label'=>'Баланс',
-                                    'value'=>function($model){return number_format($model->balance) . ' SMS'; },
+                                    'label'=>'Баланс SMS',
+                                    'value'=>function($model){return number_format($model->balance); },
 
                                      'editableOptions'=> function ($model, $key, $index) {
                                         return [

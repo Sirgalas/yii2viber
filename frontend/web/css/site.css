@@ -254,3 +254,25 @@ aside .sidebar-menu > li > a {
 .contact_collection_form .btn-app {
     min-width: 97px;
 }
+
+.user-index .table-bordered>thead>tr>th,
+.user-index .table-bordered>tbody>tr>th,
+.user-index .table-bordered>tfoot>tr>th,
+.user-index .table-bordered>thead>tr>td,
+.user-index .table-bordered>tbody>tr>td,
+.user-index .table-bordered>tfoot>tr>td {
+
+
+    padding: 4px;
+}
+
+.table-bordered>thead>tr>th,
+.table-bordered>tbody>tr>th,
+.table-bordered>tfoot>tr>th,
+.table-bordered>thead>tr>td,
+.table-bordered>tbody>tr>td,
+.table-bordered>tfoot>tr>td {
+
+
+    padding: 4px;
+}

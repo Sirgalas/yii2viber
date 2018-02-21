@@ -52,7 +52,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
             <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
-                <a href="https://hyperhost.ua/ru" target="_blank"><img src="/images/banner.png" style="margin: 10px auto;   "></a>
+
             </div>
             <div class="col-md-12" style="margin-top:-20px">
                 <div style="position: relative;">
