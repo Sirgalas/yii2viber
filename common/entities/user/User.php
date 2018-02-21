@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  * @property bool $dealer_confirmed
  * @property string $image
  * @property integer want_dealer
- * @property  float coast
+ * @property  number cost
  * @property  string tel
  * @property  string time_work
  * @property  string first_name
@@ -90,7 +90,7 @@ class User extends BaseUser
             'targetClass' => self::className(),
             'targetAttribute' => ['dealer_id' => 'id'],
         ];
-        $rules['coast']=['coast','double'];
+        $rules['cost']=['cost','number'];
         $rules['tel']=['tel','string'];
         $rules['first_name']=['first_name','string','max' => 100];
         $rules['surname']=['surname','string','max' => 100];
@@ -111,7 +111,7 @@ class User extends BaseUser
         $labels['dealer_confirmed'] = 'Статус дилера';
         $labels['dealer_id'] = 'Родительский дилер';
         $labels['image'] = 'Аватар';
-        $labels['coast'] = 'Цена за сообщение';
+        $labels['cost'] = 'Цена за сообщение';
         $labels['tel'] = 'Телефон';
         $labels['time_work'] = 'Время работы';
         $labels['first_name'] = 'Время работы';

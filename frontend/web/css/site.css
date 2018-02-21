@@ -251,3 +251,6 @@ aside .sidebar-menu > li > a {
     opacity: .3;
     font-weight: bold;
 }
+.contact_collection_form .btn-app {
+    min-width: 97px;
+}

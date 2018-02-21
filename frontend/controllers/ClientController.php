@@ -42,7 +42,7 @@ class ClientController extends Controller
     {
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        //$dataProvider->query->d
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -131,6 +131,37 @@ class ClientController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
+    public function actionChangeCost($id){
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!Yii::$app->user->identity->amParent($id)){
+            return ['output'=>'', 'message'=>'Нет доступа к этому пользователю'];
+        }
+        if (!Yii::$app->request->post('hasEditable')){
+            return ['output'=>'', 'message'=>'Плохой запрос'];
+        }
+        $user = $this->findModel($id);
+        if ($user->id == Yii::$app->user->id && !Yii::$app->user->identity->isAdmin()) {
+            return ['output'=>'', 'message'=>'Вы не можете править собственный баланс'];
+        }
+        $db=Yii::$app->db;
+        $transaction = $db->beginTransaction();
+        try {
+            $edidableIndex= $_POST['editableIndex'];
+
+            $value=$_POST['Client'][$edidableIndex]['cost'] ;
+
+            $user->cost = $value;
+
+            if(!$user->save())
+                throw new \Exception(json_encode($user->getErrors()));
+
+            $transaction->commit();
+            return ['output' => number_format($user->cost,2) . ' руб' , 'message' => ''];
+        } catch (\Exception $e){
+            $transaction->rollBack();
+            return ['output' => '', 'message' => 'error:: ' . $e->getMessage() ];
+        }
+    }
     public function actionChangeBalance($id){
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (!Yii::$app->user->identity->amParent($id)){
