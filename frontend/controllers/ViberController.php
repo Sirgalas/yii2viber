@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\entities\ViberTransaction;
 use frontend\forms\ViberNotification;
+use Yii;
 
 class ViberController extends \yii\web\Controller
 {
@@ -24,7 +25,7 @@ class ViberController extends \yii\web\Controller
     public function actionReport()
     {
         $path = \Yii::getAlias('@frontend').'/runtime/viber_report';
-        echo "path =$path";
+
         if (! file_exists($path)) {
             echo 'notfound,   mkdir=', mkdir($path);
         }
@@ -47,20 +48,27 @@ class ViberController extends \yii\web\Controller
         }
 
         $data = $_POST;
-        Yii::info("Notify:  \n " . print_r($data,1), 'viber');
+
+
+
         $vb_Note = new ViberNotification();
         $vb_Note->load($data, '');
+
         if ($vb_Note->validate()) {
-            $viber_transaction =  ViberTransaction::findOne($vb_Note->p_transaction_id);
+            $viber_transaction = ViberTransaction::findOne($vb_Note->p_transaction_id);
+
             if ($viber_transaction) {
+
                 $viber_transaction->handleViberNotification($vb_Note);
+
             }
         }
 
         return 'OK';
     }
 
-    public function actionLog($id = null){
+    public function actionLog($id = null)
+    {
         $path = '@common/runtime/logs/viber/';
     }
 }

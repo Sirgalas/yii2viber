@@ -21,12 +21,18 @@ class CronController extends Controller
         while ($this->time_stop > time()){
             $vm='';
             $vm = ViberMessage::find()->isProcess()->one();
-
+            echo 'found $vm->id';
+            if ($vm && $vm->id == 24){
+                $vm->status=ViberMessage::STATUS_CANCEL;
+                $vm->save();
+                print_r($vm->getErrors());
+                continue;
+            }
             if (!$vm){
                 echo " Vm for process not found\n";
                 $vm = ViberMessage::find()->isNew()->one();
                 if (!$vm){
-                    echo 'Нечего отправлять!';
+                    echo 'Queue is empty !';
                     return;
                 }
                 $v=new Viber($vm);
@@ -34,7 +40,7 @@ class CronController extends Controller
             }
 
             if ($vm){
-                echo 'Отправляем ' , $vm->title , $vm->user_id ;
+                echo 'SEND ' , $vm->id , $vm->title , $vm->user_id ;
                 $v=new Viber($vm);
                 $v->sendMessage();
             }

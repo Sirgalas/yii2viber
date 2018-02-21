@@ -442,7 +442,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             'FastFitnes'=>'Фитнес',
             'ChatTest'=>'ChatTest',
             'Documents'=>'Documents',
-            //'AUTO'=>'AUTO'
+            'AUTO'=>'AUTO'
         ];
     }
     public function getAlphaNamesOptions(){

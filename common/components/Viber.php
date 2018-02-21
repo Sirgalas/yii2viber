@@ -62,7 +62,9 @@ class Viber
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type:multipart/form-data",
         ]);
-        $result = json_decode(curl_exec($ch), true);
+        $result =curl_exec($ch);
+
+        $result = json_decode( $result, true);
         curl_close($ch);
         $imageId = false;
         if (! empty($result['image_id'])) {
@@ -75,6 +77,7 @@ class Viber
     }
 
     public function sendToViber($from, $phones, $viber_transaction){
+
         $encoded = urlencode('user').'='.urlencode(Yii::$app->params['viber']['login']).'&';
         $encoded .= urlencode('from').'='.urlencode($from).'&';
         $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
@@ -84,6 +87,7 @@ class Viber
             $encoded .= urlencode('phone').'='.urlencode($phone).'&';
             $signString .= $phone;
         }
+
         if ($this->viber_message->type !== ViberMessage::ONLYIMAGE) {
             $encoded .= urlencode('txt').'='.urlencode($this->viber_message->text).'&';
             $signString .= $this->viber_message->text;
@@ -92,7 +96,8 @@ class Viber
         if ($this->viber_message->type === ViberMessage::ONLYIMAGE || $this->viber_message->type === ViberMessage::TEXTBUTTONIMAGE) {
             if (! $this->viber_message->viber_image_id) {
                 if (! $this->sendImage()) {
-                    throw new \RuntimeException('Sending error.');
+                    echo 'Error of image sending';
+                    throw new \RuntimeException('Image Sending error.');
                 }
                 $this->viber_message->viber_image_id = $this->image_id;
                 $this->viber_message->save();
@@ -117,11 +122,11 @@ class Viber
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
 
-        Yii::info("Query: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $encoded, 'viber');
+        //Yii::info("Query: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $encoded, 'viber');
 
         $result = curl_exec($ch);
 
-        Yii::info("Answer: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $result, 'viber');
+        //Yii::info("Answer: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $result, 'viber');
 
         return $result;
     }
@@ -139,14 +144,19 @@ class Viber
 
         if (!$viber_transaction){
             $this->viber_message->status = ViberMessage::STATUS_WAIT;
+
+            $this->viber_message->viber_image_id = '' . $this->viber_message->viber_image_id;
             $this->viber_message->save();
+
             return;
         }
+
         $phonesArray = Message_Phone_List::find()
             ->indexBy('phone')
             ->where(['transaction_id'=>$viber_transaction->id])->all();
         $phones=[];
         $phonesA=[];
+
         foreach ($phonesArray as $phone){
             $phones[] =$phone->phone;
             $phonesA[$phone->phone] = $phone;
@@ -165,15 +175,19 @@ class Viber
         // Отправка сообщения
         $result = $this->sendToViber($from, $phones, $viber_transaction);
         $viber_transaction->date_send = time();
+
         if ($this->parseSendResult($result, $phonesA)) {
             $viber_transaction->date_send = time();
             $viber_transaction->status = 'sended';
+            $this->viber_message->viber_image_id = '' . $this->viber_message->viber_image_id;
             $viber_transaction->save();
         } else {
             $viber_transaction->status = 'error';
             Yii::error($result);
+            $this->viber_message->viber_image_id = '' . $this->viber_message->viber_image_id;
             $viber_transaction->save();
         }
+
        return;
     }
 
