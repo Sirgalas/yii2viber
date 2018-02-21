@@ -15,8 +15,6 @@ use kartik\checkbox\CheckboxX;
 * @var $model common\entities\ViberTransaction
  * @var $messagePhoneList common\entities\mongo\Message_Phone_List
  **/
-
-
 $this->title = Yii::t('app', 'Статистика');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
