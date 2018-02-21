@@ -150,21 +150,30 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function handleViberNotification(ViberNotification $vb_Note)
     {
         $phone = Message_Phone_List::find()->where(['msg_id' => $vb_Note->msg_id])->one();
-
         $changed = false;
 
         if ($vb_Note->type == 'undelivered'){
-            $phone->status = 'delivered';
+            $phone->status = 'undelivered';
             $changed = true;
         } else {
-            if ($phone & $phone->status === 'new' || $phone->status === 'sended') {
-                if ($vb_Note->type == 'delivered') {
-                    $this->delivered += 1;
-                    $phone->status = 'delivered';
-                    $phone->date_delivered = time();
-                    $changed = true;
+
+            if (is_object($phone) & $phone->getAttribute('status') === 'new' || $phone->getAttribute('status') === 'sended') {
+                if ($vb_Note->type === 'delivered' || $vb_Note->type === 'delivery') {
+
+                    if ( $vb_Note->status == 'undelivered'){
+
+                        $phone->status = 'undelivered';
+                        $changed = true;
+                    } else {
+
+                        $this->delivered += 1;
+                        $phone->status = 'delivered';
+                        $phone->date_delivered = time();
+                        $changed = true;
+                    }
                 }
                 if ($vb_Note->type == 'seen') {
+
                     $this->delivered += 1;
                     $this->viewed += 1;
                     $phone->status = 'viewed';
@@ -172,6 +181,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
                     $changed = true;
                 }
             } elseif ($phone['status'] === 'delivered') {
+
                 if ($vb_Note->type == 'seen') {
                     $this->viewed += 1;
                     $phone->status = 'viewed';

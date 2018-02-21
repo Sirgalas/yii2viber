@@ -43,7 +43,7 @@ class ViberNotification extends Model
             [['p_transaction_id','sending_method', 'msg_id', 'type' ], 'required'],
             [['p_transaction_id' ], 'integer'],
             [['sending_method' ], 'in', 'range'=>[ 'viber']],
-            ['type', 'in','range'=>['seen','delivered']],
+            ['type', 'in','range'=>['seen','delivered','delivery']],
             ['status', 'string'],
             ['msg_id','string']
         ];
