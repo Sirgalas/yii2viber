@@ -25,14 +25,15 @@ $defaultExportConfig = [
         ]
     ],
 ]
-
+/*<div class="col-md-12">
+    <?php var_dump($dataProvider->getModels());?>
+</div>*/
 ?>
+
+
 <?=GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
-    'headerRowOptions' => ['class' => 'kartik-sheet-style'],
-    'filterRowOptions' => ['class' => 'kartik-sheet-style'],
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         [
@@ -54,7 +55,7 @@ $defaultExportConfig = [
             'header'=>'Статус',
             'format'=>'raw',
             'value'=>function($model){
-                return $model->Status();
+                return implode(',</br>',$model->Status());
             }
         ],
         [
@@ -81,12 +82,6 @@ $defaultExportConfig = [
             }
         ],
     ],
-    'bordered'=>false,
-    'striped'=>true,
-    'condensed'=>true,
-    'responsive'=>true,
-    'hover'=>true,
-    'showPageSummary' => false,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => false,

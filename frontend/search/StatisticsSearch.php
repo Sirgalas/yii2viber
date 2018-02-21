@@ -50,7 +50,7 @@ class StatisticsSearch extends ViberTransaction
      */
     public function search($params)
     {
-        $query = ViberTransaction::find()->with('essagePhoneList');
+        $query = ViberTransaction::find();
 
         if(isset($params['titleSearch'])){
                 $idMessageViber=ViberMessage::find()->andFilterWhere(['like','title',$params['titleSearch']])->select(['id'])->column();

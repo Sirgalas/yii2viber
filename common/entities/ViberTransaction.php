@@ -192,6 +192,10 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
         }
     }
+    public function getMessagePhoneList()
+    {
+        $this->hasMany(Message_Phone_List::class, ['transaction_id' => 'id']);
+    }
 
     /**
      * @param ViberTransaction $model
@@ -209,7 +213,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
         $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
         foreach ($phoneList as $messagePhoneList)
             $status[]=$messagePhoneList::$statusMessage[$messagePhoneList->status];
-        return implode(',</br>',$status);
+        return $status;
     }
     
     public function DateDelivery(){
@@ -226,8 +230,5 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return implode(',</br>',$date_viewed);
     }
     
-    public function getMessagePhoneList()
-    {
-        $this->hasMany(Message_Phone_List::class, ['transaction_id' => 'id']);
-    }
+
 }
