@@ -21,119 +21,133 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
 
 
     <div class="viber-test-message-form row " data-id="<?=$model->id?>">
-
         <?php
-        if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin()) {
-
+        if ($model->status && $model->status !== ViberMessage::STATUS_PRE) {
             ?>
+            <div style="padding: 20px 30px; background: rgb(243, 156, 18); z-index: 999999; font-size: 16px; font-weight: 600;">
+                Эта рассылка доступна толко для просмотра.
+                Обработка рассылки уже идет.
+            </div>
+        <?php      }
+
+
+            if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin()) { ?>
 
             <div class="col-xs-12">
-                <?php $form = ActiveForm::begin(['action'=>'moderate', 'options' => ['enctype' => 'multipart/form-data']]); ?>
+                <?php $form = ActiveForm::begin([
+                    'action' => 'moderate',
+                    'options' => ['enctype' => 'multipart/form-data'],
+                ]); ?>
                 <?=$form->field($model, 'id')->hiddenInput()->label(false)?>
                 <div class="col-xs-3">
 
 
-                    <input type="submit" class="btn btn-block btn-success btn-lg" id="moderation_on" name="allow" value="Одобрить">
+                    <input type="submit" class="btn btn-block btn-success btn-lg" id="moderation_on" name="allow"
+                           value="Одобрить">
 
 
                 </div>
                 <div class="col-xs-3">
 
 
-                    <input type="submit" class="btn btn-block btn-warning btn-lg" id="moderation_cancel" value="Отклонить" name="disallow">
+                    <input type="submit" class="btn btn-block btn-warning btn-lg" id="moderation_cancel"
+                           value="Отклонить" name="disallow">
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>
         <?php } ?>
         <div class="col-xs-12">
-        <div class="col-xs-12" class="small">
-            Cтоимость рассылки <span class="small" id="cost"><?=number_format($model->cost)?></span> SMS
-        </div>
-    </div>
-<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
-    <div class="col-md-7">
-        <div class="col-md-7">
-            <div class="block-header">
-                Рассылка
-
+            <div class="col-xs-12" class="small">
+                Cтоимость рассылки <span class="small" id="cost"><?=number_format($model->cost)?></span> SMS
             </div>
+        </div>
+        <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+        <div class="col-md-7">
+            <div class="col-md-7">
+                <div class="block-header">
+                    Рассылка
 
-            <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
-                ['maxlength' => true, 'id' => 'field_type'])?>
-            <div class="form-group radio-toggle" style="display: none">
-                <label class="control-label" for="field_type">Назначение сообщения</label>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="ViberMessage[message_type]"
-                               id="exampleRadios1"
-                               value="Реклама" <?=$model->message_type != 'Информация' ? 'checked' : ''?>>
-                        Реклама
-                    </label>
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="ViberMessage[message_type]"
-                               id="exampleRadios2"
-                               value="Информация" <?=$model->message_type == 'Информация' ? 'checked' : ''?>>
-                        Информация
-                    </label>
+                </div>
+
+                <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
+                    ['maxlength' => true, 'id' => 'field_type'])?>
+                <div class="form-group radio-toggle" style="display: none">
+                    <label class="control-label" for="field_type">Назначение сообщения</label>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="ViberMessage[message_type]"
+                                   id="exampleRadios1"
+                                   value="Реклама" <?=$model->message_type != 'Информация' ? 'checked' : ''?>>
+                            Реклама
+                        </label>
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="ViberMessage[message_type]"
+                                   id="exampleRadios2"
+                                   value="Информация" <?=$model->message_type == 'Информация' ? 'checked' : ''?>>
+                            Информация
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-5" style="  z-index: 9999;text-align: center;">
-            <div class="block-header">&nbsp;</div>
+            <div class="col-md-5" style="  z-index: 9999;text-align: center;">
+                <div class="block-header">&nbsp;</div>
 
-        </div>
-        <div class="col-md-12" style="margin-top:-20px">
-            <div style="position: relative;">
-                <?=$form->field($model, 'text')->textarea([
-                    'maxlength' => true,
-                    'id' => 'filed_text',
-                    'rows' => 10,
-                ])?>
-                <div id="remaining_text"></div>
             </div>
-            <?php if ($model->image) : ?>
-                <img src="/uploads/<?=$model->image?>" id="viber_image"
-                     style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
-            <?php endif ?>
-            <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
-            <?=$form->field($model, 'title_button')->textInput([
-                'maxlength' => true,
-                'id' => 'field_title_button',
-            ])?>
+            <div class="col-md-12" style="margin-top:-20px">
+                <div style="position: relative;">
+                    <?=$form->field($model, 'text')->textarea([
+                        'maxlength' => true,
+                        'id' => 'filed_text',
+                        'rows' => 10,
+                    ])?>
+                    <div id="remaining_text"></div>
+                </div>
+                <?php if ($model->image) : ?>
+                    <img src="/uploads/<?=$model->image?>" id="viber_image"
+                         style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
+                <?php endif ?>
+                <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
+                <?=$form->field($model, 'title_button')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_title_button',
+                ])?>
 
-            <?=$form->field($model, 'url_button')->textInput([
-                'maxlength' => true,
-                'id' => 'field_url_button',
-            ])?>
+                <?=$form->field($model, 'url_button')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_url_button',
+                ])?>
+            </div>
+            <div class="form-group col-md-12">
+                <?php if (!$model->status || $model->status === ViberMessage::STATUS_PRE) {
+
+                    echo Html::submitButton('Отправить', ['class' => 'btn btn-success']);
+                } ?>
+            </div>
         </div>
-        <div class="form-group col-md-12">
-            <?=Html::submitButton('Отправить', ['class' => 'btn btn-success'])?>
-        </div>
-    </div>
 
 
-    <div class="col-md-5">
-        <div class="block-header">Задать параметры рассылки</div>
-        <?=$form->field($model, 'title')->textInput([
-            'maxlength' => true,
-        ])?>
-        <?=$form->field($model, 'alpha_name')->dropDownList(ViberMessage::getAlphaNames(),
-            ['maxlength' => true, 'options' => ViberMessage::getAlphaNamesOptions()])?>
-        <?php
+        <div class="col-md-5">
+            <div class="block-header">Задать параметры рассылки</div>
+            <?=$form->field($model, 'title')->textInput([
+                'maxlength' => true,
+            ])?>
+            <?=$form->field($model, 'alpha_name')->dropDownList(ViberMessage::getAlphaNames(),
+                ['maxlength' => true, 'options' => ViberMessage::getAlphaNamesOptions()])?>
+            <?php
 
-        echo $form->field($model, 'assign_collections')->widget(Select2::class, [
-            'data' => $contact_collections,
-            'maintainOrder' => true,
-            'options' => [
-                'placeholder' => 'Выберите коллекции ...',
-                'multiple' => true,
-            ],
-            'pluginOptions' => [
-                'tags' => true,
-                'maximumInputLength' => 10,
-            ],
-            "pluginEvents" => [
-                "change" => "function(e) {
+            echo $form->field($model, 'assign_collections')->widget(Select2::class, [
+                'data' => $contact_collections,
+                'maintainOrder' => true,
+                'options' => [
+                    'placeholder' => 'Выберите коллекции ...',
+                    'multiple' => true,
+                ],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'maximumInputLength' => 10,
+                ],
+                "pluginEvents" => [
+                    "change" => "function(e) {
                         var cost = $(this).val();
                         var id= $('.viber-test-message-form').data('id');
                         $.ajax(
@@ -165,45 +179,45 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                                 },
                             });
                     }",
-            ],
-        ]);
+                ],
+            ]);
 
-        ?>
-        <?=$form->field($model, 'date_start')->widget(DatePicker::class, [
-            'options' => ['placeholder' => 'Дата отправки'],
-            'pluginOptions' => [
-                'autoclose' => true,
-                'format' => 'yyyy-mm-dd',
-            ],
-        ]);?>
-        <div style="width: 48%;float:left;">
-            <?=$form->field($model, 'time_start')->input('time')?>
+            ?>
+            <?=$form->field($model, 'date_start')->widget(DatePicker::class, [
+                'options' => ['placeholder' => 'Дата отправки'],
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ],
+            ]);?>
+            <div style="width: 48%;float:left;">
+                <?=$form->field($model, 'time_start')->input('time')?>
 
+            </div>
+            <div style="width: 48%;float: right" class="has-success">
+                <label class="cbx-label" style="margin-bottom: 5px;">Прямо сейчас</label>
+                <?=$form->field($model, 'just_now')->widget(CheckboxX::class, [
+                    'pluginOptions' => ['threeState' => false, 'size' => 'lg', 'class' => 'has-sucess'],
+                ])->label(false)?>
+            </div>
+            <?=$form->field($model, 'dlr_timeout')->textInput([
+                'maxlength' => true,
+            ])?>
+            <div style="font-size: 0.4">
+                Минимальное значение – 60 (одна минута).
+
+                Максимальное значение – 86400 (24 часа).
+
+                Значение округляется до минут, в меньшую сторону.
+
+                В случае, если не указано, считается, что равен 14 дням.
+
+                Этот параметр используется для того, чтобы оперативно отправлять сообщения по каналу, отличному от Viber
+                (SMS, USSD или подобное)
+            </div>
         </div>
-        <div style="width: 48%;float: right" class="has-success">
-            <label class="cbx-label" style="margin-bottom: 5px;">Прямо сейчас</label>
-            <?=$form->field($model, 'just_now')->widget(CheckboxX::class, [
-                'pluginOptions' => ['threeState' => false, 'size' => 'lg', 'class' => 'has-sucess'],
-            ])->label(false)?>
-        </div>
-        <?=$form->field($model, 'dlr_timeout')->textInput([
-            'maxlength' => true,
-        ])?>
-        <div style="font-size: 0.4">
-            Минимальное значение – 60 (одна минута).
 
-            Максимальное значение – 86400 (24 часа).
-
-            Значение округляется до минут, в меньшую сторону.
-
-            В случае, если не указано, считается, что равен 14 дням.
-
-            Этот параметр используется для того, чтобы оперативно отправлять сообщения по каналу, отличному от Viber
-            (SMS, USSD или подобное)
-        </div>
-    </div>
-
-<?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
     </div>
     <script>
         function calcRemaining(obj, maxCount) {

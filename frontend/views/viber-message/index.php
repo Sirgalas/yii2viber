@@ -47,31 +47,42 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'time_finish',
         [
             'attribute' => 'status',
-            'value'=>function($model){
-                $color='bg-aqua';
-                if ($model->status == 'pre'){
-                    $color='label-warning';
-                } elseif  ($model->status == 'new'){
-                    $color='label-primary';
-                } elseif  ($model->status == 'cancel'){
-                    $color='label-danger';
-                } elseif  ($model->status == 'process'){
-                    $color='bg-olive';
-                } elseif  ($model->status == 'ready'){
-                    $color='label-success';
+            'value' => function ($model) {
+                $color = 'bg-aqua';
+                if ($model->status == 'pre') {
+                    $color = 'label-warning';
+                } elseif ($model->status == 'new') {
+                    $color = 'label-primary';
+                } elseif ($model->status == 'cancel') {
+                    $color = 'label-danger';
+                } elseif ($model->status == 'process') {
+                    $color = 'bg-olive';
+                } elseif ($model->status == 'ready') {
+                    $color = 'label-success';
                 }
-                return "<small class=\"label center $color \">{$model->status}</small>" ;
+
+                return "<small class=\"label center $color \">{$model->status}</small>";
             },
-            'format'=>'raw'
+            'format' => 'raw',
         ],
-            //'limit_messages',
+        //'limit_messages',
         'cost',
         //'balance',
 
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{update}{delete}',
+            'buttons' => [
+                'delete' => function ($url, $model) {
+                    if ($model->status=== \common\entities\ViberMessage::STATUS_PRE ) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
 
+                            'title' => Yii::t('app', 'Delete'),
+                            'class' => '',
+                        ]);
+                    } else return '';
+                },
+            ],
         ],
     ];
     if (Yii::$app->user->identity->isDealer()) {

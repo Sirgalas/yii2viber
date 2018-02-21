@@ -76,10 +76,17 @@ class ViberMessageController extends Controller
     {
         if ($id) {
             $model = $this->findModel($id);
+
+            if (!Yii::$app->user->identity->isAdmin()  && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
+                throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
+            }
         } else {
             $model = new ViberMessage();
         }
         if ($model->load(Yii::$app->request->post())) {
+            if ($model->status && $model->status != ViberMessage::STATUS_PRE){
+                return $this->redirect(['index']);
+            }
             if ($model->validate() && $model->send()) {
                 return $this->redirect(['index']);
             }
@@ -110,8 +117,16 @@ class ViberMessageController extends Controller
     public function actionDelete($id)
     {
         $transaction = Yii::$app->db->beginTransaction();
+
         try {
-            $this->findModel($id)->delete();
+            $model=$this->findModel($id);
+            if (!Yii::$app->user->identity->isAdmin()  && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
+                throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
+            }
+            if ($model->status != ViberMessage::STATUS_PRE){
+                throw new NotFoundHttpException('Удаление этой рассылка невозможно', 403);
+            }
+            $model ->delete();
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();

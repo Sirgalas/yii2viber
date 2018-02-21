@@ -35,6 +35,7 @@ class ViberMessageSearch extends ViberMessage
         $query->joinWith(['user']);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['id'=>SORT_DESC]]
         ]);
 
         if (!($this->load($params) && $this->validate())) {
