@@ -25,7 +25,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
         if ($model->status && $model->status !== ViberMessage::STATUS_PRE) {
             ?>
             <div style="padding: 20px 30px; background: rgb(243, 156, 18); z-index: 999999; font-size: 16px; font-weight: 600;">
-                Эта рассылка доступна толко для просмотра.
+                Эта рассылка доступна только для просмотра.
                 Обработка рассылки уже идет.
             </div>
         <?php      }
