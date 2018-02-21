@@ -25,9 +25,6 @@ $defaultExportConfig = [
         ]
     ],
 ]
-/*<div class="col-md-12">
-    <?php var_dump($dataProvider->getModels());?>
-</div>*/
 ?>
 
 
