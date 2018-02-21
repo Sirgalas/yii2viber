@@ -47,7 +47,7 @@ class ViberMessageSearch extends ViberMessage
         ];
         $query->andFilterWhere([
             'id' => $this->id,
-            'user_id' => $this->user_id,
+            'user_id' => Yii::$app->user->identity->id,
             'date_start' => $this->date_start,
             'date_finish' => $this->date_finish,
             'limit_messages' => $this->limit_messages,
