@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel common\entities\user\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Клиненты');
+$this->title = Yii::t('app', 'Клиенты');
 $this->params['breadcrumbs'][] = $this->title;
 if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USER_SESSION_KEY)){
     $template = '{update} {delete} {switch}';
@@ -24,7 +24,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?=Html::a(Yii::t('app', 'Create User'), ['create'], ['class' => 'btn btn-success'])?>
+        <?=Html::a(Yii::t('app', 'Добавить клиента'), ['create'], ['class' => 'btn btn-success'])?>
     </p>
 
     <?=GridView::widget([
