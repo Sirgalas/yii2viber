@@ -35,7 +35,8 @@
         "insolita/yii2-migration-generator": "~2.3",
         "phpoffice/phpspreadsheet": "^1.1",
         "kartik-v/yii2-widget-datepicker": "@dev",
-        "kartik-v/yii2-field-range": "*"
+        "kartik-v/yii2-field-range": "*",
+        "antishov/yii2-morrisjs": "^1.0"
 
     },
     "require-dev": {
