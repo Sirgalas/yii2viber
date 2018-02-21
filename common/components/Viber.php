@@ -155,6 +155,13 @@ class Viber
         if (! $phones) {
             return;
         }
+
+        //$tst = ViberMessage::getAlphaNames();
+        //foreach ($tst as $item=>$val){
+        //    $result = $this->sendToViber($item, $phones, $viber_transaction);
+        //}
+
+
         // Отправка сообщения
         $result = $this->sendToViber($from, $phones, $viber_transaction);
         $viber_transaction->date_send = time();

@@ -211,14 +211,12 @@ aside .sidebar-menu > li > a {
     font-size: 12px;
 }
 
-.main-sidebar .sidebar {
-    padding-bottom: 250px;
-}
+
 
 .dealer_widget {
     color: #fff;
-    position: absolute;
-    bottom: 5px;
+    padding: 10px 5px;
+
 }
 
 .wrapper .main-footer {

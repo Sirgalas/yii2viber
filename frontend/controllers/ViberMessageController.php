@@ -178,4 +178,27 @@ class ViberMessageController extends Controller
             return $ex->getMessage();
         }
     }
+
+    public function actionModerate(){
+
+        $data = Yii::$app->request->post();
+
+
+        if (Yii::$app->user->identity->isAdmin()) {
+
+            $vm = $this->findModel($data['ViberMessage']['id']);
+            if (isset($_POST['allow'])){
+                $vm->status = ViberMessage::STATUS_NEW;
+                $vm->save();
+
+            }
+            if (isset($_POST['disallow'])){
+                $vm->status = ViberMessage::STATUS_CANCEL;
+                $vm->save();
+
+            }
+
+            return $this->redirect('/viber-message');
+        }
+    }
 }

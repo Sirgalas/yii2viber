@@ -68,6 +68,8 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_SENDED = 'sended';
 
+    const STATUS_CANCEL = 'cancel';
+
     public static $types = [
         self::ONLYTEXT => 'Только текст (Официально)',
         self::ONLYIMAGE => 'Только изображение (Официально)',
@@ -78,6 +80,7 @@ class ViberMessage extends \yii\db\ActiveRecord
     public static $status = [
         self::STATUS_NEW=>'Новое',
         self::STATUS_PRE=>'Модер.',
+        self::STATUS_CANCEL=>'Откл.',
         self::STATUS_READY=>'Готово',
         self::STATUS_WAIT=>'Ожидает',
         self::STATUS_PROCESS=>'В процессе',
@@ -130,7 +133,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             ],
 
             [['status'], 'string', 'max' => 16],
-            ['status', 'in', 'range' => ['pre', 'new', 'ready', 'wait', 'process']],
+            ['status', 'in', 'range' => ['pre', 'cancel', 'new', 'ready', 'wait', 'process']],
             ['message_type', 'in', 'range' => ['реклама', 'информация','Реклама', 'Информация']],
             [
                 ['user_id'],
@@ -238,7 +241,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         $this->time_finish = '23:59';
 
         if (! $this->status) {
-            $this->status = self::STATUS_NEW;
+            $this->status = self::STATUS_PRE;
         }
         if (! $this->user_id) {
             $this->user_id = Yii::$app->user->id;
@@ -404,7 +407,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             $transaction->rollBack();
             return false;
         }
-        if ($this->just_now) {
+        if ($this->just_now && $this->status == self::STATUS_NEW) {
 
             $v = new Viber($this);
             $v->prepareTransaction();
@@ -422,23 +425,24 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function getAlphaNames(){
         return [
+            'TEST'=>'TEST',
             'Clickbonus'=>'Бонус',
             //'SALE'=>'SALE',
-            'Promo'=>'Promo',
+            //
+            'Promo1'=>'Promo',
+            'deliverydel'=>'Delivery',
+            'InfoDostavk'=>'Dostavka',
+            'EXPRESSS'=>'EXPRESS',
             'SHOPSHOP'=>'SHOP',
-            'Feedback'=>'Feedback',
+            'SMSfeedback'=>'Feedback',
             'sushilot'=>'Sushi',
-            'Бонус'=>'Бонус',
-            'Фитнес'=>'Фитнес',
-            'Taxi'=>'Taxi',
-            'TEST'=>'TEST',
-            'ChatTest'=>'ChatTest',
-            'Dostavka'=>'Dostavka',
+            'Taxis'=>'Taxi',
             'Klinika'=>'Klinika',
-            'EXPRESS'=>'EXPRESS',
-            'Недвижимость'=>'Недвижимость',
+            'Bazakvartir'=>'Недвижимость',
+            'FastFitnes'=>'Фитнес',
+            'ChatTest'=>'ChatTest',
             'Documents'=>'Documents',
-            'AUTO'=>'AUTO'
+            //'AUTO'=>'AUTO'
         ];
     }
     public function getAlphaNamesOptions(){
@@ -446,19 +450,19 @@ class ViberMessage extends \yii\db\ActiveRecord
                 //'Clickbonus'=>'Бонус',
             //'SALE'=>'SALE',
 
-            'Promo'=>['disabled'=>true],
-            'Feedback'=>['disabled'=>true],
-
-            'Бонус'=>['disabled'=>true],
-            'Фитнес'=>['disabled'=>true],
-            'Taxi'=>['disabled'=>true],
-            'TEST'=>['disabled'=>true],
-            'ChatTest'=>['disabled'=>true],
-            'Dostavka'=>['disabled'=>true],
-            'Klinika'=>['disabled'=>true],
-            'EXPRESS'=>['disabled'=>true],
-            'Недвижимость'=>['disabled'=>true],
-            'Documents'=>['disabled'=>true],
+            //'Promo'=>['disabled'=>true],
+            //'Feedback'=>['disabled'=>true],
+            //
+            //'Бонус'=>['disabled'=>true],
+            //'Фитнес'=>['disabled'=>true],
+            //'Taxi'=>['disabled'=>true],
+            //'TEST'=>['disabled'=>true],
+            //'ChatTest'=>['disabled'=>true],
+            //'Dostavka'=>['disabled'=>true],
+            //'Klinika'=>['disabled'=>true],
+            //'EXPRESS'=>['disabled'=>true],
+            //'Недвижимость'=>['disabled'=>true],
+            //'Documents'=>['disabled'=>true],
             'AUTO'=>['disabled'=>true],
             ];
     }

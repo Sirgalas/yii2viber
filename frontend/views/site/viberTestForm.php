@@ -76,7 +76,7 @@ use yii\helpers\Url;
             $items = ViberMessage::getAlphaNames();
             $options = [];
             foreach ($items as $key => $val) {
-                if ($key != 'Clickbonus') {
+                if ($key != 'TEST') {
                     $options[$key] = ['disabled' => true];
                 }
             }
