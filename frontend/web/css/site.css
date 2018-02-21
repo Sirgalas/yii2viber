@@ -243,9 +243,9 @@ aside .sidebar-menu > li > a {
 
 #remaining_text {
     position: absolute;
-    bottom: 28px;
-    right: 36px;
-    font-size: 29px;
+    bottom: -32px;
+    right: 0;
+    font-size: 23px;
     opacity: .3;
     font-weight: bold;
 }
