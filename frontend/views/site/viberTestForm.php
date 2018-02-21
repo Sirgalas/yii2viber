@@ -42,9 +42,10 @@ use yii\helpers\Url;
             ])->label(false)?>
         </div>
         <div class="col-md-12" style="margin-top:-55px">
+            <div style="position: relative;">
             <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text', 'rows' => 10])?>
             <div id="remaining_text"></div>
-
+            </div>
             <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
             <?=$form->field($model, 'title_button')->textInput([
                 'maxlength' => true,
