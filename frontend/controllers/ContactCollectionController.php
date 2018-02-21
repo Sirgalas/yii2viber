@@ -115,7 +115,6 @@ class ContactCollectionController extends Controller
             if (Yii::$app->request->post('hasEditable')) {
                 try {
                     $phone = $model->phoneSave(Yii::$app->request, $model->id);
-
                     return $phone;
                 } catch (RuntimeException $ex) {
                     Yii::$app->errorHandler->logException($ex);
@@ -127,9 +126,7 @@ class ContactCollectionController extends Controller
                 if ($model->size != $cnt) {
                     $model->size = $cnt;
                 }
-
                 if ($model->save()) {
-
                     return $this->redirect(['index']);
                 }
             }
@@ -213,6 +210,7 @@ class ContactCollectionController extends Controller
             try {
                 $resource = UploadedFile::getInstance($form, 'file');
                 $result = $phone->pointer($resource, Yii::$app->request->post(), $post, $form);
+                return var_dump($result);
                 if (! $result) {
                     throw new \Exception('Ошибка импорта');
                 }

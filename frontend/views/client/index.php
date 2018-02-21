@@ -48,7 +48,8 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 ],
 
                                 'email:email',
-                                'username',
+                                'attribute'=>'username',
+
                                 //'password_hash',
                                 //'auth_key',
                                 [
