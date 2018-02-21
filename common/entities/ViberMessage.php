@@ -2,6 +2,7 @@
 
 namespace common\entities;
 
+use common\components\Viber;
 use common\entities\mongo\Message_Phone_List;
 use common\entities\user\User;
 use Yii;
@@ -393,16 +394,49 @@ class ViberMessage extends \yii\db\ActiveRecord
                return false;
             }
             $transaction->commit();
-            return true;
+
         } catch (\Exception $ex) {
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash($ex->getMessage());
             $transaction->rollBack();
             return false;
         }
+        if ($this->just_now) {
+
+            $v = new Viber($this);
+            $v->prepareTransaction();
+            $v->sendMessage();
+        }
+        return true;
     }
-    
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getMessagePhoneList(){
         return $this->hasMany(Message_Phone_List::className(),['message_id'=>'id']);
     }
+
+    public function getAlphaNames(){
+        return [
+            'Clickbonus'=>'Clickbonus',
+            //'SALE'=>'SALE',
+            //'Promo'=>'Promo',
+            //'SHOP'=>'SHOP',
+            //'Feedback'=>'Feedback',
+            //'Sushi'=>'Sushi',
+            //'Бонус'=>'Бонус',
+            //'Фитнес'=>'Фитнес',
+            //'Taxi'=>'Taxi',
+            //'TEST'=>'TEST',
+            //'ChatTest'=>'ChatTest',
+            //'Dostavka'=>'Dostavka',
+            //'Klinika'=>'Klinika',
+            //'EXPRESS'=>'EXPRESS',
+            //'Недвижимость'=>'Недвижимость',
+            //'Documents'=>'Documents',
+            //'AUTO'=>'AUTO'
+        ];
+    }
+
 }

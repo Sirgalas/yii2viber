@@ -117,6 +117,11 @@ class User extends BaseUser
         $labels['first_name'] = 'Время работы';
         $labels['surname'] = 'Время работы';
         $labels['family'] = 'Время работы';
+        $labels['username'] = 'Логин';
+        $labels['cost'] = 'Цена';
+        $labels['created_at'] = 'Зарегистрирован';
+        return $labels;
+
     }
 
     public function isAdmin()

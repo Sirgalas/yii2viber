@@ -24,7 +24,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?=Html::a(Yii::t('app', 'Create User'), ['create'], ['class' => 'btn btn-success'])?>
+        <?=Html::a(Yii::t('app', 'Новый клиент'), ['create'], ['class' => 'btn btn-success'])?>
     </p>
 
     <?=GridView::widget([
@@ -49,12 +49,18 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
 
                                 'email:email',
                                 'attribute'=>'username',
-
+                                [
+                                    'attribute'=>'created_at',
+                                    'value' => function ($model) {
+                                         return date('Y-m-d H:i',$model->created_at);
+                                    },
+                                    'label'=>'Дата. Регист.'
+                                ],
                                 //'password_hash',
                                 //'auth_key',
                                 [
                                     'attribute' => 'confirmed_at',
-                                    'label' => 'Подтвержденый',
+                                    'label' => 'Одобр.',
                                     'headerOptions' => ['width' => '40'],
                                     'value' => function ($model) {
                                         if ($model->confirmed_at) {
@@ -67,7 +73,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 ],
                                 [
                                     'attribute' => 'blocked_at',
-                                    'label' => 'Заблокированный',
+                                    'label' => 'Блок.',
                                     'headerOptions' => ['width' => '40'],
                                     'value' => function ($model) {
                                         if ($model->blocked_at) {
@@ -129,7 +135,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                 ],
                                 [
                                     'attribute'=>'dealer_confirmed',
-                                    'label'=>'подтвержденый дилер',
+                                    'label'=>'подтв. дилер',
                                     'format'=>'boolean',
                                 ],
                                 //'image',

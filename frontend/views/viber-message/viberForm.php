@@ -33,11 +33,9 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     Рассылка
 
                 </div>
+
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
-
-
-
                 <div class="form-group radio-toggle" style="display: none">
                     <label class="control-label" for="field_type">Назначение сообщения</label>
                     <div class="form-check">
@@ -87,6 +85,8 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             <?=$form->field($model, 'title')->textInput([
                 'maxlength' => true,
             ])?>
+            <?=$form->field($model, 'alpha_name')->dropDownList(ViberMessage::getAlphaNames(),
+                ['maxlength' => true, ])?>
             <?php
 
                 echo $form->field($model, 'assign_collections')->widget(Select2::class, [
