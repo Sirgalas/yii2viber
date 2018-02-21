@@ -31,6 +31,7 @@ class ViberMessageSearch extends ViberMessage
 
     public function search($params)
     {
+
         $query = ViberMessage::find()->where(['user_id' => Yii::$app->user->identity->id,]);
         $query->joinWith(['user']);
         $dataProvider = new ActiveDataProvider([

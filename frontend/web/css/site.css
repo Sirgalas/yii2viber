@@ -101,6 +101,10 @@ a.desc:after {
     border: none;
 }
 
+.clearfix{
+    clear: both;
+}
+
 @media (max-width: 767px) {
     .nav li > form > button.logout {
         display: block;

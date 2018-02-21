@@ -77,6 +77,8 @@ $this->params['breadcrumbs'][] = $this->title;
             echo $this->render('_mongo',compact('dataProvider','searchModel','post'));
         else
             echo $this->render('_postgris',compact('dataProvider','searchModel')); ?>
+
     </div>
+    <div class="clearfix"></div>
     <?php Pjax::end(); ?>
 </div>
