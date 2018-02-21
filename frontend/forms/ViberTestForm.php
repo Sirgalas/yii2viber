@@ -224,6 +224,7 @@ class ViberTestForm extends Model
             return false;
         }
         if ($this->just_now) {
+            $vm->alpha_name ='TEST';
             $v = new Viber($vm, $phones);
             $v->prepareTransaction();
             $v->sendMessage();

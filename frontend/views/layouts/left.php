@@ -68,6 +68,8 @@ use yii\helpers\Url;
             else
                 $id=Yii::$app->user->identity->dealer_id;
             echo \frontend\widgets\DealerViews::widget(['id'=>$id]) ?>
+
+        <a href="https://hyperhost.ua/ru" target="_blank" style="position: absolute;bottom:0;width:100%;"><img src="/images/banner.png" style="margin: 10px 4% 0; width:92%;  "></a>
     </section>
 
 </aside>

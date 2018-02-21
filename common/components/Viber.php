@@ -74,38 +74,7 @@ class Viber
         return $imageId !== false;
     }
 
-    /**
-     *
-     */
-    public function sendMessage()
-    {
-
-        if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
-            return;
-        }
-        $from = $this->viber_message->alpha_name;
-        $viber_transaction = ViberTransaction::find()->isNew($this->viber_message->id)->one();
-
-        if (!$viber_transaction){
-            $this->viber_message->status = ViberMessage::STATUS_WAIT;
-            $this->viber_message->save();
-            return;
-        }
-        $phonesArray = Message_Phone_List::find()
-            ->indexBy('phone')
-            ->where(['transaction_id'=>$viber_transaction->id])->all();
-        $phones=[];
-        $phonesA=[];
-        foreach ($phonesArray as $phone){
-            $phones[] =$phone->phone;
-            $phonesA[$phone->phone] = $phone;
-        }
-
-        if (! $phones) {
-            return;
-        }
-        // Отправка сообщения
-
+    public function sendToViber($from, $phones, $viber_transaction){
         $encoded = urlencode('user').'='.urlencode(Yii::$app->params['viber']['login']).'&';
         $encoded .= urlencode('from').'='.urlencode($from).'&';
         $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
@@ -151,10 +120,51 @@ class Viber
         Yii::info("Query: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $encoded, 'viber');
 
         $result = curl_exec($ch);
-        //curl_close($ch);
-        //echo '===============================';
-        $viber_transaction->date_send = time();
+
         Yii::info("Answer: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $result, 'viber');
+
+        return $result;
+    }
+    /**
+     *
+     */
+    public function sendMessage()
+    {
+
+        if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
+            return;
+        }
+        $from = $this->viber_message->alpha_name;
+        $viber_transaction = ViberTransaction::find()->isNew($this->viber_message->id)->one();
+
+        if (!$viber_transaction){
+            $this->viber_message->status = ViberMessage::STATUS_WAIT;
+            $this->viber_message->save();
+            return;
+        }
+        $phonesArray = Message_Phone_List::find()
+            ->indexBy('phone')
+            ->where(['transaction_id'=>$viber_transaction->id])->all();
+        $phones=[];
+        $phonesA=[];
+        foreach ($phonesArray as $phone){
+            $phones[] =$phone->phone;
+            $phonesA[$phone->phone] = $phone;
+        }
+
+        if (! $phones) {
+            return;
+        }
+
+        //$tst = ViberMessage::getAlphaNames();
+        //foreach ($tst as $item=>$val){
+        //    $result = $this->sendToViber($item, $phones, $viber_transaction);
+        //}
+
+
+        // Отправка сообщения
+        $result = $this->sendToViber($from, $phones, $viber_transaction);
+        $viber_transaction->date_send = time();
         if ($this->parseSendResult($result, $phonesA)) {
             $viber_transaction->date_send = time();
             $viber_transaction->status = 'sended';
@@ -165,7 +175,6 @@ class Viber
             $viber_transaction->save();
         }
        return;
-
     }
 
     /**

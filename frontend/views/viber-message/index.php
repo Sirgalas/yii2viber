@@ -32,28 +32,57 @@ $this->params['breadcrumbs'][] = $this->title;
         'id',
         [
             'attribute' => 'username',
-            'header'=>'Клиент',
+            'header' => 'Клиент',
             'value' => 'user.username',
         ],
         'title',
         'image:image',
 //            'title_button',
 //            'url_button:url',
-            'type',
+        'type',
 //            'alpha_name',
 //            'date_start',
 //            'date_finish',
 //            'time_start',
 //            'time_finish',
-        'status',
-            //'limit_messages',
+        [
+            'attribute' => 'status',
+            'value' => function ($model) {
+                $color = 'bg-aqua';
+                if ($model->status == 'pre') {
+                    $color = 'label-warning';
+                } elseif ($model->status == 'new') {
+                    $color = 'label-primary';
+                } elseif ($model->status == 'cancel') {
+                    $color = 'label-danger';
+                } elseif ($model->status == 'process') {
+                    $color = 'bg-olive';
+                } elseif ($model->status == 'ready') {
+                    $color = 'label-success';
+                }
+
+                return "<small class=\"label center $color \">{$model->status}</small>";
+            },
+            'format' => 'raw',
+        ],
+        //'limit_messages',
         'cost',
         //'balance',
 
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{update}{delete}'
+            'template' => '{update}{delete}',
+            'buttons' => [
+                'delete' => function ($url, $model) {
+                    if ($model->status=== \common\entities\ViberMessage::STATUS_PRE ) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
 
+                            'title' => Yii::t('app', 'Delete'),
+                            'class' => '',
+                        ]);
+                    } else return '';
+                },
+            ],
         ],
     ];
     if (Yii::$app->user->identity->isDealer()) {
@@ -62,24 +91,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
     Pjax::begin();
     echo GridView::widget([
-                              'dataProvider' => $dataProvider,
-                              'filterModel' => $searchModel,
-                              'columns' => $columns,
-                              'responsive' => true,
-                              'hover' => true,
-                              'condensed' => true,
-                              'floatHeader' => true,
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => $columns,
+        'responsive' => true,
+        'hover' => true,
+        'condensed' => true,
+        'floatHeader' => true,
 
-                              'panel' => [
-                                  'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
-                                  'type' => 'info',
-                                  'before' => Html::a('<i class="glyphicon glyphicon-plus"></i> Новая рассылка', ['update'],
-                                                      ['class' => 'btn btn-success']),
-                                  'after' => Html::a('<i class="glyphicon glyphicon-repeat"></i> Обновить', ['index'],
-                                                     ['class' => 'btn btn-info']),
-                                  'showFooter' => false,
-                              ],
-                          ]);
+        'panel' => [
+            'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
+            'type' => 'info',
+            'before' => Html::a('<i class="glyphicon glyphicon-plus"></i> Новая рассылка', ['update'],
+                ['class' => 'btn btn-success']),
+            'after' => Html::a('<i class="glyphicon glyphicon-repeat"></i> Обновить', ['index'],
+                ['class' => 'btn btn-info']),
+            'showFooter' => false,
+        ],
+    ]);
     Pjax::end(); ?>
 
 </div>

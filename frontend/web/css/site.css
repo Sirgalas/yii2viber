@@ -211,14 +211,12 @@ aside .sidebar-menu > li > a {
     font-size: 12px;
 }
 
-.main-sidebar .sidebar {
-    padding-bottom: 250px;
-}
+
 
 .dealer_widget {
     color: #fff;
-    position: absolute;
-    bottom: 5px;
+    padding: 10px 5px;
+
 }
 
 .wrapper .main-footer {
@@ -245,12 +243,34 @@ aside .sidebar-menu > li > a {
 
 #remaining_text {
     position: absolute;
-    bottom: 28px;
-    right: 36px;
-    font-size: 29px;
+    bottom: -32px;
+    right: 0;
+    font-size: 23px;
     opacity: .3;
     font-weight: bold;
 }
 .contact_collection_form .btn-app {
     min-width: 97px;
+}
+
+.user-index .table-bordered>thead>tr>th,
+.user-index .table-bordered>tbody>tr>th,
+.user-index .table-bordered>tfoot>tr>th,
+.user-index .table-bordered>thead>tr>td,
+.user-index .table-bordered>tbody>tr>td,
+.user-index .table-bordered>tfoot>tr>td {
+
+
+    padding: 4px;
+}
+
+.table-bordered>thead>tr>th,
+.table-bordered>tbody>tr>th,
+.table-bordered>tfoot>tr>th,
+.table-bordered>thead>tr>td,
+.table-bordered>tbody>tr>td,
+.table-bordered>tfoot>tr>td {
+
+
+    padding: 4px;
 }

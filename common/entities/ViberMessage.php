@@ -2,6 +2,7 @@
 
 namespace common\entities;
 
+use common\components\Viber;
 use common\entities\mongo\Message_Phone_List;
 use common\entities\user\User;
 use Yii;
@@ -57,6 +58,8 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_NEW = 'new';
 
+    const STATUS_PRE = 'pre';
+
     const STATUS_READY = 'ready';
 
     const STATUS_WAIT = 'wait';
@@ -64,6 +67,8 @@ class ViberMessage extends \yii\db\ActiveRecord
     const STATUS_PROCESS = 'process';
 
     const STATUS_SENDED = 'sended';
+
+    const STATUS_CANCEL = 'cancel';
 
     public static $types = [
         self::ONLYTEXT => 'Только текст (Официально)',
@@ -74,6 +79,8 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public static $status = [
         self::STATUS_NEW=>'Новое',
+        self::STATUS_PRE=>'Модер.',
+        self::STATUS_CANCEL=>'Откл.',
         self::STATUS_READY=>'Готово',
         self::STATUS_WAIT=>'Ожидает',
         self::STATUS_PROCESS=>'В процессе',
@@ -126,7 +133,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             ],
 
             [['status'], 'string', 'max' => 16],
-            ['status', 'in', 'range' => ['new', 'ready', 'wait', 'process']],
+            ['status', 'in', 'range' => ['pre', 'cancel', 'new', 'ready', 'wait', 'process']],
             ['message_type', 'in', 'range' => ['реклама', 'информация','Реклама', 'Информация']],
             [
                 ['user_id'],
@@ -234,7 +241,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         $this->time_finish = '23:59';
 
         if (! $this->status) {
-            $this->status = self::STATUS_NEW;
+            $this->status = self::STATUS_PRE;
         }
         if (! $this->user_id) {
             $this->user_id = Yii::$app->user->id;
@@ -393,16 +400,71 @@ class ViberMessage extends \yii\db\ActiveRecord
                return false;
             }
             $transaction->commit();
-            return true;
+
         } catch (\Exception $ex) {
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash($ex->getMessage());
             $transaction->rollBack();
             return false;
         }
+        if ($this->just_now && $this->status == self::STATUS_NEW) {
+
+            $v = new Viber($this);
+            $v->prepareTransaction();
+            $v->sendMessage();
+        }
+        return true;
     }
-    
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getMessagePhoneList(){
         return $this->hasMany(Message_Phone_List::className(),['message_id'=>'id']);
     }
+
+    public function getAlphaNames(){
+        return [
+            'TEST'=>'TEST',
+            'Clickbonus'=>'Бонус',
+            //'SALE'=>'SALE',
+            //
+            'Promo1'=>'Promo',
+            'deliverydel'=>'Delivery',
+            'InfoDostavk'=>'Dostavka',
+            'EXPRESSS'=>'EXPRESS',
+            'SHOPSHOP'=>'SHOP',
+            'SMSfeedback'=>'Feedback',
+            'sushilot'=>'Sushi',
+            'Taxis'=>'Taxi',
+            'Klinika'=>'Klinika',
+            'Bazakvartir'=>'Недвижимость',
+            'FastFitnes'=>'Фитнес',
+            'ChatTest'=>'ChatTest',
+            'Documents'=>'Documents',
+            //'AUTO'=>'AUTO'
+        ];
+    }
+    public function getAlphaNamesOptions(){
+            return [
+                //'Clickbonus'=>'Бонус',
+            //'SALE'=>'SALE',
+
+            //'Promo'=>['disabled'=>true],
+            //'Feedback'=>['disabled'=>true],
+            //
+            //'Бонус'=>['disabled'=>true],
+            //'Фитнес'=>['disabled'=>true],
+            //'Taxi'=>['disabled'=>true],
+            //'TEST'=>['disabled'=>true],
+            //'ChatTest'=>['disabled'=>true],
+            //'Dostavka'=>['disabled'=>true],
+            //'Klinika'=>['disabled'=>true],
+            //'EXPRESS'=>['disabled'=>true],
+            //'Недвижимость'=>['disabled'=>true],
+            //'Documents'=>['disabled'=>true],
+            'AUTO'=>['disabled'=>true],
+            ];
+    }
+
 }

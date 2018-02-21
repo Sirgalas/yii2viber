@@ -13,106 +13,121 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 
 ?>
-<div class="viber-test-message-form row ">
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
-    <div class="col-md-7">
+    <div class="viber-test-message-form row ">
+        <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
         <div class="col-md-7">
-            <div class="block-header">Тестовая рассылка</div>
-            <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
-                ['maxlength' => true, 'id' => 'field_type'])?>
-        </div>
-        <div class="col-md-5" style="    z-index: 9999;">
-            <div class="block-header">Введите номер</div>
-            <?=$form->field($model, 'phone1')->textInput([
-                'maxlength' => true,
-                'id' => 'field_phone1',
-                'class' => 'labelLess form-control',
-            ])->label(false)?>
-
-            <?=$form->field($model, 'phone2')->textInput([
-                'maxlength' => true,
-                'id' => 'field_phone2',
-                'class' => 'labelLess form-control',
-            ])->label(false)?>
-
-            <?=$form->field($model, 'phone3')->textInput([
-                'maxlength' => true,
-                'id' => 'field_phone2',
-                'class' => 'labelLess form-control',
-            ])->label(false)?>
-        </div>
-        <div class="col-md-12" style="margin-top:-55px">
-            <div style="position: relative;">
-            <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text', 'rows' => 10])?>
-            <div id="remaining_text"></div>
+            <div class="col-md-7">
+                <div class="block-header">Тестовая рассылка</div>
+                <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
+                    ['maxlength' => true, 'id' => 'field_type'])?>
             </div>
-            <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
-            <?=$form->field($model, 'title_button')->textInput([
+            <div class="col-md-5" style="    z-index: 9999;">
+                <div class="block-header">Введите номер</div>
+                <?=$form->field($model, 'phone1')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_phone1',
+                    'class' => 'labelLess form-control',
+                ])->label(false)?>
+
+                <?=$form->field($model, 'phone2')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_phone2',
+                    'class' => 'labelLess form-control',
+                ])->label(false)?>
+
+                <?=$form->field($model, 'phone3')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_phone2',
+                    'class' => 'labelLess form-control',
+                ])->label(false)?>
+            </div>
+            <div class="col-md-12" style="margin-top:-55px">
+                <div style="position: relative;">
+                    <?=$form->field($model, 'text')->textarea([
+                        'maxlength' => true,
+                        'id' => 'filed_text',
+                        'rows' => 10,
+                    ])?>
+                    <div id="remaining_text"></div>
+                </div>
+                <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
+                <?=$form->field($model, 'title_button')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_title_button',
+                ])?>
+
+                <?=$form->field($model, 'url_button')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_url_button',
+                ])?>
+            </div>
+            <div class="form-group col-md-12">
+                <?=Html::submitButton('Отправить', ['class' => 'btn btn-success'])?>
+            </div>
+        </div>
+
+
+        <div class="col-md-5">
+            <div class="block-header">Задать параметры рассылки</div>
+            <?=$form->field($model, 'title')->textInput([
                 'maxlength' => true,
-                'id' => 'field_title_button',
             ])?>
+            <?php
+            $items = ViberMessage::getAlphaNames();
+            $options = [];
+            foreach ($items as $key => $val) {
+                if ($key != 'TEST') {
+                    $options[$key] = ['disabled' => true];
+                }
+            }
+            echo $form->field($model, 'alpha_name')->dropDownList($items, ['maxlength' => true, 'options' => $options]);
+            ?>
 
-            <?=$form->field($model, 'url_button')->textInput([
-                'maxlength' => true,
-                'id' => 'field_url_button',
-            ])?>
+
+            <?=$form->field($model, 'date_start')->widget(DatePicker::classname(), [
+                'options' => ['placeholder' => 'Дата отправки'],
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ],
+            ]);?>
+            <div style="width: 48%;float:left;">
+                <?=$form->field($model, 'time_start')->input('time')?>
+
+            </div>
+            <div style="width: 48%;float: right" class="has-success">
+                <label class="cbx-label" style="margin-bottom: 5px;">Прямо сейчас</label>
+                <?=$form->field($model, 'just_now')->widget(CheckboxX::classname(), [
+                    'pluginOptions' => ['threeState' => false, 'size' => 'lg', 'class' => 'has-sucess'],
+                ])->label(false)?>
+            </div>
+
         </div>
-        <div class="form-group col-md-12">
-            <?=Html::submitButton('Отправить', ['class' => 'btn btn-success'])?>
-        </div>
+
+        <?php ActiveForm::end(); ?>
     </div>
-
-
-    <div class="col-md-5">
-        <div class="block-header">Задать параметры рассылки</div>
-        <?=$form->field($model, 'title')->textInput([
-            'maxlength' => true
-        ])?>
-
-        <?=$form->field($model, 'date_start')->widget(DatePicker::classname(), [
-            'options' => ['placeholder' => 'Дата отправки'],
-            'pluginOptions' => [
-                'autoclose' => true,
-                'format'=>'yyyy-mm-dd'
-            ],
-        ]);?>
-        <div style="width: 48%;float:left;">
-            <?=$form->field($model, 'time_start')->input('time')?>
-
-        </div>
-        <div style="width: 48%;float: right" class="has-success">
-            <label class="cbx-label"     style="margin-bottom: 5px;">Прямо сейчас</label>
-            <?=
-             $form->field($model, 'just_now')->widget(CheckboxX::classname(), [
-                 'pluginOptions'=>['threeState'=>false, 'size'=>'lg', 'class'=>'has-sucess']
-            ])->label(false)?>
-        </div>
-
-    </div>
-
-    <?php ActiveForm::end(); ?>
-</div>
     <script>
 
-        function calcRemaining(obj, maxCount){
+        function calcRemaining(obj, maxCount) {
             var val = ($(obj).val());
-            if (val.length>maxCount){
-                val=val.substr(0,maxCount);
+            if (val.length > maxCount) {
+                val = val.substr(0, maxCount);
                 $(obj).val(val);
 
             }
-            var remaining = maxCount- val.length;
-            return ''+ remaining + ' символов осталось';
+            var remaining = maxCount - val.length;
+            return '' + remaining + ' символов осталось';
         }
-        function informToptext(obj){
-            var txt = calcRemaining(obj,1000);
+
+        function informToptext(obj) {
+            var txt = calcRemaining(obj, 1000);
             $('#remaining_text').html(txt);
         }
 
         function initPage() {
 
-            informToptext( $('#filed_text')[0]);
-            $('#filed_text').keyup( function(){
+            informToptext($('#filed_text')[0]);
+            $('#filed_text').keyup(function () {
                 informToptext(this);
             })
 
@@ -158,6 +173,7 @@ use yii\helpers\Url;
                         break
                 }
             }
+
             manageVisible();
             $('#field_type').change(manageVisible);
 
