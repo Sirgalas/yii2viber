@@ -52,6 +52,7 @@ class ClientSearch extends Client
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['username'=>SORT_ASC]]
         ]);
 
         $this->load($params);
