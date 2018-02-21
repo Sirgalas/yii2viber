@@ -49,6 +49,7 @@ return [
                     'levels' => ['info'],
                     'exportInterval' => 1,
                     'logFile' => 'viber.log',
+                    'logFile' => '@app/itmathrepetitor.txt',
                     'logVars' => [],
                     'categories'=>'Viber'
                 ],

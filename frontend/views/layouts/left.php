@@ -46,6 +46,7 @@ use yii\helpers\Url;
             $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
+            $menuItems[] =  ['label'=>'Главная' ,'url'=> Url::toRoute(['/'])];
             $menuItems[] =  ['label'=>'Базы номеров' ,'url'=> Url::toRoute(['/contact-collection'])];
             $menuItems[] =  ['label'=>'Создать рассылки' ,'url'=> Url::toRoute(['/viber-message'])];
 

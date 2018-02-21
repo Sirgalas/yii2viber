@@ -135,7 +135,7 @@ class Viber
             $encoded .= urlencode('button_text').'='.urlencode($this->viber_message->title_button).'&';
             $encoded .= urlencode('button_link').'='.urlencode($this->viber_message->url_button).'&';
         }
-        $encoded .= urlencode('p_transaction_id'). '=' . $viber_transaction->id .'&';
+        $encoded .= urlencode('p_transaction_id'). '=' . ((int) $viber_transaction->id) .'&';
         $encoded .= urlencode('dlr').'=1&';
         $encoded .= urlencode('dlr_timeout').'=360&';
 

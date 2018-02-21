@@ -43,7 +43,7 @@ use yii\helpers\Url;
         </div>
         <div class="col-md-12" style="margin-top:-55px">
             <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text', 'rows' => 10])?>
-
+            <div id="remaining_text"></div>
 
             <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
             <?=$form->field($model, 'title_button')->textInput([
@@ -93,8 +93,30 @@ use yii\helpers\Url;
 </div>
     <script>
 
+        function calcRemaining(obj, maxCount){
+            var val = ($(obj).val());
+            if (val.length>maxCount){
+                val=val.substr(0,maxCount);
+                $(obj).val(val);
+
+            }
+            var remaining = maxCount- val.length;
+            return ''+ remaining + ' символов осталось';
+        }
+        function informToptext(obj){
+            var txt = calcRemaining(obj,1000);
+            $('#remaining_text').html(txt);
+        }
+
         function initPage() {
+
+            informToptext( $('#filed_text')[0]);
+            $('#filed_text').keyup( function(){
+                informToptext(this);
+            })
+
             function manageVisible() {
+
                 var type = $('#field_type').val();
                 switch (type) {
                     case

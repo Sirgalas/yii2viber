@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 <div class="box-header">
                     <h3 class="box-title"> Телефоны </h3>
                 </div><!-- /.box-header -->
-                <div class="box-body">
+                <div class="box-body contact_collection_form">
                     <div class="row">
                         <div class="col-md-7">
                             <?php echo $this->render('phone_grid/index',

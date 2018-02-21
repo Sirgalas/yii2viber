@@ -88,7 +88,22 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
                                     'filter' => ['dealer' => 'dealer', 'client' => 'client'],
                                 ],
                                 //'dealer_id',
+                                [
+                                    'class'=>'kartik\grid\EditableColumn',
+                                    'attribute'=>'cost',
+                                    'value'=>function($model){return number_format($model->cost,2) . ' руб'; },
 
+                                    'editableOptions'=> function ($model, $key, $index) {
+                                        return [
+                                            'header'=>Yii::t('front','edit_cost'),
+                                            'size'=>'md',
+                                            'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                                            'formOptions' => [
+                                                'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
+                                            ]
+                                        ];
+                                    }
+                                ],
                                 [
                                     'class'=>'kartik\grid\EditableColumn',
                                     'attribute'=>'balance',

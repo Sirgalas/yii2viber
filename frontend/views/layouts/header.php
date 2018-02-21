@@ -22,7 +22,9 @@ if (Yii::$app->user->isGuest){
         </a>
 
         <div class="navbar-custom-menu">
+          <?php  $x=Yii::info('test message');
 
+            ?>
             <ul class="nav navbar-nav">
 
                 <!-- Messages: style can be found in dropdown.less -->
@@ -160,7 +162,7 @@ if (Yii::$app->user->isGuest){
                     ?>
                 </li>
                 <li class="dropdown tasks-menu">
-                    <?php if(!Yii::$app->user->isGuest){ ?>
+                    <?php if(!Yii::$app->user->isGuest && Yii::$app->user->identity->isClient()){ ?>
                        <?= Html::a('Хочу стать дилером', Url::to(['/client/want-dealer'])); ?>
                     <?php } ?>
                 </li>

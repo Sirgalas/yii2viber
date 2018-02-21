@@ -191,8 +191,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             $('#filed_text').keyup( function(){
                 informToptext(this);
             })
-            $('.radio-toggle').toggleInput();
-            $('.radio-toggle').show();
+
             function manageVisible() {
                 var type = $('#field_type').val();
                 switch (type) {
