@@ -47,6 +47,7 @@ class ViberController extends \yii\web\Controller
         }
 
         $data = $_POST;
+        Yii::info("Notify:  \n " . print_r($data,1), 'viber');
         $vb_Note = new ViberNotification();
         $vb_Note->load($data, '');
         if ($vb_Note->validate()) {
@@ -57,5 +58,9 @@ class ViberController extends \yii\web\Controller
         }
 
         return 'OK';
+    }
+
+    public function actionLog($id = null){
+        $path = '@common/runtime/logs/viber/';
     }
 }

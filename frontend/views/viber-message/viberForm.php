@@ -57,8 +57,10 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <a href="https://hyperhost.ua/ru" target="_blank"><img src="/images/banner.png" style="margin: 10px auto;   "></a>
             </div>
             <div class="col-md-12" style="margin-top:-20px">
+                <div style="position: relative;">
                 <?=$form->field($model, 'text')->textarea(['maxlength' => true, 'id' => 'filed_text', 'rows' => 10])?>
                 <div id="remaining_text"></div>
+                </div>
                 <?php if ($model->image) : ?>
                     <img src="/uploads/<?=$model->image?>" id="viber_image"
                          style="max-width: 100%;max-height: 20vh;border: black solid 1px;">

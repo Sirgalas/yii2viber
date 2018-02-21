@@ -39,6 +39,7 @@ return [
             ],
         ],
         'log' => [
+            'flushInterval' => 1,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
@@ -48,10 +49,11 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['info'],
                     'exportInterval' => 1,
-                    'logFile' => 'viber.log',
-                    'logFile' => '@app/itmathrepetitor.txt',
-                    'logVars' => [],
-                    'categories'=>'Viber'
+                    'logVars' => [/*'_GET', '_POST', '_FILES', '_COOKIE', '_SESSION'*/],
+                    'categories' => ['viber'],
+                    'logFile' => '@common/runtime/logs/viber/viber.log',
+                    'maxFileSize' => 1024 * 2*1024,
+                    'maxLogFiles' => 200,
                 ],
             ],
         ],

@@ -210,7 +210,7 @@ class ContactCollectionController extends Controller
             try {
                 $resource = UploadedFile::getInstance($form, 'file');
                 $result = $phone->pointer($resource, Yii::$app->request->post(), $post, $form);
-                return var_dump($result);
+
                 if (! $result) {
                     throw new \Exception('Ошибка импорта');
                 }

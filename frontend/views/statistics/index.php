@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::begin(); ?>
     <div class="col-md-10 col-md-offset-1">
         <?php $form=ActiveForm::begin(); ?>
-        <?= $form->field($model,'titleSearch')->textInput(['placeholder'=>'Выбирите телефон или название рассылки'])->label(false) ?>
+        <?= $form->field($model,'titleSearch')->textInput(['placeholder'=>'Выберите телефон или название рассылки'])->label(false) ?>
         <div class="col-md-5 col-md-offset-1">
             <div class="form-group">
                 <?= DatePicker::widget([
