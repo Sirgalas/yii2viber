@@ -148,7 +148,7 @@ class ViberTestForm extends Model
         }
         $cc = new ContactCollection([
             'user_id' => \Yii::$app->user->id,
-            'title' => 'База для рассылки '.$this->title,
+            'title' => 'База для рассылки <'. $this->title . '> - ' . time(),
             'type' => 'viber',
             'created_at' => time(),
         ]);

@@ -20,7 +20,7 @@ use yii\helpers\Html;
                 <?= $form->field($contactForm,'collection_id')->widget(Select2::class, [
                     'data' => $contactCollection,
                     'language' => 'ru',
-                    'options' => ['placeholder' => 'Выбирите коллекцию'],
+                    'options' => ['placeholder' => 'Выберите коллекцию'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],

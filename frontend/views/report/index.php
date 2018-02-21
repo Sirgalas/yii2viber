@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterWidgetOptions'=>[
                     'pluginOptions'=>['allowClear'=>true],
                 ],
-                'filterInputOptions'=>['placeholder'=>'Выбирите рассылку']
+                'filterInputOptions'=>['placeholder'=>'Выберите рассылку']
             ],
             [
                 'attribute'=>'status',
@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterWidgetOptions'=>[
                     'pluginOptions'=>['allowClear'=>true],
                 ],
-                'filterInputOptions'=>['placeholder'=>'Выбирите рассылку']
+                'filterInputOptions'=>['placeholder'=>'Выберите рассылку']
             ],
             [
                 'attribute'=>'created_at',
@@ -60,6 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'header'=>'База телефонов',
                 'format'=>'raw',
                 'value'=>function($model){
+                    $arrCollection=[];
                     foreach ($model->viberMessage->contactCollection as $contactCollection){
                         $arrCollection[]=$contactCollection->title;
                     }
@@ -70,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterWidgetOptions'=>[
                     'pluginOptions'=>['allowClear'=>true],
                 ],
-                'filterInputOptions'=>['placeholder'=>'Выбирите базу телефонов']
+                'filterInputOptions'=>['placeholder'=>'Выберите базу телефонов']
             ],
             [
                 'class' => 'yii\grid\ActionColumn',

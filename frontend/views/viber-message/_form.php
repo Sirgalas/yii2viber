@@ -53,7 +53,7 @@ use yii\helpers\Url;
                                 <?=$form->field($model, 'user_id')->widget(Select2::classname(), [
                                     'data' => $clients,
                                     'language' => 'ru',
-                                    'options' => ['placeholder' => 'Выбирите клента'],
+                                    'options' => ['placeholder' => 'Выберите клента'],
                                     'pluginOptions' => [
                                         'allowClear' => true
                                     ],

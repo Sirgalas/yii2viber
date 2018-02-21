@@ -76,7 +76,8 @@ class TestController extends Controller
 
     public function actionVb()
     {
-
+        Yii::info('text', 'pixels');
+        exit;
 
         $data = [
             'p_transaction_id' => '102',

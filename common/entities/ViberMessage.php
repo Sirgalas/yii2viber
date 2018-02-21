@@ -101,6 +101,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             [['cost', 'balance'], 'number'],
             ['viber_image_id', 'string'],
             [['title'], 'string', 'max' => 50],
+
             [['text'], 'string', 'max' => 1000],
             [['image', 'url_button'], 'string', 'max' => 255],
             [

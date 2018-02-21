@@ -148,9 +148,13 @@ class Viber
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
 
+        Yii::info("Query: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $encoded, 'viber');
+
         $result = curl_exec($ch);
         //curl_close($ch);
         //echo '===============================';
+        $viber_transaction->date_send = time();
+        Yii::info("Answer: {$viber_transaction->viber_message_id}::{$viber_transaction->id} \n " . $result, 'viber');
         if ($this->parseSendResult($result, $phonesA)) {
             $viber_transaction->date_send = time();
             $viber_transaction->status = 'sended';
