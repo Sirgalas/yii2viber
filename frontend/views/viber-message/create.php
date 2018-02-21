@@ -9,10 +9,8 @@ use yii\helpers\Html;
  * @var array $assign_collections
  */
 
-$this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Viber Message',
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Viber Messages'), 'url' => ['index']];
+$this->title = Yii::t('app', ' Создать рассылку');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Viber рассылки'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="viber-message-create">

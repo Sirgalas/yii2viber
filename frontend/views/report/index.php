@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'attribute'=>'viber_message_id',
+                'header'=>'Название рассылки',
                 'value'=>function($model){
                     return $model->viberMessage->title;
                 },
@@ -37,6 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute'=>'status',
+                'header'=>'Статус',
                 'value'=>function($model){
                     return $model->theStatus;
                 },
@@ -55,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute'=>'collection_id',
+                'header'=>'База телефонов',
                 'format'=>'raw',
                 'value'=>function($model){
                     foreach ($model->viberMessage->contactCollection as $contactCollection){

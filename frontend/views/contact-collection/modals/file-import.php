@@ -36,8 +36,8 @@ use yii\helpers\Html;
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                <?= Html::submitButton(Yii::t('front','Save'), ['class' => 'btn btn-primary']) ?>
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Закрыть</button>
+                <?= Html::submitButton(Yii::t('front','Сохранить'), ['class' => 'btn btn-primary']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

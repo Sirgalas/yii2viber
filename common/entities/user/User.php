@@ -13,6 +13,8 @@ use common\entities\Phone;
 use common\entities\ViberMessage;
 use dektrium\user\models\User as BaseUser;
 use Yii;
+use yii\helpers\ArrayHelper;
+
 /**
  * @property string $type
  * @property int $dealer_id
@@ -23,6 +25,10 @@ use Yii;
  * @property  number cost
  * @property  string tel
  * @property  string time_work
+ * @property  string first_name
+ * @property  string surname
+ * @property  string family
+ * @property  string avatar
  * @property ContactCollection[] $contactCollections
  * @property Phone[] $phones
  * @property ViberMessage[] $viberMessages
@@ -31,10 +37,22 @@ class User extends BaseUser
 {
     const WANT=1;
     const NOT_WANT=0;
+    const SCENARIO_PROFILE = 'profile';
+
+    const ADMIN='admin';
+    const CLIENT='client';
+    const DEALER='dealer';
+
+    public static $userTypes=[
+        self::ADMIN=>'Админ',
+        self::CLIENT=>'Клиент',
+        self::DEALER=>'Дилер'
+    ];
     public function scenarios()
     {
         $scenarios = parent::scenarios();
         // add field to scenarios
+
         $scenarios['create'][] = 'dealer_id';
         $scenarios['create'][] = 'image';
         $scenarios['create'][] = 'type';
@@ -45,7 +63,7 @@ class User extends BaseUser
         $scenarios['register'][] = 'dealer_id';
         $scenarios['register'][] = 'image';
         $scenarios['register'][] = 'type';
-
+        $scenarios[self::SCENARIO_PROFILE] = ['tel', 'first_name','surname','family','time_work','username','email'];
         return $scenarios;
     }
 
@@ -74,8 +92,15 @@ class User extends BaseUser
         ];
         $rules['cost']=['cost','number'];
         $rules['tel']=['tel','string'];
-        $rules['time_work']=['time_work','string'];
+        $rules['first_name']=['first_name','string','max' => 100];
+        $rules['surname']=['surname','string','max' => 100];
+        $rules['family']=['family','string','max' => 100];
+        $rules['avatar']=['avatar','string'];
         return $rules;
+    }
+
+    public function getTheStatus(){
+        return $this::$userTypes[$this->type];
     }
 
     public function attributeLabels()
@@ -89,6 +114,9 @@ class User extends BaseUser
         $labels['cost'] = 'Цена за сообщение';
         $labels['tel'] = 'Телефон';
         $labels['time_work'] = 'Время работы';
+        $labels['first_name'] = 'Время работы';
+        $labels['surname'] = 'Время работы';
+        $labels['family'] = 'Время работы';
     }
 
     public function isAdmin()
@@ -237,6 +265,6 @@ class User extends BaseUser
     }
 
     public function headerInfo(){
-        return 'Ваш баланс ( ' . number_format($this->balance) .  ' SMS )';
+        return 'Ваш баланс = ' . number_format($this->balance) .  ' SMS ';
     }
 }

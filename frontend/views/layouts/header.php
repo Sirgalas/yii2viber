@@ -189,12 +189,12 @@ if (Yii::$app->user->isGuest){
                         <!-- Menu Footer-->
                         <?php if (is_object(Yii::$app->user->identity)):  ?>
                         <li class="user-footer">
-                            <!--<div class="pull-left">
-                                <a href="<?= Url::to(['/user/settings/profile']) ?>" class="btn btn-default btn-flat">Profile</a>
-                            </div>-->
+                            <div class="pull-left">
+                                <a href="<?= Url::to(['/profile/views']) ?>" class="btn btn-default btn-flat">Профиль</a>
+                            </div>
                             <div class="pull-right">
                                 <?= Html::a(
-                                    'Sign out',
+                                    'Выйти',
                                     ['/site/logout'],
                                     ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
                                 ) ?>

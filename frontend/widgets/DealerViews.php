@@ -15,7 +15,7 @@ class DealerViews extends Widget
     public $id;
     public function run()
     {
-       $dealer=User::find()->where(['id'=>$this->id])->select(['username','tel','email','time_work'])->one();
+       $dealer=User::find()->where(['id'=>$this->id])->select(['username','tel','email','time_work','first_name','surname','family'])->one();
        return $this->render('dealer',compact('dealer')); 
 
     }

@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model common\entities\user\User */
 /* @var $dealers array */
 
-$this->title = Yii::t('app', 'Create User');
+$this->title = Yii::t('app', 'Создать клиента');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

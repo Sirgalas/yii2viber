@@ -6,7 +6,7 @@ use yii\helpers\Url;
 /* @var $model common\entities\ContactCollection */
 /* @var $phoneSearchModel common\entities\PhoneSearch */
 /* @var $phoneDataProvider yii\data\ActiveDataProvider */
-$this->title = Yii::t('app', 'Update Contact Collection: {nameAttribute}', [
+$this->title = Yii::t('app', 'Изменить: {nameAttribute}', [
     'nameAttribute' => $model->title,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Contact Collections'), 'url' => ['index']];
