@@ -419,24 +419,45 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function getAlphaNames(){
         return [
-            'Clickbonus'=>'Clickbonus',
+            'Clickbonus'=>'Бонус',
             //'SALE'=>'SALE',
-            //'Promo'=>'Promo',
-            //'SHOP'=>'SHOP',
-            //'Feedback'=>'Feedback',
-            //'Sushi'=>'Sushi',
-            //'Бонус'=>'Бонус',
-            //'Фитнес'=>'Фитнес',
-            //'Taxi'=>'Taxi',
-            //'TEST'=>'TEST',
-            //'ChatTest'=>'ChatTest',
-            //'Dostavka'=>'Dostavka',
-            //'Klinika'=>'Klinika',
-            //'EXPRESS'=>'EXPRESS',
-            //'Недвижимость'=>'Недвижимость',
-            //'Documents'=>'Documents',
-            //'AUTO'=>'AUTO'
+            'Promo'=>'Promo',
+            'SHOPSHOP'=>'SHOP',
+            'Feedback'=>'Feedback',
+            'sushilot'=>'Sushi',
+            'Бонус'=>'Бонус',
+            'Фитнес'=>'Фитнес',
+            'Taxi'=>'Taxi',
+            'TEST'=>'TEST',
+            'ChatTest'=>'ChatTest',
+            'Dostavka'=>'Dostavka',
+            'Klinika'=>'Klinika',
+            'EXPRESS'=>'EXPRESS',
+            'Недвижимость'=>'Недвижимость',
+            'Documents'=>'Documents',
+            'AUTO'=>'AUTO'
         ];
+    }
+    public function getAlphaNamesOptions(){
+            return [
+                //'Clickbonus'=>'Бонус',
+            //'SALE'=>'SALE',
+
+            'Promo'=>['disabled'=>true],
+            'Feedback'=>['disabled'=>true],
+
+            'Бонус'=>['disabled'=>true],
+            'Фитнес'=>['disabled'=>true],
+            'Taxi'=>['disabled'=>true],
+            'TEST'=>['disabled'=>true],
+            'ChatTest'=>['disabled'=>true],
+            'Dostavka'=>['disabled'=>true],
+            'Klinika'=>['disabled'=>true],
+            'EXPRESS'=>['disabled'=>true],
+            'Недвижимость'=>['disabled'=>true],
+            'Documents'=>['disabled'=>true],
+            'AUTO'=>['disabled'=>true],
+            ];
     }
 
 }
