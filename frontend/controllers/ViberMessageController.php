@@ -92,7 +92,7 @@ class ViberMessageController extends Controller
             }
         }
 
-        $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id])->select([
+        $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id? $model->user_id: Yii::$app->user->identity->id])->select([
             'id',
             'title',
         ])->orderBy('title')->asArray()->all();

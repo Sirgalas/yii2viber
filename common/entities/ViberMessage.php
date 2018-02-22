@@ -33,6 +33,8 @@ use common\entities\mongo\Phone;
  * @property int $limit_messages Сколько сообщений отправлять?
  * @property string $cost Стоимость
  * @property string $balance Сколько средств уже потрачено
+ * @property int date_send_finish время окончания рассылки
+ *
  * @property ContactCollection $contactCollection
  * @property MessageContactCollection[] $messageContactCollections
  * @property User $user
@@ -273,6 +275,9 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
+        if ($this->dlr_timeout){
+            $this->dlr_timeout = 24 * 3600;
+        }
         if (!$this->alpha_name){
             $this->alpha_name =Yii::$app->params['viber']['from'];
         }
@@ -466,5 +471,10 @@ class ViberMessage extends \yii\db\ActiveRecord
             'AUTO'=>['disabled'=>true],
             ];
     }
+
+
+
+
+
 
 }

@@ -43,11 +43,14 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     const  VIEWED = 'viewed';
 
+    const  READY = 'ready';
+
     public static $statusSend = [
         self::NEWSEND => 'Новое',
         self::SENDED => 'Отправленно',
         self::DELIVERED => 'Доставлено',
         self::VIEWED => 'Просмотрено',
+        self::READY => 'Готово',
     ];
 
     /**
