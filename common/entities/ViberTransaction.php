@@ -125,9 +125,11 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
-    public function getTheStatus(){
+    public function getTheStatus()
+    {
         return $this::$statusSend[$this->status];
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -150,12 +152,12 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return (array)\GuzzleHttp\json_decode($this->phones, true);
     }
 
-    public function handleViberNotification(ViberNotification $vb_Note)
+    public function handleViberNotification(ViberNotification $vb_Note, $fileName)
     {
         $phone = Message_Phone_List::find()->where(['msg_id' => $vb_Note->msg_id])->one();
         $changed = false;
-
-        if ($vb_Note->type == 'undelivered'){
+        file_put_contents($fileName, "\n --- Before action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
+        if ($vb_Note->type == 'undelivered') {
             $phone->status = 'undelivered';
             $changed = true;
         } else {
@@ -163,7 +165,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
             if (is_object($phone) & $phone->getAttribute('status') === 'new' || $phone->getAttribute('status') === 'sended') {
                 if ($vb_Note->type === 'delivered' || $vb_Note->type === 'delivery') {
 
-                    if ( $vb_Note->status == 'undelivered'){
+                    if ($vb_Note->status == 'undelivered') {
 
                         $phone->status = 'undelivered';
                         $changed = true;
@@ -200,11 +202,12 @@ class ViberTransaction extends \yii\db\ActiveRecord
             if ($this->viewed >= $this->size && $this->status != 'ready') {
                 $this->status = 'ready';
             }
+            file_put_contents($fileName, "\n --- after action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
             $phone->save();
             $this->save();
-
         }
     }
+
     public function getMessagePhoneList()
     {
         $this->hasMany(Message_Phone_List::class, ['transaction_id' => 'id']);
@@ -216,32 +219,43 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     public function Phone()
     {
-       $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
-        foreach ($phoneList as $messagePhoneList)
-                $phone[]=$messagePhoneList->phone;
-        return implode(',</br>',$phone);
+        $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        foreach ($phoneList as $messagePhoneList) {
+            $phone[] = $messagePhoneList->phone;
+        }
+
+        return implode(',</br>', $phone);
     }
 
-    public function Status(){
-        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
-        foreach ($phoneList as $messagePhoneList)
-            $status[]=$messagePhoneList::$statusMessage[$messagePhoneList->status];
+    public function Status()
+    {
+        $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        foreach ($phoneList as $messagePhoneList) {
+            $status[] = $messagePhoneList::$statusMessage[$messagePhoneList->status];
+        }
+
         return $status;
     }
-    
-    public function DateDelivery(){
-        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
-        foreach ($phoneList as $messagePhoneList)
-            $date_delivered[]=($messagePhoneList->date_delivered)?date('d:m:Y',$messagePhoneList->date_delivered):'не доставлено';
-        return implode(',</br>',$date_delivered);
-    }
-    
-    public function DateViewed(){
-        $phoneList=Message_Phone_List::find()->where(['transaction_id' =>$this->id])->all();
-        foreach ($phoneList as $messagePhoneList)
-            $date_viewed[]=($messagePhoneList->date_viewed)?date('d:m:Y',$messagePhoneList->date_viewed):'Не просмотрено';
-        return implode(',</br>',$date_viewed);
-    }
-    
 
+    public function DateDelivery()
+    {
+        $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        foreach ($phoneList as $messagePhoneList) {
+            $date_delivered[] = ($messagePhoneList->date_delivered) ? date('d:m:Y',
+                $messagePhoneList->date_delivered) : 'не доставлено';
+        }
+
+        return implode(',</br>', $date_delivered);
+    }
+
+    public function DateViewed()
+    {
+        $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        foreach ($phoneList as $messagePhoneList) {
+            $date_viewed[] = ($messagePhoneList->date_viewed) ? date('d:m:Y',
+                $messagePhoneList->date_viewed) : 'Не просмотрено';
+        }
+
+        return implode(',</br>', $date_viewed);
+    }
 }
