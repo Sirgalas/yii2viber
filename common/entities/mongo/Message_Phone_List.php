@@ -27,7 +27,7 @@ class Message_Phone_List extends ActiveRecord
     const SENDED = 'sended';
     const DELIVERED = 'delivered';
     const VIEWED = 'viewed';
-
+    const UNDELIVERED = 'undelivered';
 
     public static $statusMessage=
         [
@@ -35,16 +35,24 @@ class Message_Phone_List extends ActiveRecord
             self::SENDED=>"Отправлено",
             self::DELIVERED=>"Получено",
             self::VIEWED=>"Прочитано",
+            self::UNDELIVERED=>'Недоставлено'
         ];
+    public static $BgColor=[
+        self::NEWMESSAGE=>'#3C8DBC',
+        self::SENDED=>'#FFF600',
+        self::DELIVERED=>'#00A65A',
+        self::VIEWED=>'#F56954',
+        self::UNDELIVERED=>'#222D32'
+    ];
 
+   
     public static function collectionName()
     {
         return 'message_phone_list';
     }
-    
-    public function getStatusMessage(){
-        return $this::$statusMessage[$this->status];
-    }
+
+
+   
 
     public function attributes()
     {
@@ -87,5 +95,21 @@ class Message_Phone_List extends ActiveRecord
     }
     public function getViberTransaction(){
         return $this->hasOne(ViberTransaction::class,['id'=>'transaction_id']);
+    }
+
+    public function statusMessage($status){
+        return self::$statusMessage[$status];
+    }
+    public function BgColor($status){
+        return self::$BgColor[$status];
+    }
+    public function allStatus():array {
+        return self::$statusMessage;
+    }
+    public function allColor(){
+        return self::$BgColor;
+    }
+    public function getStatusMessage(){
+        return self::$statusMessage[$this->status];
     }
 }
