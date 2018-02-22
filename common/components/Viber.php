@@ -144,7 +144,7 @@ class Viber
 
         if (!$viber_transaction){
             $this->viber_message->status = ViberMessage::STATUS_WAIT;
-
+            $this->viber_message->date_send_finish = time();
             $this->viber_message->viber_image_id = '' . $this->viber_message->viber_image_id;
             $this->viber_message->save();
 

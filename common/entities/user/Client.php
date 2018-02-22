@@ -17,7 +17,7 @@ class Client extends User
      * @return \yii\db\ActiveQuery
      */
     public static function getMyClients($type='all'){
-        $ids = getClildList();
+        $ids = getChildList();
         if ($ids === -1){
             return [];
         }

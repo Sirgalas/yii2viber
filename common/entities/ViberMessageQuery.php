@@ -47,4 +47,5 @@ class ViberMessageQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['status'=>ViberMessage::STATUS_PROCESS ])->justNow();
     }
+
 }

@@ -46,7 +46,7 @@ class ClientSearch extends Client
         $query = Client::find();
 
         // add conditions that should always apply here
-        $ids = Yii::$app->user->identity->getClildList();
+        $ids = Yii::$app->user->identity->getChildList();
         if ($ids !== -1) {
             $query->andWhere(['in', 'id', $ids]);
         }
@@ -66,14 +66,18 @@ class ClientSearch extends Client
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            //'created_at' => $this->created_at,
+            //'updated_at' => $this->updated_at,
+            'dealer_id' =>  $this->dealer_id,
             'flags' => $this->flags,
             'last_login_at' => $this->last_login_at,
-            'dealer_id' => $this->dealer_id,
+
             'balance' => $this->balance,
 
         ]);
+        if ( $this->created_at){
+            $query->andFilterWhere(['like', "cast(abstime(created_at) as varchar) ", $this->created_at]);
+        }
 
         if ($this->dealer_confirmed){
             if ($this->dealer_confirmed==='t'){

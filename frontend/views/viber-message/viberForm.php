@@ -22,7 +22,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
 
     <div class="viber-test-message-form row " data-id="<?=$model->id?>">
         <?php
-        if ($model->status && $model->status !== ViberMessage::STATUS_PRE) {
+        if ($model->status && $model->status !== ViberMessage::STATUS_PRE ) {
             ?>
             <div style="padding: 20px 30px; background: rgb(243, 156, 18); z-index: 999999; font-size: 16px; font-weight: 600;">
                 Эта рассылка доступна только для просмотра.
@@ -31,7 +31,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
         <?php      }
 
 
-            if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin()) { ?>
+            if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin() && $model->cost>0) { ?>
 
             <div class="col-xs-12">
                 <?php $form = ActiveForm::begin([
@@ -54,6 +54,12 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                            value="Отклонить" name="disallow">
                 </div>
                 <?php ActiveForm::end(); ?>
+            </div>
+        <?php } ?>
+        <?php if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin() && $model->cost == 0) { ?>
+            <div style="padding: 20px 30px; background: rgb(243,223,34); z-index: 999999; font-size: 16px; font-weight: 600;">
+                Эта рассылка доступна только для просмотра.
+                Не назначены реальные телефоны
             </div>
         <?php } ?>
         <div class="col-xs-12">
