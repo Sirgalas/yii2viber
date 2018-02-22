@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $content string */
 
 
-backend\assets\AppAsset::register($this);
+frontend\assets\AppAsset::register($this);
 dmstr\web\AdminLteAsset::register($this);
 $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
 ?>

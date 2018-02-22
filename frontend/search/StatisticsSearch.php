@@ -57,7 +57,7 @@ class StatisticsSearch extends ViberTransaction
         }
 
         if($params['user_id']!=""){
-            $user=User::find()->select('id')->where(['id_dealer'=>Yii::$app->user->identity->id,'id'=>$params['user_id']])->one();
+            $user=User::find()->select('id')->where(['dealer_id'=>Yii::$app->user->identity->id,'id'=>$params['user_id']])->one();
             if($user)
                 $user_id=$user->id;
             else
@@ -65,16 +65,12 @@ class StatisticsSearch extends ViberTransaction
         }else{
             $user_id=Yii::$app->user->identity->id;
         }
-        $id_messageFromCollection=[];
-        if($params['contactCollection']!=""){
-            $collections=MessageContactCollection::find()
-            ->where(['contact_collection_id'=>$params['contactCollection']])
+
+        $collections=MessageContactCollection::find()
+            ->where(['contact_collection_id'=>(int)$params['contactCollection']])
             ->select('viber_message_id')
-            ->all();
-            foreach ($collections as $viber_message_id){
-                $id_messageFromCollection[]=$viber_message_id->viber_message_id;
-            }
-        }
+            ->column();
+
 
         if(isset($params['dateTo'])){
             $dateTo=strtotime($params['dateTo']. ' 23:59:59');
@@ -100,10 +96,9 @@ class StatisticsSearch extends ViberTransaction
             'created_at'=>$this->created_at,
             'status'=>$this->status
             ]);
+        $query->andFilterWhere(['in','viber_message_id',$collections]);
         if(!empty($idMessageViber))
             $query->andFilterWhere(['in','viber_message_id',$idMessageViber]);
-        if(!empty($id_messageFromCollection))
-            $query->andFilterWhere(['in','viber_message_id',$id_messageFromCollection]);
         if($params['dateFrom']!='') {
             $query->andFilterWhere(['>=', 'created_at', $params['dateFrom'] ? strtotime($params['dateFrom'] . ' 00:00:00') : null]);
             $query->andFilterWhere(['<=', 'created_at', $dateTo ? $dateTo  : null]);

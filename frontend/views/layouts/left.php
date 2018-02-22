@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-
+$controller = Yii::$app->controller->id;
+$action = Yii::$app->controller->action->id;
 ?>
 <aside class="main-sidebar">
 
@@ -50,16 +51,18 @@ use yii\helpers\Url;
             $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
         } else {
             $menuItems[] = ['label' => 'Главная', 'url' => Url::toRoute(['/'])];
-            $menuItems[] = ['label' => 'Базы номеров', 'url' => Url::toRoute(['/contact-collection'])];
-            $menuItems[] = ['label' => 'Создать рассылки', 'url' => Url::toRoute(['/viber-message'])];
+            $menuItems[] = ['label' => 'Базы номеров', 'url' => Url::toRoute(['/contact-collection']),'options'=>['class'=>($controller=='contact-collection')?'active':'not-active']];
+            $menuItems[] = ['label' => 'Создать рассылки', 'url' => Url::toRoute(['/viber-message']),'options'=>['class'=>($controller=='viber-message')?'active':'not-active']];
 
             if (Yii::$app->user->identity->isDealer() || Yii::$app->user->identity->isAdmin()) {
-                $menuItems[] = ['label' => 'Все клиенты', 'url' => Url::toRoute(['/client'])];
+                $menuItems[] = ['label' => 'Все клиенты', 'url' => Url::toRoute(['/client']),'options'=>['class'=>($controller=='client')?'active':'not-active']];
+                $menuItems[] = ['label' => 'Профиль', 'url' => Url::toRoute(['/profile/views']),'options'=>['class'=>($controller=='profile')?'active':'not-active']];
+
             }
-            $menuItems[] = ['label' => 'Все отчеты', 'url' => Url::toRoute(['/report'])];
-            $menuItems[] = ['label' => 'Вся статистика', 'url' => Url::toRoute(['/statistics'])];
+            $menuItems[] = ['label' => 'Все отчеты', 'url' => Url::toRoute(['/report']),'options'=>['class'=>($controller=='report')?'active':'not-active']];
+            $menuItems[] = ['label' => 'Вся статистика', 'url' => Url::toRoute(['/statistics']),'options'=>['class'=>($controller=='statistics')?'active':'not-active']];
         }
-        $menuItems[] = ['label' => 'Реклама', 'url' => Url::toRoute(['site/advertising'])];
+        $menuItems[] = ['label' => 'Реклама', 'url' => Url::toRoute(['site/advertising']),'options'=>['class'=>($controller=='site'&&$action=='advertising')?'active':'not-active']];
         ?>
         <?=dmstr\widgets\Menu::widget([
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget' => 'tree'],

@@ -17,6 +17,7 @@ use kartik\checkbox\CheckboxX;
  **/
 $this->title = Yii::t('app', 'Статистика');
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="statistics-index">
     <h1><?=Html::encode($this->title)?></h1>
