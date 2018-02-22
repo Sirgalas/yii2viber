@@ -35,19 +35,24 @@ use yii\helpers\ArrayHelper;
  */
 class User extends BaseUser
 {
-    const WANT=1;
-    const NOT_WANT=0;
+    const WANT = 1;
+
+    const NOT_WANT = 0;
+
     const SCENARIO_PROFILE = 'profile';
 
-    const ADMIN='admin';
-    const CLIENT='client';
-    const DEALER='dealer';
+    const ADMIN = 'admin';
 
-    public static $userTypes=[
-        self::ADMIN=>'Админ',
-        self::CLIENT=>'Клиент',
-        self::DEALER=>'Дилер'
+    const CLIENT = 'client';
+
+    const DEALER = 'dealer';
+
+    public static $userTypes = [
+        self::ADMIN => 'Админ',
+        self::CLIENT => 'Клиент',
+        self::DEALER => 'Дилер',
     ];
+
     public function scenarios()
     {
         $scenarios = parent::scenarios();
@@ -63,21 +68,30 @@ class User extends BaseUser
         $scenarios['register'][] = 'dealer_id';
         $scenarios['register'][] = 'image';
         $scenarios['register'][] = 'type';
-        $scenarios[self::SCENARIO_PROFILE] = ['tel', 'first_name','surname','family','time_work','username','email'];
+        $scenarios[self::SCENARIO_PROFILE] = [
+            'tel',
+            'first_name',
+            'surname',
+            'family',
+            'time_work',
+            'username',
+            'email',
+        ];
+
         return $scenarios;
     }
 
     public function rules()
     {
-        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()){
-            $ranges= ['admin', 'client', 'dealer'];
+        if (! Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()) {
+            $ranges = ['admin', 'client', 'dealer'];
         } else {
-            $ranges= [  'client', 'dealer'];
+            $ranges = ['client', 'dealer'];
         }
         $rules = parent::rules();
         // add some rules
         $rules['fieldRequired'] = ['type', 'required'];
-        $rules['typeLength'] = ['type', 'in', 'range' => $ranges ];
+        $rules['typeLength'] = ['type', 'in', 'range' => $ranges];
 
         $rules['balance'] = ['balance', 'integer'];
         $rules['image'] = ['image', 'string', 'max' => 255];
@@ -90,16 +104,18 @@ class User extends BaseUser
             'targetClass' => self::className(),
             'targetAttribute' => ['dealer_id' => 'id'],
         ];
-        $rules['cost']=['cost','number'];
-        $rules['tel']=['tel','string'];
-        $rules['first_name']=['first_name','string','max' => 100];
-        $rules['surname']=['surname','string','max' => 100];
-        $rules['family']=['family','string','max' => 100];
-        $rules['avatar']=['avatar','string'];
+        $rules['cost'] = ['cost', 'number'];
+        $rules['tel'] = ['tel', 'string'];
+        $rules['first_name'] = ['first_name', 'string', 'max' => 100];
+        $rules['surname'] = ['surname', 'string', 'max' => 100];
+        $rules['family'] = ['family', 'string', 'max' => 100];
+        $rules['avatar'] = ['avatar', 'string'];
+
         return $rules;
     }
 
-    public function getTheStatus(){
+    public function getTheStatus()
+    {
         return $this::$userTypes[$this->type];
     }
 
@@ -120,8 +136,8 @@ class User extends BaseUser
         $labels['username'] = 'Логин';
         $labels['cost'] = 'Цена';
         $labels['created_at'] = 'Зарегистрирован';
-        return $labels;
 
+        return $labels;
     }
 
     public function isAdmin()
@@ -139,10 +155,10 @@ class User extends BaseUser
         return $this->type === 'dealer';
     }
 
-    public function getClient(){
+    public function getClient()
+    {
         return $this->type === 'client';
     }
-
 
     /**
      * Является ли переданный id - дочерним для текущего пользователя
@@ -173,16 +189,18 @@ class User extends BaseUser
                     ON \"user\".id = r.dealer_id
                 )
 
-                SELECT * FROM r WHere id=" . $this->id;
+                SELECT * FROM r WHere id=".$this->id;
         $user = Yii::$app->db->createCommand($sql)->queryOne();
         if ($user) {
             return true;
         }
+
         return false;
     }
 
-    public function getClildList($type=''){
-        if (!$type){
+    public function getChildList($type = '')
+    {
+        if (! $type) {
             $type = '\'client\',\'dealer\'';
         }
         if ($this->isClient()) {
@@ -195,39 +213,43 @@ class User extends BaseUser
             $sql = 'WITH RECURSIVE r AS (
                     SELECT id, dealer_id 
                     FROM "user"
-                    WHERE id = '.Yii::$app->user->id .'
+                    WHERE id = '.Yii::$app->user->id.'
 
                     UNION
 
                     SELECT "user".id, "user".dealer_id 
                     FROM "user"
                     JOIN r
-                    ON "user".dealer_id = r.id  and type in (' . $type . ')
+                    ON "user".dealer_id = r.id  and type in ('.$type.')
                 )
 
-                SELECT id FROM r WHERE id!=' . Yii::$app->user->id
-                   ;
+                SELECT id FROM r WHERE id!='.Yii::$app->user->id;
         }
-        $user_ids =  Yii::$app->db->createCommand($sql)->queryColumn();
-        if ($user_ids && !is_array($user_ids)){
+        $user_ids = Yii::$app->db->createCommand($sql)->queryColumn();
+        if ($user_ids && ! is_array($user_ids)) {
             $user_ids = [$user_ids];
         }
+
         return $user_ids;
     }
 
-    public function whoDealer(){
-        if($this->dealer_id)
+    public function whoDealer()
+    {
+        if ($this->dealer_id) {
             return $this->dealer_id;
+        }
+
         return false;
     }
 
     public function beforeValidate()
     {
-        if (!$this->type && $this->scenario === 'register'){
-            $this->type='client';
-            $this->want_dealer=self::NOT_WANT;
-            $this->dealer_id=Yii::$app->params['defaultDealer'];
+        if (! $this->type && $this->scenario === 'register') {
+            $this->type = 'client';
+            $this->want_dealer = self::NOT_WANT;
+            $this->dealer_id = Yii::$app->params['defaultDealer'];
         }
+
         return parent::beforeValidate(); // TODO: Change the autogenerated stub
     }
 
@@ -257,20 +279,29 @@ class User extends BaseUser
 
     /**
      * Возвращает список дилеров среди клиентов текущего пользователя
+     *
      * @return array
      */
-    public function getMyDealers(){
-        $dealersIds = static::getClildList('\'dealer\'');
-        $dealers = static::find()->where(['in', 'id', $dealersIds])->select(['id', 'username'])->asArray()
-            ->orderBy('username')->all();
-        $dealersDropdown=[Yii::$app->user->id=>Yii::$app->user->identity->username];
-        foreach ($dealers as $dealer){
+    public function getMyDealers()
+    {
+        $dealersIds = static::getChildList('\'dealer\'');
+        if ($dealersIds === -1) {
+            $where = ['type' => 'dealer'];
+        } else {
+            $where = ['in', 'id', $dealersIds];
+        }
+        $dealers = static::find()->where($where)->select(['id', 'username'])->asArray()->orderBy('username')->all();
+
+        $dealersDropdown = [Yii::$app->user->id => Yii::$app->user->identity->username];
+        foreach ($dealers as $dealer) {
             $dealersDropdown[$dealer['id']] = $dealer['username'];
         }
+
         return $dealersDropdown;
     }
 
-    public function headerInfo(){
-        return 'Ваш баланс = ' . number_format($this->balance) .  ' SMS ';
+    public function headerInfo()
+    {
+        return 'Ваш баланс = '.number_format($this->balance).' SMS ';
     }
 }
