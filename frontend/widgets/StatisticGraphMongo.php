@@ -36,7 +36,7 @@ class StatisticGraphMongo extends Widget
     }
 
     private function percent($sumArr,$val){
-        return ($val*100)/array_sum($sumArr);
+        return round(($val*100)/array_sum($sumArr));
     }
     
 
