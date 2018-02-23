@@ -468,7 +468,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             //'EXPRESS'=>['disabled'=>true],
             //'Недвижимость'=>['disabled'=>true],
             //'Documents'=>['disabled'=>true],
-            'AUTO'=>['disabled'=>true],
+            //'AUTO'=>['disabled'=>true],
             ];
     }
 

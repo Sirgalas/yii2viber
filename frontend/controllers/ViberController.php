@@ -30,10 +30,11 @@ class ViberController extends \yii\web\Controller
             echo 'notfound,   mkdir=', mkdir($path);
         }
         try {
+            $fileName =$path.'/post_'.date('Ymd_H').'.txt';
             if (isset($_POST)) {
-                file_put_contents($path.'/post_'.date('Ymd_H').'.txt', print_r($_POST, 1), FILE_APPEND);
+                file_put_contents($fileName, date("H:i:s") . "\n=====================\n".print_r($_POST, 1), FILE_APPEND);
             } else {
-                file_put_contents($path.'/post_'.date('Ymd_H').'.txt', 'NO DATA');
+                file_put_contents($fileName, 'NO DATA', FILE_APPEND);
                 echo 'POST: NO DATA';
             }
             if (isset($_GET)) {
@@ -55,16 +56,21 @@ class ViberController extends \yii\web\Controller
         $vb_Note->load($data, '');
 
         if ($vb_Note->validate()) {
+
             $viber_transaction = ViberTransaction::findOne($vb_Note->p_transaction_id);
 
             if ($viber_transaction) {
 
-                $viber_transaction->handleViberNotification($vb_Note);
+                $viber_transaction->handleViberNotification($vb_Note, $fileName);
 
             }
         }
 
         return 'OK';
+    }
+
+    public function actionTest(){
+        return $this->render('test');
     }
 
     public function actionLog($id = null)
