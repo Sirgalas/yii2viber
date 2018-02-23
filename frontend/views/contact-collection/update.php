@@ -59,8 +59,13 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                                         <button type="button" class="btn btn-block btn-sucess btn-sm" id="btn_save">
                                             Сохранить новые
                                         </button>
+                                        <div>
+
+                                        </div>
                                     </div>
                                 </div>
+
+
                             </div><!-- /.box-body -->
                         </div>
                     </div>

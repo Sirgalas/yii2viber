@@ -22,7 +22,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
 
     <div class="viber-test-message-form row " data-id="<?=$model->id?>">
         <?php
-        if ($model->status && $model->status !== ViberMessage::STATUS_PRE ) {
+        if ($model->status && !$model->isDeleteble() ) {
             ?>
             <div style="padding: 20px 30px; background: rgb(243, 156, 18); z-index: 999999; font-size: 16px; font-weight: 600;">
                 Эта рассылка доступна только для просмотра.
@@ -30,14 +30,17 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
         <?php      }
 
+        if (Yii::$app->user->identity->isAdmin()){
+            $form = ActiveForm::begin([ 'action' => 'moderate',
+                'options' => ['enctype' => 'multipart/form-data'],
+            ]);
+                    ?>
 
-            if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin() && $model->cost>0) { ?>
 
             <div class="col-xs-12">
-                <?php $form = ActiveForm::begin([
-                    'action' => 'moderate',
-                    'options' => ['enctype' => 'multipart/form-data'],
-                ]); ?>
+                <?php if ($model->status == ViberMessage::STATUS_CHECK && Yii::$app->user->identity->isAdmin() && $model->cost>0) {
+
+                    ?>
                 <?=$form->field($model, 'id')->hiddenInput()->label(false)?>
                 <div class="col-xs-3">
 
@@ -51,12 +54,20 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
 
 
                     <input type="submit" class="btn btn-block btn-warning btn-lg" id="moderation_cancel"
-                           value="Отклонить" name="disallow">
+                           value="Отправить на доработку" name="disallow">
                 </div>
-                <?php ActiveForm::end(); ?>
+                <?php } ?>
+                <div class="col-xs-3">
+
+
+                    <input type="submit" class="btn btn-block btn-danger btn-lg" id="close"
+                           value="Закрыть рассылку" name="close">
+                </div>
+
             </div>
-        <?php } ?>
-        <?php if ($model->status == ViberMessage::STATUS_PRE && Yii::$app->user->identity->isAdmin() && $model->cost == 0) { ?>
+            <?php ActiveForm::end();
+        }
+        if ( Yii::$app->user->identity->isAdmin() && $model->cost == 0) { ?>
             <div style="padding: 20px 30px; background: rgb(243,223,34); z-index: 999999; font-size: 16px; font-weight: 600;">
                 Эта рассылка доступна только для просмотра.
                 Не назначены реальные телефоны
@@ -67,7 +78,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 Cтоимость рассылки <span class="small" id="cost"><?=number_format($model->cost)?></span> SMS
             </div>
         </div>
-        <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+        <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data'], 'enableClientValidation'=>false]); ?>
         <div class="col-md-7">
             <div class="col-md-7">
                 <div class="block-header">
@@ -97,7 +108,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
             <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
-
+                <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;"></div>
             </div>
             <div class="col-md-12" style="margin-top:-20px">
                 <div style="position: relative;">
@@ -111,8 +122,14 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <?php if ($model->image) : ?>
                     <img src="/uploads/<?=$model->image?>" id="viber_image"
                          style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
+
                 <?php endif ?>
+
                 <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
+                <?php if ($model->hasErrors('image')) : ?>
+                    <div style="color: #b66161;margin-top: -10px;margin-bottom: 15px;"><?=
+                        implode ('<br>',$model->getErrors('image')) ?></div>
+                <?php endif ?>
                 <?=$form->field($model, 'title_button')->textInput([
                     'maxlength' => true,
                     'id' => 'field_title_button',
@@ -124,10 +141,17 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 ])?>
             </div>
             <div class="form-group col-md-12">
-                <?php if (!$model->status || $model->status === ViberMessage::STATUS_PRE) {
+                <?php if (!$model->status || $model->isEditable()) {
 
-                    echo Html::submitButton('Отправить', ['class' => 'btn btn-success']);
-                } ?>
+                    echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary right-20',  'name'=>'button' ,'value'=>'save' ]);
+                    echo '<span style="width:20px"></span>';
+
+                    echo Html::submitButton('Отправить на модерацию', ['class' => 'btn btn-success right-20',  'name'=>'button' ,'value'=>'check']);
+                }
+                if (!$model->status || $model->isCancalable()) {
+                    echo Html::submitButton('Прервать', ['class' => 'btn btn-primary right-20',   'name'=>'button' ,'value'=>'cancel']);
+                }
+                ?>
             </div>
         </div>
 
@@ -250,12 +274,14 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             })
 
             function manageVisible() {
+
                 var type = $('#field_type').val();
                 switch (type) {
                     case
                     '<?= ViberMessage::ONLYTEXT?>'
                     :
                         $('.field-filed_text').show();
+                        $('#remaining_text').show();
                         $('.field-field_image').hide();
                         $('#viber_image').hide();
                         $('.field-field_title_button').hide();
@@ -265,6 +291,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     '<?= ViberMessage::ONLYIMAGE?>'
                     :
                         $('.field-filed_text').hide();
+                        $('#remaining_text').hide();
                         $('.field-field_image').show();
                         $('#viber_image').show();
                         $('.field-field_title_button').hide();
@@ -274,6 +301,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     '<?= ViberMessage::TEXTBUTTON?>'
                     :
                         $('.field-filed_text').show();
+                        $('#remaining_text').show();
                         $('.field-field_image').hide();
                         $('#viber_image').hide();
                         $('.field-field_title_button').show();
@@ -283,6 +311,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     '<?= ViberMessage::TEXTBUTTONIMAGE?>'
                     :
                         $('.field-filed_text').show();
+                        $('#remaining_text').show();
                         $('.field-field_image').show();
                         $('#viber_image').show();
                         $('.field-field_title_button').show();

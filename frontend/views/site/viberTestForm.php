@@ -139,6 +139,7 @@ use yii\helpers\Url;
                     '<?= ViberMessage::ONLYTEXT?>'
                     :
                         $('.field-filed_text').show();
+                        $('#remaining_text').show();
                         $('.field-field_image').hide();
                         $('#viber_image').hide();
                         $('.field-field_title_button').hide();
@@ -148,6 +149,7 @@ use yii\helpers\Url;
                     '<?= ViberMessage::ONLYIMAGE?>'
                     :
                         $('.field-filed_text').hide();
+                        $('#remaining_text').hide();
                         $('.field-field_image').show();
                         $('#viber_image').show();
                         $('.field-field_title_button').hide();
@@ -157,6 +159,7 @@ use yii\helpers\Url;
                     '<?= ViberMessage::TEXTBUTTON?>'
                     :
                         $('.field-filed_text').show();
+                        $('#remaining_text').show();
                         $('.field-field_image').hide();
                         $('#viber_image').hide();
                         $('.field-field_title_button').show();
@@ -166,6 +169,7 @@ use yii\helpers\Url;
                     '<?= ViberMessage::TEXTBUTTONIMAGE?>'
                     :
                         $('.field-filed_text').show();
+                        $('#remaining_text').show();
                         $('.field-field_image').show();
                         $('#viber_image').show();
                         $('.field-field_title_button').show();

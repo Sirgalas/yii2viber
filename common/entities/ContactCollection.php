@@ -46,7 +46,9 @@ class ContactCollection extends \yii\db\ActiveRecord
             [['user_id', 'created_at','size'], 'integer'],
             [['title'], 'required'],
             [['title'], 'string', 'max' => 50],
-            ['title', 'unique', 'targetAttribute' => ['title', 'user_id']],
+            ['title', 'unique', 'targetAttribute' => ['title', 'user_id'], 'message'=>'Вы уже использовали это название'
+
+            ],
             [['type'], 'string', 'max' => 10],
             ['type', 'in', 'range'=>static::listTypes()],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],

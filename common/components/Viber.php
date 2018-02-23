@@ -10,6 +10,7 @@ namespace common\components;
 
 use common\entities\mongo\Phone;
 use common\entities\mongo\Message_Phone_List;
+use common\entities\user\User;
 use common\entities\ViberMessage;
 use common\entities\ContactCollection;
 use common\entities\ViberTransaction;
@@ -236,6 +237,13 @@ class Viber
             'created_at' => time()]);
         $tVM->save();
         Message_Phone_List::deleteAll(['transaction_id'=>$tVM->id]);
+        $user = User::find()->where(['id'=> $this->viber_message->user_id])->one();
+        $user->balance = $user->balance - count($phones);
+        if (! $user->save()){
+            $tVM->status='error';
+            $tVM->save();
+            throw new \Exception('not save');
+        }
 
         foreach ($phones as $i=>$P){
             $phones[$i]['transaction_id'] = $tVM->id;
