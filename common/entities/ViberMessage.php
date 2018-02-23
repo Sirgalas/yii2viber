@@ -40,7 +40,6 @@ use common\entities\mongo\Phone;
  * @property User $user
  * @property Message_Phone_List messagePhoneList
  * @property user/User $user
- * @property 
  */
 class ViberMessage extends \yii\db\ActiveRecord
 {
@@ -58,20 +57,48 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const TEXTBUTTONIMAGE = 'all';
 
-    const STATUS_NEW = 'new';
+    const SCENARIO_DEFAULT = 'default';
 
+    const SCENARIO_HARD = 'hard';
+
+    //new:check:checked:process:wait:ready:error:cancel:closed
+    //renew
+    //
     const STATUS_PRE = 'pre';
 
-    const STATUS_READY = 'ready';
+    const STATUS_FIX = 'fix';
+
+    const STATUS_CHECK = 'check';
+
+    const STATUS_NEW = 'new';
 
     const STATUS_WAIT = 'wait';
 
     const STATUS_PROCESS = 'process';
 
-    const STATUS_SENDED = 'sended';
+    const STATUS_READY = 'ready';
+
+    const STATUS_ERROR = 'error';
+
+    const STATUS_CLOSED = 'closed';
 
     const STATUS_CANCEL = 'cancel';
 
+    /**
+     *
+     *   Таблица переходов
+     *  1. Клиент создает STATUS_PRE
+     *  2. Клиент отправляет на модерацию STATUS_PRE -> STATUS_CHECK
+     *  3. Админ проверяет и если все ОК STATUS_CHECK->STATUS_NEW
+     *                         иначе STATUS_CHECK->STATUS_FIX
+     * 4. Cron Handler - готовит транзакции и STATUS_NEW->STATUS_PROCESS
+     * 5. Cron handler отправляет все транзакции и STATUS_PROCESS->STATUS_WAIT
+     * 6. Cron handler проверяет все ли доставлено или остек срок срок доставки STATUS_WAIT->STATUS_READY
+     * 7. Если при отправке произошла ошибка STATUS_PROCESS->STATUS_ERROR
+     * 8. Админ может закрыть любую расылку в любой момент *****->STATUS_CLOSED
+     * 9  Клиент может остановить рассылку в процессе обработки STATUS_CHECK->STATUS_CANCEL, STATUS_PROCESS->STATUS_CANCEL
+     *
+     */
     public static $types = [
         self::ONLYTEXT => 'Только текст (Официально)',
         self::ONLYIMAGE => 'Только изображение (Официально)',
@@ -79,14 +106,69 @@ class ViberMessage extends \yii\db\ActiveRecord
         self::TEXTBUTTONIMAGE => 'Текст + кнопка + изображение (Официально)',
     ];
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['hard'] = $scenarios['default'];//Scenario Values Only Accepted
+
+        return $scenarios;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleteble()
+    {
+        return $this->status == ViberMessage::STATUS_PRE || $this->status == ViberMessage::STATUS_FIX || $this->status == ViberMessage::STATUS_CHECK;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEditable()
+    {
+        return $this->status == ViberMessage::STATUS_PRE || $this->status == ViberMessage::STATUS_FIX;
+    }
+
+    public function isCancalable()
+    {
+        return $this->status == ViberMessage::STATUS_CHECK || $this->status == ViberMessage::STATUS_PROCESS;
+    }
+
     public static $status = [
-        self::STATUS_NEW=>'Новое',
-        self::STATUS_PRE=>'Модер.',
-        self::STATUS_CANCEL=>'Откл.',
-        self::STATUS_READY=>'Готово',
-        self::STATUS_WAIT=>'Ожидает',
-        self::STATUS_PROCESS=>'В процессе',
+        self::STATUS_PRE => 'Новое',
+        self::STATUS_FIX => 'Исправл.',
+        self::STATUS_CHECK => 'Модер.',
+        self::STATUS_CANCEL => 'Прерв.',
+        self::STATUS_CLOSED => 'Закрыто.',
+        self::STATUS_ERROR => 'Ошибка',
+        self::STATUS_NEW => 'Утвержд.',
+        self::STATUS_READY => 'Готово',
+        self::STATUS_WAIT => 'Ожидает',
+        self::STATUS_PROCESS => 'В процессе',
     ];
+
+    public function Cancel()
+    {
+        if ($this->isCancalable()) {
+            $this->status = self::STATUS_CANCEL;
+
+            return $this->save();
+        }
+
+        return false;
+    }
+
+    public function Close()
+    {
+        if (Yii::$app->user->identity->isAdmin()) {
+            $this->status = self::STATUS_CLOSED;
+
+            return $this->save();
+        }
+
+        return false;
+    }
 
     /**
      * @inheritdoc
@@ -105,13 +187,19 @@ class ViberMessage extends \yii\db\ActiveRecord
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
             [['user_id', 'limit_messages'], 'integer'],
-            [ 'dlr_timeout', 'integer', 'max'=>86400 , 'min'=>0],
+            ['dlr_timeout', 'integer', 'max' => 86400, 'min' => 0],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
             ['viber_image_id', 'string'],
-            [['title'], 'string', 'max' => 50],
+            [['title'], 'string', 'max' => 50, 'min' => 3],
 
             [['text'], 'string', 'max' => 1000],
+            [
+                'text', 'required',
+                'when' => function ($model) {
+                    return $model->scenario === 'hard' && $model->type != self::ONLYIMAGE  ;
+                },
+            ],
             [['image', 'url_button'], 'string', 'max' => 255],
             [
                 ['upload_file'],
@@ -119,7 +207,19 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'skipOnEmpty' => true,
                 'extensions' => 'jpg, png, gif',
                 'mimeTypes' => 'image/jpeg, image/png',
+                'maxSize' => 400 * 1024
             ],
+            [
+                'image', 'required',
+                'when' => function ($model) {
+                    return ($model->scenario === 'hard' &&   ($model->type == self::ONLYIMAGE || $model->type == self::TEXTBUTTONIMAGE));
+                }
+            ],
+
+            [['title_button', 'url_button'], 'required',
+                'when' => function ($model) {
+                    return ($model->scenario === 'hard'  && ($model->type == self::TEXTBUTTON || $model->type == self::TEXTBUTTONIMAGE));
+                 }],
             [['title_button', 'alpha_name'], 'string', 'max' => 25],
             ['just_now', 'boolean'],
             ['type', 'in', 'range' => array_keys(static::listTypes())],
@@ -133,10 +233,12 @@ class ViberMessage extends \yii\db\ActiveRecord
                     $this->checkBalance($attribute, $params);
                 },
             ],
+            ['assign_collections', 'required', 'on' => ['hard']],
 
             [['status'], 'string', 'max' => 16],
-            ['status', 'in', 'range' => ['pre', 'cancel', 'new', 'ready', 'wait', 'process']],
-            ['message_type', 'in', 'range' => ['реклама', 'информация','Реклама', 'Информация']],
+            ['status', 'in', 'range' => ['pre', 'fix', 'check', 'closed','cancel', 'new', 'ready', 'wait', 'process']],
+
+            ['message_type', 'in', 'range' => ['реклама', 'информация', 'Реклама', 'Информация']],
             [
                 ['user_id'],
                 'exist',
@@ -177,7 +279,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             'balance' => 'Баланс',
             'viber_image_id' => 'Ид изображения в Viber',
             'assign_collections' => 'Выбрать базы для рассылки',
-            'dlr_timeout'=>'Время в секундах, в течение которого интересует доставка сообщения'
+            'dlr_timeout' => 'Время в секундах, в течение которого интересует доставка сообщения',
         ];
     }
 
@@ -189,6 +291,9 @@ class ViberMessage extends \yii\db\ActiveRecord
             $this->addError($attribute, 'Недостаточно средств на балансе');
         }
 
+        if ($this->scenario == ViberMessage::SCENARIO_HARD && $new_cost < 1) {
+            $this->addError($attribute, 'Нет телефонов в рассылке');
+        }
     }
 
     /**
@@ -271,17 +376,15 @@ class ViberMessage extends \yii\db\ActiveRecord
         }
     }
 
-
-
     public function beforeSave($insert)
     {
-        if ($this->dlr_timeout){
+        if ($this->dlr_timeout) {
             $this->dlr_timeout = 24 * 3600;
         }
-        if (!$this->alpha_name){
-            $this->alpha_name =Yii::$app->params['viber']['from'];
+        if (! $this->alpha_name) {
+            $this->alpha_name = Yii::$app->params['viber']['from'];
         }
-        if(is_a(Yii::$app,'yii\web\Application')) {
+        if (is_a(Yii::$app, 'yii\web\Application')) {
 
             if (is_object(Yii::$app->user)) {
                 $cost = self::cost($this->assign_collections);
@@ -292,9 +395,9 @@ class ViberMessage extends \yii\db\ActiveRecord
                 }
             }
         }
+
         return parent::beforeSave($insert);
     }
-
 
     public function uploadFile()
     {
@@ -347,12 +450,12 @@ class ViberMessage extends \yii\db\ActiveRecord
         if (! $id_collection) {
             $id_collection = 0;
         } else {
-            foreach($id_collection as $ind=>$val){
+            foreach ($id_collection as $ind => $val) {
                 $id_collection[$ind] = (int)$val;
             }
         }
 
-        $phones = Phone::find()->select(['phone'])->where(['contact_collection_id' =>   $id_collection])->column();
+        $phones = Phone::find()->select(['phone'])->where(['contact_collection_id' => $id_collection])->column();
         if (! $phones) {
             return 0;
         }
@@ -383,10 +486,12 @@ class ViberMessage extends \yii\db\ActiveRecord
             Yii::$app->user->identity->balance += 0 + $this->cost;
             Yii::$app->user->identity->save();
         }
+
         return parent::delete(); // TODO: Change the autogenerated stub
     }
 
-    public function send(){
+    public function send()
+    {
         $upload_file = $this->uploadFile();
         $transaction = Yii::$app->db->beginTransaction();
         try {
@@ -399,17 +504,18 @@ class ViberMessage extends \yii\db\ActiveRecord
                 $result = MessageContactCollection::assign($this->id, $this->user_id, $this->assign_collections);
                 if ($result !== 'ok') {
                     $this->addError('assign_collections', $result);
+
                     return false;
                 }
             } else {
-               return false;
+                return false;
             }
             $transaction->commit();
-
         } catch (\Exception $ex) {
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash($ex->getMessage());
             $transaction->rollBack();
+
             return false;
         }
         if ($this->just_now && $this->status == self::STATUS_NEW) {
@@ -418,41 +524,46 @@ class ViberMessage extends \yii\db\ActiveRecord
             $v->prepareTransaction();
             $v->sendMessage();
         }
+
         return true;
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMessagePhoneList(){
-        return $this->hasMany(Message_Phone_List::className(),['message_id'=>'id']);
+    public function getMessagePhoneList()
+    {
+        return $this->hasMany(Message_Phone_List::className(), ['message_id' => 'id']);
     }
 
-    public function getAlphaNames(){
+    public function getAlphaNames()
+    {
         return [
-            'TEST'=>'TEST',
-            'Clickbonus'=>'Бонус',
+            'TEST' => 'TEST',
+            'Clickbonus' => 'Бонус',
             //'SALE'=>'SALE',
             //
-            'Promo1'=>'Promo',
-            'deliverydel'=>'Delivery',
-            'InfoDostavk'=>'Dostavka',
-            'EXPRESSS'=>'EXPRESS',
-            'SHOPSHOP'=>'SHOP',
-            'SMSfeedback'=>'Feedback',
-            'sushilot'=>'Sushi',
-            'Taxis'=>'Taxi',
-            'Klinika'=>'Klinika',
-            'Bazakvartir'=>'Недвижимость',
-            'FastFitnes'=>'Фитнес',
-            'ChatTest'=>'ChatTest',
-            'Documents'=>'Documents',
-            'AUTO'=>'AUTO'
+            'Promo1' => 'Promo',
+            'deliverydel' => 'Delivery',
+            'InfoDostavk' => 'Dostavka',
+            'EXPRESSS' => 'EXPRESS',
+            'SHOPSHOP' => 'SHOP',
+            'SMSfeedback' => 'Feedback',
+            'sushilot' => 'Sushi',
+            'Taxis' => 'Taxi',
+            'Klinika' => 'Klinika',
+            'Bazakvartir' => 'Недвижимость',
+            'FastFitnes' => 'Фитнес',
+            'ChatTest' => 'ChatTest',
+            'Documents' => 'Documents',
+            'AUTO' => 'AUTO',
         ];
     }
-    public function getAlphaNamesOptions(){
-            return [
-                //'Clickbonus'=>'Бонус',
+
+    public function getAlphaNamesOptions()
+    {
+        return [
+            //'Clickbonus'=>'Бонус',
             //'SALE'=>'SALE',
 
             //'Promo'=>['disabled'=>true],
@@ -469,12 +580,6 @@ class ViberMessage extends \yii\db\ActiveRecord
             //'Недвижимость'=>['disabled'=>true],
             //'Documents'=>['disabled'=>true],
             //'AUTO'=>['disabled'=>true],
-            ];
+        ];
     }
-
-
-
-
-
-
 }

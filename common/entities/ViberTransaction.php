@@ -182,6 +182,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
                     $this->delivered += 1;
                     $this->viewed += 1;
                     $phone->status = 'viewed';
+                    $phone->date_delivered = time();
                     $phone->date_viewed = time();
                     $changed = true;
                 }

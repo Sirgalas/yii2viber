@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'template' => '{update}{delete}',
             'buttons' => [
                 'delete' => function ($url, $model) {
-                    if ($model->status=== \common\entities\ViberMessage::STATUS_PRE ) {
+                    if ($model->isDeleteble() ) {
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                             'data' => ['method' => 'post',],
                             'title' => Yii::t('app', 'Delete'),

@@ -83,15 +83,37 @@ class ViberMessageController extends Controller
         } else {
             $model = new ViberMessage();
         }
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->status && $model->status != ViberMessage::STATUS_PRE){
-                return $this->redirect(['index']);
-            }
-            if ($model->validate() && $model->send()) {
-                return $this->redirect(['index']);
-            }
+        if (!$model->status){
+            $model->status = ViberMessage::STATUS_PRE;
         }
 
+        if ($_POST['button'] == 'cancel'){
+            $model->Cancel();
+            return $this->redirect(['index']);
+        }
+
+
+        if ($model->load(Yii::$app->request->post())) {
+
+            if ($model->status && !$model->isEditable()){
+                return $this->redirect(['index']);
+            }
+
+
+            if ($model->getAttribute('status') && $model->isEditable()) {
+
+                if ($model->validate() && $model->send()) {
+                    if ($_POST['button'] == 'check'){
+                        $model->scenario = ViberMessage::SCENARIO_HARD;
+                        $model->status=ViberMessage::STATUS_CHECK;
+                        if ($model->validate() && $model->send()) {
+                            return $this->redirect(['index']);
+                        }
+                    }
+                }
+            }
+        }
+        $model->setAttribute('status',$model->getOldAttribute('status'));
         $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id? $model->user_id: Yii::$app->user->identity->id])->select([
             'id',
             'title',
@@ -123,7 +145,7 @@ class ViberMessageController extends Controller
             if (!Yii::$app->user->identity->isAdmin()  && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
                 throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
             }
-            if ($model->status != ViberMessage::STATUS_PRE){
+            if ($model->isDeleteble()){
                 throw new NotFoundHttpException('Удаление этой рассылка невозможно', 403);
             }
             $model ->delete();
@@ -155,7 +177,6 @@ class ViberMessageController extends Controller
             return ['cost' => $cost, 'balance' => $balance, 'result' => 'ok'];
         } catch (\Exception $ex) {
             Yii::$app->errorHandler->logException($ex);
-
             return ['result' => 'error', 'message' => $ex->getMessage()];
         }
     }
@@ -208,7 +229,12 @@ class ViberMessageController extends Controller
 
             }
             if (isset($_POST['disallow'])){
-                $vm->status = ViberMessage::STATUS_CANCEL;
+                $vm->status = ViberMessage::STATUS_FIX;
+                $vm->save();
+
+            }
+            if (isset($_POST['close'])){
+                $vm->status = ViberMessage::STATUS_CLOSED;
                 $vm->save();
 
             }
