@@ -50,10 +50,10 @@ class StatisticsController extends Controller
         if(preg_match('%(\d)+%',($post['titleSearch']))||is_array($post['status'])){
             $searchModel = new StatisticsMongoSearch();
         }
-
+        $status=$messagePhoneList->allStatus();
         ViberTransaction::find()->where(['user_id'=>Yii::$app->user->identity->id]);
         $dataProvider = $searchModel->search(Yii::$app->request->post('ViberTransaction'));
-        return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients','post','messagePhoneList'));
+        return $this->render('index', compact('model','contact_collections','searchModel', 'dataProvider','clients','post','messagePhoneList','status'));
     }
 
 
