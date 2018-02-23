@@ -59,6 +59,11 @@ return [
         ],
     ],
     'modules' => [
+        'modules' => [
+            'api' => [
+                'class' => 'common\modules\api\Module',
+            ],
+        ],
         'user' => [
             'class' => 'dektrium\user\Module',
             'enableUnconfirmedLogin' => true,

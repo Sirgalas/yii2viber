@@ -13,7 +13,6 @@ if(!empty($dataArr)){
     ]);
 }
 ?>
-    
 </div>
 <div class="col-md-6">
     <ul class="statusLi col-md-6">
