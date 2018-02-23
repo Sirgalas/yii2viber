@@ -18,5 +18,4 @@ if(!empty($dataArr)){
     <ul class="statusLi col-md-6">
         <?= $datali ?>
     </ul>
-
 </div>

@@ -23,7 +23,7 @@ class StatisticGraph extends Widget
         $dataArr=array();
         $countArr=$this->countArr($status,$messagesPhoneList);
         foreach ($countArr as $key =>$value){
-            $dataLi.="<li><span class='fa fa-square fa-2x'  style='color: ".$this->fontColor($key,$messagesPhoneList)."'></span><span class='text'>$key <span class='right'>$value</span></li>";
+            $dataLi.="<li><span class='fa fa-square fa-2x'  style='color: ".$this->fontColor($key,$messagesPhoneList)."'></span><span class='text'>$key </span><span class='right'>$value</span></li>";
             $dataArr[]=["label"=>$key,"value"=>$this->percent($countArr,$value)];
         }
 
