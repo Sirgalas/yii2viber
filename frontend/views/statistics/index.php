@@ -14,9 +14,11 @@ use kartik\checkbox\CheckboxX;
 * @var $dataProvider yii\data\ActiveDataProvider
 * @var $model common\entities\ViberTransaction
  * @var $messagePhoneList common\entities\mongo\Message_Phone_List
+ * @var array $status
  **/
 $this->title = Yii::t('app', 'Статистика');
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="statistics-index">
     <h1><?=Html::encode($this->title)?></h1>
@@ -39,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]);?>
                 </div>
                 <div class="form-group">
-                    <?= $form->field($model, 'contactCollection')->widget(Select2::classname(), [
+                    <?= $form->field($model, 'contactCollection')->widget(Select2::class, [
                         'data' => $contact_collections,
                         'maintainOrder' => true,
                         'options' => [
@@ -49,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <div class="form-group">
                     <?php if(!Yii::$app->user->identity->isClient()){
-                        echo $form->field($model, 'user_id')->widget(Select2::classname(), [
+                        echo $form->field($model, 'user_id')->widget(Select2::class, [
                             'data' => $clients,
                             'maintainOrder' => true,
                             'options' => [
@@ -62,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="col-md-5">
                 <div class="form-group ">
-                    <?= $form->field($model, 'status')->checkboxList([$messagePhoneList::NEWMESSAGE=>$messagePhoneList::$statusMessage[$messagePhoneList::NEWMESSAGE],$messagePhoneList::SENDED=>$messagePhoneList::$statusMessage[$messagePhoneList::SENDED],$messagePhoneList::DELIVERED=>$messagePhoneList::$statusMessage[$messagePhoneList::DELIVERED],$messagePhoneList::VIEWED=>$messagePhoneList::$statusMessage[$messagePhoneList::VIEWED]])->label('Статусы'); ?>
+                    <?= $form->field($model, 'status')->checkboxList($status)->label('Статусы');?>
                 </div>
             </div>
             <div class="form-group col-md-12 bottom-center">

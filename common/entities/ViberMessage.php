@@ -40,7 +40,6 @@ use common\entities\mongo\Phone;
  * @property User $user
  * @property Message_Phone_List messagePhoneList
  * @property user/User $user
- * @property
  */
 class ViberMessage extends \yii\db\ActiveRecord
 {

@@ -92,5 +92,7 @@ return [
             'autoWidget' => true,
         ],
 
+
+
     ],
 ];

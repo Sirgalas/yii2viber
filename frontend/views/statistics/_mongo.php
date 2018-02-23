@@ -1,5 +1,6 @@
 <?php
 use kartik\grid\GridView;
+use frontend\widgets\StatisticGraphMongo;
 /**
  * @var $searchModel common\entities\mongo\Message_Phone_List;
  * @var $dataProvider yii\data\ActiveDataProvider
@@ -23,9 +24,9 @@ $defaultExportConfig = [
             'cssFile' => ''
         ]
     ],
-]
+]; ?>
+<?= StatisticGraphMongo::widget(['model'=>$dataProvider->getModels()]) ?>
 
-?>
 <?=GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,

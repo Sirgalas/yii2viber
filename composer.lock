@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2896dcc03966bd7968efca06c6f12eea",
+    "content-hash": "f67f3fd3c9c0a45de38f76a22536295b",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -48,47 +48,6 @@
                 "web"
             ],
             "time": "2018-02-04T12:54:57+00:00"
-        },
-        {
-            "name": "antishov/yii2-morrisjs",
-            "version": "v1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/antishov/yii2-morrisjs.git",
-                "reference": "bb6ec6efb7bbe0fadc0c82333a9ccee40f84a80c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/antishov/yii2-morrisjs/zipball/bb6ec6efb7bbe0fadc0c82333a9ccee40f84a80c",
-                "reference": "bb6ec6efb7bbe0fadc0c82333a9ccee40f84a80c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6",
-                "yiisoft/yii2": "2.*"
-            },
-            "type": "yii2-extension",
-            "autoload": {
-                "psr-4": {
-                    "antishov\\Morris\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Antishov Viktor",
-                    "email": "antishov.viktor@gmai.com"
-                }
-            ],
-            "keywords": [
-                "chart",
-                "morris",
-                "yii2"
-            ],
-            "time": "2017-06-17T13:57:54+00:00"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -3288,6 +3247,47 @@
             "time": "2017-01-11T14:05:47+00:00"
         },
         {
+            "name": "sirgalas/yii2-morrisjs",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sirgalas/yii2-morrisjs.git",
+                "reference": "66f56fa26d6fe7a2cfaca9d2e5780b258a7eb72c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sirgalas/yii2-morrisjs/zipball/66f56fa26d6fe7a2cfaca9d2e5780b258a7eb72c",
+                "reference": "66f56fa26d6fe7a2cfaca9d2e5780b258a7eb72c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6",
+                "yiisoft/yii2": "2.*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "sirgalas\\Morris\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Serglas",
+                    "email": "hudosg@gmai.com"
+                }
+            ],
+            "keywords": [
+                "chart",
+                "morris",
+                "yii2"
+            ],
+            "time": "2018-02-22T10:06:06+00:00"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.0.2",
             "source": {
@@ -4945,16 +4945,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.7.4",
+            "version": "1.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "9f901e29c93dae4aa77c0bb161df4276f9c9a1be"
+                "reference": "dfd6be44111a7c41c2e884a336cc4f461b3b2401"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/9f901e29c93dae4aa77c0bb161df4276f9c9a1be",
-                "reference": "9f901e29c93dae4aa77c0bb161df4276f9c9a1be",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/dfd6be44111a7c41c2e884a336cc4f461b3b2401",
+                "reference": "dfd6be44111a7c41c2e884a336cc4f461b3b2401",
                 "shasum": ""
             },
             "require": {
@@ -5004,7 +5004,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2018-02-11T18:49:29+00:00"
+            "time": "2018-02-19T10:16:54+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -6762,21 +6762,21 @@
         },
         {
             "name": "yiisoft/yii2-faker",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-faker.git",
-                "reference": "b88ca69ee226a3610b2c26c026c3203d7ac50f6c"
+                "reference": "3df62b1dcb272a8413f9c6e532c9d73f325ccde1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-faker/zipball/b88ca69ee226a3610b2c26c026c3203d7ac50f6c",
-                "reference": "b88ca69ee226a3610b2c26c026c3203d7ac50f6c",
+                "url": "https://api.github.com/repos/yiisoft/yii2-faker/zipball/3df62b1dcb272a8413f9c6e532c9d73f325ccde1",
+                "reference": "3df62b1dcb272a8413f9c6e532c9d73f325ccde1",
                 "shasum": ""
             },
             "require": {
-                "fzaninotto/faker": "*",
-                "yiisoft/yii2": "*"
+                "fzaninotto/faker": "~1.4",
+                "yiisoft/yii2": "~2.0.0"
             },
             "type": "yii2-extension",
             "extra": {
@@ -6805,7 +6805,7 @@
                 "faker",
                 "yii2"
             ],
-            "time": "2015-03-01T06:22:44+00:00"
+            "time": "2018-02-19T20:27:10+00:00"
         },
         {
             "name": "yiisoft/yii2-gii",

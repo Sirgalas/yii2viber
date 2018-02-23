@@ -1,11 +1,19 @@
 <?php
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use frontend\widgets\StatisticGraph;
 /**
 * @var $searchModel common\entities\ViberTransaction
 * @var $dataProvider yii\data\ActiveDataProvider
 * @var $model common\entities\ViberTransaction
 */
+
+?>
+<div class="col-md-12">
+    <div id="sales-chart"></div>
+    <?= StatisticGraph::widget(['model'=>$dataProvider->getModels()]) ?>
+</div>
+<?php
 $defaultExportConfig = [
     GridView::EXCEL => [
         'label' => Yii::t('kvgrid', 'Excel'),
@@ -24,7 +32,7 @@ $defaultExportConfig = [
             'cssFile' => ''
         ]
     ],
-]
+];
 ?>
 
 

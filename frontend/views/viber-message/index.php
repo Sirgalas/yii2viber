@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'delete' => function ($url, $model) {
                     if ($model->isDeleteble() ) {
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-
+                            'data' => ['method' => 'post',],
                             'title' => Yii::t('app', 'Delete'),
                             'class' => '',
                         ]);
