@@ -1,10 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-//use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
-use yii\bootstrap\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $searchModel common\entities\user\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -34,7 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterWidgetOptions'=>[
                     'pluginOptions'=>['allowClear'=>true],
                 ],
-                'filterInputOptions'=>['placeholder'=>'Выберите рассылку']
+                'filterInputOptions'=>['placeholder'=>'Выберите рассылку'],
+                'group'=>true,
+                'subGroupOf'=>2
             ],
             [
                 'attribute'=>'status',
@@ -54,6 +54,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'=>function($model){
                     return date('d:m:Y',$model->created_at);
                 },
+                'group'=>true,
+                'subGroupOf'=>1 
             ],
             [
                 'attribute'=>'collection_id',
@@ -71,7 +73,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterWidgetOptions'=>[
                     'pluginOptions'=>['allowClear'=>true],
                 ],
-                'filterInputOptions'=>['placeholder'=>'Выберите базу телефонов']
+                'filterInputOptions'=>['placeholder'=>'Выберите базу телефонов'],
+                'group'=>true
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
