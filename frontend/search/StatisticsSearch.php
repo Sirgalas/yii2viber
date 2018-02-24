@@ -56,7 +56,7 @@ class StatisticsSearch extends ViberTransaction
                 $idMessageViber=ViberMessage::find()->andFilterWhere(['like','title',$params['titleSearch']])->select(['id'])->column();
         }
 
-        if($params['user_id']!=""){
+        if(isset($params['user_id']) && $params['user_id'] !=""){
             $user=User::find()->select('id')->where(['dealer_id'=>Yii::$app->user->identity->id,'id'=>$params['user_id']])->one();
             if($user)
                 $user_id=$user->id;
