@@ -55,14 +55,14 @@ $defaultExportConfig = [
                 return $model->Phone();
             }
         ],
-        [
+        /*[
             'attribute'=>'status',
             'header'=>'Статус',
             'format'=>'raw',
             'value'=>function($model){
                 return implode(',</br>',$model->Status());
             }
-        ],
+        ],*/
         [
             'attribute'=>'dateDelivery',
             'header'=>'Дата доставки',
