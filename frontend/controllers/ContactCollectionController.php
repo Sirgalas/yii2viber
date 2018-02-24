@@ -183,10 +183,17 @@ class ContactCollectionController extends Controller
         if (! $collection) {
             return 'Ошибка в запросе. Обновите страницу';
         }
+
         // TODO проверить права на коллекцию
         $phone = new Phone();
-
-        return $phone->importText($id, $_POST['txt']);
+        $result=$phone->importText($id, $_POST['txt']);
+        $cnt = Phone::find()->where(['contact_collection_id' => (int) $id])->count();
+        if ($collection->size != $cnt) {
+            $collection->size = $cnt;
+        }
+        if(!$collection->save())
+            return var_dump($collection->getErrors());
+        return $result;
     }
 
     public function actionRemovePhones($id)
@@ -197,8 +204,13 @@ class ContactCollectionController extends Controller
         }
         // TODO проверить права на коллекцию
         $phone = new Phone();
-
-        return $phone->removeList($_POST['ids']);
+        $result=$phone->removeList($_POST['ids']);
+        $cnt = Phone::find()->where(['contact_collection_id' => (int) $id])->count();
+        if ($collection->size != $cnt) {
+            $collection->size = $cnt;
+        }
+        $collection->save();
+        return $result;
     }
 
     public function actionImportFile()
@@ -214,7 +226,12 @@ class ContactCollectionController extends Controller
                 if (! $result) {
                     throw new \Exception('Ошибка импорта');
                 }
-
+                $collection = ContactCollection::findOne($result);
+                $cnt = Phone::find()->where(['contact_collection_id' => (int) $result])->count();
+                if ($collection->size != $cnt) {
+                    $collection->size = $cnt;
+                }
+                $collection->save();
                 return $this->redirect(['/contact-collection/update', 'id' => $result]);
             } catch (\Exception $ex) {
                 Yii::$app->session->setFlash($ex->getMessage());
@@ -234,7 +251,12 @@ class ContactCollectionController extends Controller
         if ($form->load(Yii::$app->request->post())) {
             try {
                 $result = $phone->importCollection(Yii::$app->request->post('ContactCollectionModalForm'));
-
+                $collection = ContactCollection::findOne($result);
+                $cnt = Phone::find()->where(['contact_collection_id' => (int) $result])->count();
+                if ($collection->size != $cnt) {
+                    $collection->size = $cnt;
+                }
+                $collection->save();
                 return $this->redirect(['/contact-collection/update', 'id' => $result]);
             } catch (\Exception $ex) {
                 Yii::$app->session->setFlash($ex->getMessage());

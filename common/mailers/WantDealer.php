@@ -13,12 +13,11 @@ class WantDealer
         } else {
             $to = Yii::$app->params['supportEmail'];
         }
-        $sent=Yii::$app->mailer
-            ->compose('dealer/wantDealer.php', ['clients' => $user])
+        $sent=Yii::$app->mailer;
+        $sent->compose('dealer/wantDealer.php', ['clients' => $user])
             ->setFrom(\Yii::$app->params['adminEmail'])
             ->setTo($to)
             ->setSubject(Yii::t('mailer','You clients'.$user->username.' want dealer'))
             ->send();
-
     }
 }

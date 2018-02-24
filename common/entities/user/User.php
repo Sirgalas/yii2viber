@@ -28,7 +28,6 @@ use yii\helpers\ArrayHelper;
  * @property  string first_name
  * @property  string surname
  * @property  string family
- * @property  string avatar
  * @property ContactCollection[] $contactCollections
  * @property Phone[] $phones
  * @property ViberMessage[] $viberMessages
@@ -46,6 +45,8 @@ class User extends BaseUser
     const CLIENT = 'client';
 
     const DEALER = 'dealer';
+
+    public $avatar;
 
     public static $userTypes = [
         self::ADMIN => 'Админ',
@@ -109,14 +110,13 @@ class User extends BaseUser
         $rules['first_name'] = ['first_name', 'string', 'max' => 100];
         $rules['surname'] = ['surname', 'string', 'max' => 100];
         $rules['family'] = ['family', 'string', 'max' => 100];
-        $rules['avatar'] = ['avatar', 'string'];
 
         return $rules;
     }
 
     public function getTheStatus()
     {
-        return $this::$userTypes[$this->type];
+        return self::$userTypes[$this->type];
     }
 
     public function attributeLabels()
