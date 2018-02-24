@@ -130,7 +130,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     public function getTheStatus()
     {
-        return $self::$statusSend[$this->status];
+        return self::$statusSend[$this->status];
     }
 
     /**
