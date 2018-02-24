@@ -34,7 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'filterInputOptions'=>['placeholder'=>'Выберите рассылку'],
                 'group'=>true,
-                'subGroupOf'=>2
             ],
             [
                 'attribute'=>'status',
@@ -47,7 +46,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterWidgetOptions'=>[
                     'pluginOptions'=>['allowClear'=>true],
                 ],
-                'filterInputOptions'=>['placeholder'=>'Выберите рассылку']
+                'filterInputOptions'=>['placeholder'=>'Выберите рассылку'],
+                'group'=>true,
+                'subGroupOf'=>2
             ],
             [
                 'attribute'=>'created_at',
