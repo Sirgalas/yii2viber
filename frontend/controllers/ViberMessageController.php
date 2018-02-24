@@ -109,7 +109,9 @@ class ViberMessageController extends Controller
                         if ($model->validate() && $model->send()) {
                             return $this->redirect(['index']);
                         }
+                        print_r($model->getErrors());exit;
                     }
+                    return $this->redirect(['index']);
                 }
             }
         }

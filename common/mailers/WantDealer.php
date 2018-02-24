@@ -6,7 +6,7 @@ use common\entities\user\User;
 use Yii;
 class WantDealer
 {
-    public function send(User $user,  $dealer ): void
+    public function send(User $user,  $dealer )
     {
         if ($dealer){
             $to = $dealer->email;

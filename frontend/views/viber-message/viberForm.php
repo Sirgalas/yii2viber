@@ -57,7 +57,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                            value="Отправить на доработку" name="disallow">
                 </div>
                 <?php } ?>
-                <div class="col-xs-3">
+                <div class="col-xs-3 pull-right">
 
 
                     <input type="submit" class="btn btn-block btn-danger btn-lg" id="close"
@@ -148,7 +148,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
 
                     echo Html::submitButton('Отправить на модерацию', ['class' => 'btn btn-success right-20',  'name'=>'button' ,'value'=>'check']);
                 }
-                if (!$model->status || $model->isCancalable()) {
+                if ($model->status && $model->isCancalable()) {
                     echo Html::submitButton('Прервать', ['class' => 'btn btn-primary right-20',   'name'=>'button' ,'value'=>'cancel']);
                 }
                 ?>

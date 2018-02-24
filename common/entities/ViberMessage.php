@@ -127,12 +127,12 @@ class ViberMessage extends \yii\db\ActiveRecord
      */
     public function isEditable()
     {
-        return $this->status == ViberMessage::STATUS_PRE || $this->status == ViberMessage::STATUS_FIX;
+        return $this->status == ViberMessage::STATUS_PRE || $this->status == ViberMessage::STATUS_FIX ;
     }
 
     public function isCancalable()
     {
-        return $this->status == ViberMessage::STATUS_CHECK || $this->status == ViberMessage::STATUS_PROCESS;
+        return $this->status == ViberMessage::STATUS_CHECK || ViberMessage::STATUS_NEW || $this->status == ViberMessage::STATUS_PROCESS;
     }
 
     public static $status = [
