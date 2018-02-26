@@ -9,6 +9,9 @@ use kartik\widgets\Select2;
 use yii\helpers\Url;
 use kartik\datetime\DateTimePicker;
 
+use common\components\ViberIcons;
+
+$listIcons=explode(',', ViberIcons::iconListAsString());
 /* @var $this yii\web\View */
 /* @var $model common\entities\ViberMessage */
 /* @var $form yii\widgets\ActiveForm */
@@ -108,7 +111,18 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
             <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
-                <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;"></div>
+                <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;">
+                    <?php
+                    foreach ($listIcons as $icon){
+                        echo "<img class='viber-icon' title='$icon' src='" .  ViberIcons::ICON_PATH  . $icon. ".png'>";
+                    }
+                    ?>
+                    <style>
+                        .viber-icon {
+                            max-width: 25px;max-height: 25px;padding: 2px;cursor: pointer;
+                        }
+                    </style>
+                </div>
             </div>
             <div class="col-md-12" style="margin-top:-20px">
                 <div style="position: relative;">
@@ -117,6 +131,8 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         'id' => 'filed_text',
                         'rows' => 10,
                     ])?>
+
+
                     <div id="remaining_text"></div>
                 </div>
                 <?php if ($model->image) : ?>
@@ -152,6 +168,11 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     echo Html::submitButton('Прервать', ['class' => 'btn btn-primary right-20',   'name'=>'button' ,'value'=>'cancel']);
                 }
                 ?>
+
+
+
+
+
             </div>
         </div>
 
