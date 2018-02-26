@@ -1,0 +1,9 @@
+Array
+(
+    [sending_method] => 
+    [type] => delivery
+    [status_extended] => PHONE_INCORRECT
+    [p_transaction_id] => 90
+    [status] => undelivered
+    [msg_id] => ae3a1dae-17cc-11e8-89c3-ec509c9465b3
+)
