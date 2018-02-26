@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterInputOptions'=>['placeholder'=>'Выберите рассылку'],
                 'group'=>true,
             ],
-            [
+            /*[
                 'attribute'=>'status',
                 'header'=>'Статус',
                 'value'=>function($model){
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterInputOptions'=>['placeholder'=>'Выберите рассылку'],
                 'group'=>true,
                 'subGroupOf'=>2
-            ],
+            ],*/
             [
                 'attribute'=>'created_at',
                 'value'=>function($model){

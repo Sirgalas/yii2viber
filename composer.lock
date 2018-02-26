@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "c62b3adff03e4b34d57b91ce5d87a50e",
+=======
+    "content-hash": "4f8c4406b08ee04c45f9505b90dbb8a9",
+>>>>>>> b00ebd17a2642e23f74b8aa2d9d3987650699628
     "packages": [
         {
             "name": "2amigos/yii2-tinymce-widget",
@@ -235,16 +239,16 @@
         },
         {
             "name": "bower-asset/semantic",
-            "version": "2.2.14",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:Semantic-Org/Semantic-UI.git",
-                "reference": "e890bd3809c23288d1e9fd5ab6026ba380079d6a"
+                "reference": "5b681ca84e756d0d6080ecc6a3e2cdd40c0e3d50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Semantic-Org/Semantic-UI/zipball/e890bd3809c23288d1e9fd5ab6026ba380079d6a",
-                "reference": "e890bd3809c23288d1e9fd5ab6026ba380079d6a",
+                "url": "https://api.github.com/repos/Semantic-Org/Semantic-UI/zipball/5b681ca84e756d0d6080ecc6a3e2cdd40c0e3d50",
+                "reference": "5b681ca84e756d0d6080ecc6a3e2cdd40c0e3d50",
                 "shasum": null
             },
             "require": {

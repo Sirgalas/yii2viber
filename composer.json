@@ -37,7 +37,10 @@
         "kartik-v/yii2-widget-datepicker": "@dev",
         "kartik-v/yii2-field-range": "*",
         "sirgalas/yii2-morrisjs": "^2.0",
+<<<<<<< HEAD
         "2amigos/yii2-tinymce-widget": "~1.1",
+=======
+>>>>>>> b00ebd17a2642e23f74b8aa2d9d3987650699628
         "yiisoft/yii2-redis": "^2.0"
     },
     "require-dev": {

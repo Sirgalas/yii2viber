@@ -25,7 +25,7 @@ $defaultExportConfig = [
         ]
     ],
 ]; ?>
-<?= StatisticGraphMongo::widget(['model'=>$dataProvider->getModels()]) ?>
+<?= StatisticGraphMongo::widget(['model'=>$providerFromGetModel->getModels()]) ?>
 
 <?=GridView::widget([
     'dataProvider' => $dataProvider,
