@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\entities\ViberTransaction;
 use frontend\forms\ViberNotification;
+use common\entities\mongo\Message_Phone_List;
 use Yii;
 
 class ViberController extends \yii\web\Controller
@@ -57,11 +58,61 @@ class ViberController extends \yii\web\Controller
 
         if ($vb_Note->validate()) {
 
-            $viber_transaction = ViberTransaction::findOne($vb_Note->p_transaction_id);
+            //$viber_transaction = ViberTransaction::findOne($vb_Note->p_transaction_id);
+            //
+            //if ($viber_transaction) {
+            //
+            //    $viber_transaction->handleViberNotification($vb_Note, $fileName);
+            //
+            //}
+            $phone = Message_Phone_List::find()->where(['msg_id' => $vb_Note->msg_id])->one();
+            if (!$phone) {
+                file_put_contents($fileName,"\n      NOT FOUND ", FILE_APPEND);
+                return 'OK';
+            }
+            $changed = false;
+            file_put_contents($fileName, "\n --- Before action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
+            if ($vb_Note->type == 'undelivered') {
+                $phone->status = 'undelivered';
+                $changed = true;
+            } else {
 
-            if ($viber_transaction) {
+                if (is_object($phone) & $phone->getAttribute('status') === 'new' || $phone->getAttribute('status') === 'sended') {
+                    if ($vb_Note->type === 'delivered' || $vb_Note->type === 'delivery') {
 
-                $viber_transaction->handleViberNotification($vb_Note, $fileName);
+                        if ($vb_Note->status == 'undelivered') {
+
+                            $phone->status = 'undelivered';
+                            $changed = true;
+                        } else {
+
+                            ;
+                            $phone->status = 'delivered';
+                            $phone->date_delivered = time();
+                            $changed = true;
+                        }
+                    }
+                    if ($vb_Note->type == 'seen') {
+
+
+                        $phone->status = 'viewed';
+                        $phone->date_delivered = time();
+                        $phone->date_viewed = time();
+                        $changed = true;
+                    }
+                } elseif ($phone['status'] === 'delivered') {
+
+                    if ($vb_Note->type == 'seen') {
+
+                        $phone->status = 'viewed';
+                        $phone->date_viewed = time();
+                        $changed = true;
+                    }
+                }
+            }
+            if ($changed) {
+                file_put_contents($fileName, "\n --- after action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
+                $phone->save();
 
             }
         }

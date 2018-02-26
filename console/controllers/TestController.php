@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\entities\mongo\Message_Phone_List;
 use common\entities\phone\Phone;
 use common\entities\user\User;
 use frontend\forms\ViberNotification;
@@ -95,5 +96,67 @@ class TestController extends Controller
         } else {
             print_r($vb_Note->getErrors());
         }
+    }
+
+    public function actionHa1(){
+
+        $lst = explode("\r", file_get_contents(__DIR__ .'/n.txt'));
+        $cnt = 0;
+        $cnt1 = 0;
+        foreach($lst as $r){
+            list($id,$dt,$from,$phone,$status,$msg,$type) = explode("\t", $r);
+            if ($status =='Не доставлено'){
+                $status = 'undelivered';
+            }elseif ($status =='Доставлено'){
+                $status = 'delivered';
+            }elseif ($status =='Просмотрено'){
+                $status = 'viewed';
+            }
+
+            $mls = Message_Phone_List::find()->where(['msg_id'=>trim($id)])->one();
+            $cnt+=1;
+            if ($mls){
+                $cnt1+=1;
+                $mls->setAttribute('status',$status);
+                $mls->save();
+            }
+            echo "$id - $phone - $status $cnt   $cnt1\n";
+        }
+        echo count($lst);
+        exit;
+    }
+    public function actionHa(){
+        $txt= file_get_contents(__DIR__ .'/sm.txt');
+        $lst = explode("\n", $txt);
+
+        $cnt1 = 0;
+        foreach($lst as $r){
+            if (!$r){
+                continue;
+            }
+            list($id,$status,$cnt) = explode(";", $r);
+
+            if (trim($status) != 'undelivered' ){
+                $mst = ViberTransaction::find()->where(['id'=>$id])->one();
+                if ($mst) {
+                    if (trim($status) != 'delivered') {
+                        $mst->delivered = $cnt;
+                        $mst->save();
+                    } else {
+                        if (trim($status) != 'viewed') {
+                            $mst->viewed = $cnt;
+                            $mst->save();
+                        }
+                    }
+                }
+            }
+
+
+            $cnt1+=1;
+
+            echo "$id -  $status  - $cnt   -- $cnt1\n";
+        }
+
+        exit;
     }
 }

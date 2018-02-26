@@ -28,6 +28,8 @@ class Viber
 
     public $debug = true;
 
+    public $viberQuery;
+
     /**
      * Viber constructor.
      *
@@ -116,6 +118,7 @@ class Viber
 
         $signString .= Yii::$app->params['viber']['secret'];
         $encoded .= urlencode('sign').'='.md5($signString);
+        $this->viberQuery =$encoded;
         //echo "\n\n", $encoded, "\n";
         $ch = curl_init('https://bulk.sms-online.com/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -161,6 +164,12 @@ class Viber
         foreach ($phonesArray as $phone){
             $phones[] =$phone->phone;
             $phonesA[$phone->phone] = $phone;
+            if (count($phones) > 100) {
+                $this->derectSend($from, $phonesA,$phones, $viber_transaction);
+                delay(2);
+                $phones=[];
+                $phonesA=[];
+            }
         }
 
         if (! $phones) {
@@ -174,8 +183,26 @@ class Viber
 
 
         // Отправка сообщения
+        $this->derectSend($from, $phonesA,$phones, $viber_transaction);
+
+       return;
+    }
+
+    /**
+     * @param $from
+     * @param $phonesA
+     * @param $phones
+     * @param $viber_transaction
+     */
+    public function derectSend($from, $phonesA,$phones, $viber_transaction){
+
+        $path = \Yii::getAlias('@frontend').'/runtime/viber_report';
+        $fileName = $path.'/query_'.$viber_transaction->id . '_'. date('Ymd_H').'.txt';
+
         $result = $this->sendToViber($from, $phones, $viber_transaction);
         $viber_transaction->date_send = time();
+        file_put_contents($fileName, '\n' .  $this->viberQuery , FILE_APPEND);
+        file_put_contents($fileName, '\n==================' . date('H:i:s') . '====================', FILE_APPEND);
 
         if ($this->parseSendResult($result, $phonesA)) {
             $viber_transaction->date_send = time();
@@ -183,15 +210,17 @@ class Viber
             $this->viber_message->viber_image_id = '' . $this->viber_message->viber_image_id;
             $viber_transaction->save();
         } else {
-            $viber_transaction->status = 'error';
+            $viber_transaction->status = '\n error';
+            file_put_contents($fileName, '\n==================' . date('H:i:s') . '====================', FILE_APPEND);
+            file_put_contents($fileName, print_r($phones,1 ), FILE_APPEND);
+            file_put_contents($fileName, '\n======================================', FILE_APPEND);
+            file_put_contents($fileName, $result, FILE_APPEND);
+            file_put_contents($fileName, '\n======================================', FILE_APPEND);
             Yii::error($result);
-            $this->viber_message->viber_image_id = '' . $this->viber_message->viber_image_id;
             $viber_transaction->save();
+
         }
-
-       return;
     }
-
     /**
      * @param $xml
      * @param $phonesArray
@@ -229,6 +258,10 @@ class Viber
      */
     private function saveNewTransaction(array $phones)
     {
+        $user = User::find()->where(['id'=> $this->viber_message->user_id])->one();
+        if (  $user->balance < count($phones)){
+           // throw new \Exception('balance is small  not save');
+        }
         $tVM = new ViberTransaction([
             'user_id' => $this->viber_message->user_id,
             'viber_message_id' => $this->viber_message->id,
@@ -237,7 +270,7 @@ class Viber
             'created_at' => time()]);
         $tVM->save();
         Message_Phone_List::deleteAll(['transaction_id'=>$tVM->id]);
-        $user = User::find()->where(['id'=> $this->viber_message->user_id])->one();
+
         $user->balance = $user->balance - count($phones);
         if (! $user->save()){
             $tVM->status='error';
@@ -248,6 +281,7 @@ class Viber
         foreach ($phones as $i=>$P){
             $phones[$i]['transaction_id'] = $tVM->id;
         }
+        echo "\n created phones ", count($phones), ' transaction id=', $tVM->id;
         if (!Yii::$app->mongodb
             ->getCollection(Message_Phone_List::collectionName())
             ->batchInsert($phones)) {
@@ -287,9 +321,12 @@ class Viber
                 ])->distinct('phone');
             }
             $tPhones = [];
+
             foreach ($phones as $phone) {
                 $tPhones[] = ['phone'=>$phone, 'status'=>'new', 'message_id'=>$this->viber_message->id];
                 if (count($tPhones) >= Yii::$app->params['viber']['transaction_size_limit']) {
+
+                    echo "\n prepared ", count($tPhones);
                     $this->saveNewTransaction($tPhones);
                     $tPhones = [];
                 }

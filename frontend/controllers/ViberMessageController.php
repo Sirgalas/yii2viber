@@ -76,30 +76,29 @@ class ViberMessageController extends Controller
     {
         if ($id) {
             $model = $this->findModel($id);
-
             if (!Yii::$app->user->identity->isAdmin()  && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
+
                 throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
             }
         } else {
+
             $model = new ViberMessage();
         }
+
         if (!$model->status){
+
             $model->status = ViberMessage::STATUS_PRE;
         }
 
-        if ($_POST['button'] == 'cancel'){
+        if (isset($_POST['button']) && $_POST['button'] == 'cancel'){
             $model->Cancel();
             return $this->redirect(['index']);
         }
 
-
         if ($model->load(Yii::$app->request->post())) {
-
             if ($model->status && !$model->isEditable()){
                 return $this->redirect(['index']);
             }
-
-
             if ($model->getAttribute('status') && $model->isEditable()) {
 
                 if ($model->validate() && $model->send()) {
@@ -109,10 +108,13 @@ class ViberMessageController extends Controller
                         if ($model->validate() && $model->send()) {
                             return $this->redirect(['index']);
                         }
+                        print_r($model->getErrors());exit;
                     }
+                    return $this->redirect(['index']);
                 }
             }
         }
+
         $model->setAttribute('status',$model->getOldAttribute('status'));
         $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id? $model->user_id: Yii::$app->user->identity->id])->select([
             'id',

@@ -4,8 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f67f3fd3c9c0a45de38f76a22536295b",
+    "content-hash": "c62b3adff03e4b34d57b91ce5d87a50e",
     "packages": [
+        {
+            "name": "2amigos/yii2-tinymce-widget",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/2amigos/yii2-tinymce-widget.git",
+                "reference": "4f519e37774ef231e4b4d6046854d5638548c8e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/2amigos/yii2-tinymce-widget/zipball/4f519e37774ef231e4b4d6046854d5638548c8e0",
+                "reference": "4f519e37774ef231e4b4d6046854d5638548c8e0",
+                "shasum": ""
+            },
+            "require": {
+                "tinymce/tinymce": ">=4",
+                "yiisoft/yii2": "~2.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                },
+                "asset-installer-paths": {
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "dosamigos\\tinymce\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "2amigOS! Consulting Group",
+                    "email": "hola@2amigos.us",
+                    "homepage": "http://2amigos.us",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TinyMCE widget for Yii2.",
+            "homepage": "http://yiiwheels.com/extension/tinymce-widget",
+            "keywords": [
+                "2amigos",
+                "extension",
+                "tinymce",
+                "widget",
+                "yii",
+                "yii 2",
+                "yii2"
+            ],
+            "time": "2017-06-09T14:12:14+00:00"
+        },
         {
             "name": "almasaeed2010/adminlte",
             "version": "v2.4.3",
@@ -750,16 +810,16 @@
         },
         {
             "name": "ezyang/htmlpurifier",
-            "version": "v4.9.3",
+            "version": "v4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ezyang/htmlpurifier.git",
-                "reference": "95e1bae3182efc0f3422896a3236e991049dac69"
+                "reference": "d85d39da4576a6934b72480be6978fb10c860021"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/95e1bae3182efc0f3422896a3236e991049dac69",
-                "reference": "95e1bae3182efc0f3422896a3236e991049dac69",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/d85d39da4576a6934b72480be6978fb10c860021",
+                "reference": "d85d39da4576a6934b72480be6978fb10c860021",
                 "shasum": ""
             },
             "require": {
@@ -793,7 +853,7 @@
             "keywords": [
                 "html"
             ],
-            "time": "2017-06-03T02:28:16+00:00"
+            "time": "2018-02-23T01:58:20+00:00"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -2547,12 +2607,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-select2.git",
-                "reference": "d46c74c67536622c8e38bcb0e7bcaac981832936"
+                "reference": "d08a5b302fe04216bd04290f0e99e26386801a37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/d46c74c67536622c8e38bcb0e7bcaac981832936",
-                "reference": "d46c74c67536622c8e38bcb0e7bcaac981832936",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/d08a5b302fe04216bd04290f0e99e26386801a37",
+                "reference": "d08a5b302fe04216bd04290f0e99e26386801a37",
                 "shasum": ""
             },
             "require": {
@@ -2592,7 +2652,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2018-02-09T11:39:11+00:00"
+            "time": "2018-02-24T05:28:25+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-sidenav",
@@ -3248,16 +3308,16 @@
         },
         {
             "name": "sirgalas/yii2-morrisjs",
-            "version": "2.0.1",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sirgalas/yii2-morrisjs.git",
-                "reference": "66f56fa26d6fe7a2cfaca9d2e5780b258a7eb72c"
+                "reference": "f54021691787a9b1314b9dbd8f7ff7bb1d804d58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sirgalas/yii2-morrisjs/zipball/66f56fa26d6fe7a2cfaca9d2e5780b258a7eb72c",
-                "reference": "66f56fa26d6fe7a2cfaca9d2e5780b258a7eb72c",
+                "url": "https://api.github.com/repos/Sirgalas/yii2-morrisjs/zipball/f54021691787a9b1314b9dbd8f7ff7bb1d804d58",
+                "reference": "f54021691787a9b1314b9dbd8f7ff7bb1d804d58",
                 "shasum": ""
             },
             "require": {
@@ -3285,7 +3345,7 @@
                 "morris",
                 "yii2"
             ],
-            "time": "2018-02-22T10:06:06+00:00"
+            "time": "2018-02-23T13:05:32+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3341,6 +3401,52 @@
                 "mailer"
             ],
             "time": "2017-09-30T22:39:41+00:00"
+        },
+        {
+            "name": "tinymce/tinymce",
+            "version": "4.7.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tinymce/tinymce-dist.git",
+                "reference": "cfc045b07507159aa74f36a3f0e8988c0b3509a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/cfc045b07507159aa74f36a3f0e8988c0b3509a5",
+                "reference": "cfc045b07507159aa74f36a3f0e8988c0b3509a5",
+                "shasum": ""
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "tinymce.js",
+                        "plugins/*/plugin.js",
+                        "themes/*/theme.js"
+                    ],
+                    "files": [
+                        "tinymce.min.js",
+                        "plugins/*/plugin.min.js",
+                        "themes/*/theme.min.js",
+                        "skins/**"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-only"
+            ],
+            "description": "Web based JavaScript HTML WYSIWYG editor control.",
+            "homepage": "http://www.tinymce.com",
+            "keywords": [
+                "editor",
+                "html",
+                "javascript",
+                "richtext",
+                "tinymce",
+                "wysiwyg"
+            ],
+            "time": "2018-02-19T15:13:21+00:00"
         },
         {
             "name": "warrence/yii2-kartikgii",
@@ -3785,6 +3891,54 @@
                 "yii2"
             ],
             "time": "2018-02-13T15:20:45+00:00"
+        },
+        {
+            "name": "yiisoft/yii2-redis",
+            "version": "2.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiisoft/yii2-redis.git",
+                "reference": "3891bb19f3ddc7ad744b439fe1d656ebb5b60a99"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiisoft/yii2-redis/zipball/3891bb19f3ddc7ad744b439fe1d656ebb5b60a99",
+                "reference": "3891bb19f3ddc7ad744b439fe1d656ebb5b60a99",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2.0.13"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii\\redis\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Carsten Brandt",
+                    "email": "mail@cebe.cc"
+                }
+            ],
+            "description": "Redis Cache, Session and ActiveRecord for the Yii framework",
+            "keywords": [
+                "active-record",
+                "cache",
+                "redis",
+                "session",
+                "yii2"
+            ],
+            "time": "2017-12-11T21:17:34+00:00"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
