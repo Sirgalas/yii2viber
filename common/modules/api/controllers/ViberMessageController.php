@@ -1,13 +1,14 @@
 <?php
 namespace common\modules\api\controllers;
 
-use yii\web\Controller;
 
+use yii\rest\ActiveController;
 /**
  * Default controller for the `api` module
  */
-class DefaultController extends Controller
+class MessageController extends ActiveController
 {
+    use \common\modules\api\traits\Aplication;
     /**
      * Renders the index view for the module
      * @return string

@@ -44,6 +44,8 @@ class ViberTransaction extends \yii\db\ActiveRecord
     const  VIEWED = 'viewed';
 
     const  READY = 'ready';
+    
+    const ERROR = 'error';
 
     public static $statusSend = [
         self::NEWSEND => 'Новое',
@@ -51,6 +53,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
         self::DELIVERED => 'Доставлено',
         self::VIEWED => 'Просмотрено',
         self::READY => 'Готово',
+        self::ERROR => 'Ошибка'
     ];
 
     /**
@@ -127,7 +130,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
     public function getTheStatus()
     {
-        return $this::$statusSend[$this->status];
+        return self::$statusSend[$this->status];
     }
 
     /**
