@@ -75,11 +75,8 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="col-md-12">
         <?php
-        if(preg_match('%(\d)+%',($post['titleSearch']))||is_array($post['status']))
-            echo $this->render('_mongo',compact('dataProvider','searchModel','post'));
-        else
-            echo $this->render('_postgris',compact('dataProvider','searchModel')); ?>
-
+            echo $this->render('_mongo',compact('dataProvider','searchModel','post','providerFromGetModel'));
+       ?>
     </div>
     <div class="clearfix"></div>
     <?php Pjax::end(); ?>

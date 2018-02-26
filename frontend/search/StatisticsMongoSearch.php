@@ -91,6 +91,9 @@ class StatisticsMongoSearch extends Message_Phone_List
         }
         $dataProvider = new ActiveDataProvider([
         'query' => $query,
+            'pagination' => [
+                'pageSize' => 1,
+            ],
         ]);
 
         $this->load($params);

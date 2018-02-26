@@ -36,7 +36,8 @@
         "phpoffice/phpspreadsheet": "^1.1",
         "kartik-v/yii2-widget-datepicker": "@dev",
         "kartik-v/yii2-field-range": "*",
-        "sirgalas/yii2-morrisjs": "^2.0"
+        "sirgalas/yii2-morrisjs": "^2.0",
+        "yiisoft/yii2-redis": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
