@@ -254,6 +254,8 @@ class Viber
         if (! $user->save()) {
             $tVM->status = 'error';
             $tVM->save();
+            print_r($user->getAttributes());
+            print_r($user->getErrors());
             throw new \Exception('not save');
         }
 
@@ -277,6 +279,7 @@ class Viber
     {
 
         $db = Yii::$app->db;
+
         $transaction = $db->beginTransaction();
         $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
         foreach ($contact_collection_ids as $k => $v) {
@@ -286,6 +289,7 @@ class Viber
                 $contact_collection_ids[] = (int) $v;
             }
         }
+
         try {
             if (count($this->phones) > 0) {
                 $phones = $this->phones;
@@ -309,15 +313,19 @@ class Viber
                     $tPhones = [];
                 }
             }
+
             if (count($tPhones) > 0) {
+                print_r($tPhones);
                 $this->saveNewTransaction($tPhones);
             }
+
             $this->viber_message->status = ViberMessage::STATUS_PROCESS;
             $this->viber_message->save();
+
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollback();
-            echo "\nError ", $e->getMessage();
+            echo "\n Error ", $e->getMessage();
             return false;
         }
     }

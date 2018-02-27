@@ -150,6 +150,7 @@ class ViberTestForm extends Model
             'user_id' => \Yii::$app->user->id,
             'title' => 'База для рассылки <'. $this->title . '> - ' . time(),
             'type' => 'viber',
+            'size'=> count($phones),
             'created_at' => time(),
         ]);
         $vm = new ViberMessage([
@@ -226,12 +227,22 @@ class ViberTestForm extends Model
 
             return false;
         }
+
+
+
         if ($this->just_now) {
             $vm->alpha_name ='TEST';
             $v = new Viber($vm, $phones);
-            $v->prepareTransaction();
-            $v->sendMessage();
-            $vm->setWait();
+            echo 'Send   00`1';
+
+            if ($v->prepareTransaction()) {
+                echo 'Send   0';
+                $v->sendMessage();
+
+                $vm->setWait();
+            } else {
+                return false;
+            }
         }
 
         return true;

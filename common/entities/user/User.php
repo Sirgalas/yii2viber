@@ -86,27 +86,24 @@ class User extends BaseUser
 
     public function rules()
     {
-        if (property_exists (Yii::$app,'user') && ! Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()) {
-            $ranges = ['admin', 'client', 'dealer'];
-        } else {
-            $ranges = ['client', 'dealer'];
-        }
         $rules = parent::rules();
+        if ( isset(Yii::$app->user) && !Yii::$app->user->isGuest) {
+            if ( Yii::$app->user->identity->isAdmin()) {
+                $ranges = ['admin', 'client', 'dealer'];
+            } else {
+                $ranges = ['client', 'dealer'];
+            }
+            $rules['typeLength'] = ['type', 'in', 'range' => $ranges];
+        } else {
+            $ranges = [];
+        }
         // add some rules
         $rules['fieldRequired'] = ['type', 'required'];
-        $rules['typeLength'] = ['type', 'in', 'range' => $ranges];
-
         $rules['balance'] = ['balance', 'integer'];
         $rules['image'] = ['image', 'string', 'max' => 255];
         $rules['dealer_confirmed'] = ['dealer_confirmed', 'boolean'];
         $rules['dealer_id'] = ['dealer_id', 'integer'];
-        $rules['typeLength'] = [
-            'dealer_id',
-            'exist',
-            'skipOnError' => true,
-            'targetClass' => self::className(),
-            'targetAttribute' => ['dealer_id' => 'id'],
-        ];
+        //$rules['typeLength'] = ['dealer_id','exist','skipOnError' => true,'targetClass' => self::class,'targetAttribute' => ['dealer_id' => 'id'],];
         $rules['cost'] = ['cost', 'number'];
         $rules['tel'] = ['tel', 'string'];
         $rules['first_name'] = ['first_name', 'string', 'max' => 100];
