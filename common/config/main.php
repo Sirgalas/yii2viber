@@ -11,6 +11,12 @@ return [
         'common\bootstrap\SetUp',
     ],
     'components' => [
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => 'localhost',
+            'port' => 6379,
+            'database' => 0,
+        ],
         'resourceManager' => [
             'class' => 'common\components\FileSystemResourseManager',
             'basePath' => dirname(dirname(__DIR__)).'/files',
