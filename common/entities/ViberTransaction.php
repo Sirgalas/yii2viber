@@ -224,6 +224,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function Phone()
     {
         $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        $phone=[];
         foreach ($phoneList as $messagePhoneList) {
             $phone[] = $messagePhoneList->phone;
         }
@@ -234,6 +235,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function Status()
     {
         $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        $status=[];
         foreach ($phoneList as $messagePhoneList) {
             $status[] = $messagePhoneList::$statusMessage[$messagePhoneList->status];
         }
@@ -244,6 +246,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function DateDelivery()
     {
         $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        $date_delivered=[];
         foreach ($phoneList as $messagePhoneList) {
             $date_delivered[] = ($messagePhoneList->date_delivered) ? date('d:m:Y',
                 $messagePhoneList->date_delivered) : 'не доставлено';
@@ -255,6 +258,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
     public function DateViewed()
     {
         $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        $date_viewed=[];
         foreach ($phoneList as $messagePhoneList) {
             $date_viewed[] = ($messagePhoneList->date_viewed) ? date('d:m:Y',
                 $messagePhoneList->date_viewed) : 'Не просмотрено';

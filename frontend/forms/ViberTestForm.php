@@ -190,6 +190,8 @@ class ViberTestForm extends Model
                 $phone = new Phone();
                 if ($phone->importText($cc->id, implode(',', $phones)) == 'ok') {
 
+
+                    //списание баланса
                     Yii::$app->user->identity->balance -= count($phones);
                     Yii::$app->user->identity->save();
 

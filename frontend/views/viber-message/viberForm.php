@@ -114,12 +114,12 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;">
                     <?php
                     foreach ($listIcons as $icon){
-                        echo "<img class='viber-icon' title='$icon' src='" .  ViberIcons::ICON_PATH  . $icon. ".png'>";
+                        echo "<img class='viber-icon' data-text='$icon' title='$icon' src='" .  ViberIcons::ICON_PATH  . $icon. ".png'>";
                     }
                     ?>
                     <style>
                         .viber-icon {
-                            max-width: 25px;max-height: 25px;padding: 2px;cursor: pointer;
+                            max-width: 25px;max-height: 25px;margin: 2px;cursor: pointer;
                         }
                     </style>
                 </div>
@@ -271,6 +271,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
         <?php ActiveForm::end(); ?>
     </div>
     <script>
+        var text_size_limit = 1000;
         function calcRemaining(obj, maxCount) {
             var val = ($(obj).val());
             if (val.length > maxCount) {
@@ -283,7 +284,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
         }
 
         function informToptext(obj) {
-            var txt = calcRemaining(obj, 1000);
+            var txt = calcRemaining(obj, text_size_limit);
             $('#remaining_text').html(txt);
         }
 
@@ -294,6 +295,13 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 informToptext(this);
             })
 
+            $('.viber-icon').click(function(){
+                var code = $(this).attr('data-text');
+                var fild_text =  $('#filed_text');
+                var txt = fild_text.val();
+                fild_text.val(txt + '(' + code + ')');
+                informToptext(fild_text);
+            });
             function manageVisible() {
 
                 var type = $('#field_type').val();

@@ -3,8 +3,9 @@
 return [
     'class'=>'yii\web\UrlManager',
     'hostInfo'=>$params['backendHostInfo'],
-    'enablePrettyUrl' => true,
-    'showScriptName' => false,
+    'enablePrettyUrl' => false,
+    'showScriptName' => true,
+
     'rules' => [
         '' => 'site/index',
         '<_a:login|logout>' => 'site/<_a>',
@@ -12,5 +13,6 @@ return [
         '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',
         '<_c:[\w\-]+>/<_a:[\w-]+>' => '<_c>/<_a>',
         '<_c:[\w\-]+>/<id:\d+>/<_a:[\w\-]+>' => '<_c>/<_a>',
+        '/admin/q'=>'/user/admin/index'
     ],
 ]; ?>
