@@ -260,7 +260,7 @@ class Viber
         foreach ($phones as $i => $P) {
             $phones[$i]['transaction_id'] = $tVM->id;
         }
-        echo "\n created phones ", count($phones), ' transaction id=', $tVM->id;
+       // echo "\n created phones ", count($phones), ' transaction id=', $tVM->id;
         if (! Yii::$app->mongodb->getCollection(Message_Phone_List::collectionName())->batchInsert($phones)) {
             throw new \Exception('not save');
         }

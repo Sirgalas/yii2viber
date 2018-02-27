@@ -408,7 +408,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         }
         if (is_a(Yii::$app, 'yii\web\Application')) {
 
-            if (is_object(Yii::$app->user)) {
+            if (is_object(Yii::$app->user) && $this->assign_collections) {
                 $cost = self::cost($this->assign_collections);
                 if ($this->cost != $cost) {
                     //Yii::$app->user->identity->balance += $this->cost - $cost;

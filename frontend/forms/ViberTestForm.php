@@ -182,6 +182,7 @@ class ViberTestForm extends Model
                 $upload_file->saveAs($path);
             }
         }
+
         $vm->image = $this->image;
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
@@ -230,6 +231,7 @@ class ViberTestForm extends Model
             $v = new Viber($vm, $phones);
             $v->prepareTransaction();
             $v->sendMessage();
+            $vm->setWait();
         }
 
         return true;
