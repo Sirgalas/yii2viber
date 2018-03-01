@@ -34,6 +34,9 @@ use common\entities\mongo\Phone;
  * @property string $cost Стоимость
  * @property string $balance Сколько средств уже потрачено
  * @property int date_send_finish время окончания рассылки
+ * @property string wait_payment_comment коммнт о недостатке баланса
+ * @property string admin_comment коммент администратора
+ * @property string provider провайдер
  *
  * @property ContactCollection $contactCollection
  * @property MessageContactCollection[] $messageContactCollections
@@ -78,6 +81,8 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_READY = 'ready';
 
+    const  STATUS_WAIT_PAY = 'wait-pay';
+
     const STATUS_ERROR = 'error';
 
     const STATUS_CLOSED = 'closed';
@@ -95,8 +100,10 @@ class ViberMessage extends \yii\db\ActiveRecord
      * 5. Cron handler отправляет все транзакции и STATUS_PROCESS->STATUS_WAIT
      * 6. Cron handler проверяет все ли доставлено или остек срок срок доставки STATUS_WAIT->STATUS_READY
      * 7. Если при отправке произошла ошибка STATUS_PROCESS->STATUS_ERROR
-     * 8. Админ может закрыть любую расылку в любой момент *****->STATUS_CLOSED
-     * 9  Клиент может остановить рассылку в процессе обработки STATUS_CHECK->STATUS_CANCEL, STATUS_PROCESS->STATUS_CANCEL
+     * 8. Если приотправке не хватило средств на балансе, то STATUS_PROCESS->STATUS_WAIT_PAY
+     * 6. Cron handler проверяет не появились ли новые средства на счете и если появились STATUS_WAIT_PAY->STATUS_PROCESS
+     * 9. Админ может закрыть любую расылку в любой момент *****->STATUS_CLOSED
+     * 10.  Клиент может остановить рассылку в процессе обработки STATUS_CHECK->STATUS_CANCEL, STATUS_PROCESS->STATUS_CANCEL
      *
      */
     public static $types = [
@@ -146,13 +153,31 @@ class ViberMessage extends \yii\db\ActiveRecord
         self::STATUS_READY => 'Готово',
         self::STATUS_WAIT => 'Ожидает',
         self::STATUS_PROCESS => 'В процессе',
+        self::STATUS_WAIT_PAY => 'Ожидание платежа',
     ];
 
+    public function SetWaitPay(){
+        throw new Exception('Не готово!!!!');
+        if ($this->status == self::STATUS_PROCESS){
+            $this->status = self::STATUS_WAIT_PAY;
+            $cnt = ViberTransaction::find()->where(['viber_message_id'=>$this->id])->andWhere(['status'=>ViberTransaction::NEWSEND])->sum('size');
+            $this->wait_payment_comment('не хватило средств для отправки ' . $cnt. ' сообщений');
+            return $this->save();
+        }
+        return false;
+    }
+
+    public function SetProcess(){
+        if ($this->status == self::STATUS_WAIT_PAY || $this->status == self::STATUS_NEW){
+            $this->status = self::STATUS_PROCESS;
+            return $this->save();
+        }
+        return false;
+    }
     public function Cancel()
     {
         if ($this->isCancalable()) {
             $this->status = self::STATUS_CANCEL;
-
             return $this->save();
         }
 
@@ -251,6 +276,8 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id'],
             ],
+            [['admin_comment','wait_payment_comment'], 'string', 'max'=>255],
+            [['provider'], 'string', 'max'=>16],
         ];
     }
 
@@ -285,6 +312,9 @@ class ViberMessage extends \yii\db\ActiveRecord
             'viber_image_id' => 'Ид изображения в Viber',
             'assign_collections' => 'Выбрать базы для рассылки',
             'dlr_timeout' => 'Время в секундах, в течение которого интересует доставка сообщения',
+            'wait_payment_comment'=> 'коммент о недостатке баланса',
+            'admin_comment'=>'коммент администратора',
+            'provider'=> 'провайдер'
         ];
     }
 

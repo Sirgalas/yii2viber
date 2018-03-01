@@ -42,7 +42,7 @@ composer.lock
 
 /*.htaccess
 /frontend/web/.htaccess
+/backend/web/.htaccess
 
-/.htaccess
 
 /composer.lock

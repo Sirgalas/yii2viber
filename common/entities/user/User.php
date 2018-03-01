@@ -28,6 +28,7 @@ use common\entities\BalanceLog;
  * @property  string first_name
  * @property  string surname
  * @property  string family
+ * @property  string admin_comment
  * @property ContactCollection[] $contactCollections
  * @property Phone[] $phones
  * @property ViberMessage[] $viberMessages
@@ -106,6 +107,7 @@ class User extends BaseUser
         //$rules['typeLength'] = ['dealer_id','exist','skipOnError' => true,'targetClass' => self::class,'targetAttribute' => ['dealer_id' => 'id'],];
         $rules['cost'] = ['cost', 'number'];
         $rules['tel'] = ['tel', 'string'];
+        $rules['admin_comment'] = ['admin_comment', 'string', 'max'=>1024];
         $rules['first_name'] = ['first_name', 'string', 'max' => 100];
         $rules['surname'] = ['surname', 'string', 'max' => 100];
         $rules['family'] = ['family', 'string', 'max' => 100];
@@ -135,6 +137,7 @@ class User extends BaseUser
         $labels['username'] = 'Логин';
         $labels['cost'] = 'Цена';
         $labels['created_at'] = 'Зарегистрирован';
+        $labels['admin_comment'] = 'Коммент.';
 
         return $labels;
     }
