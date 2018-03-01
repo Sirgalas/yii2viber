@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'export' => function ($url,$model) {
                         return Html::a(
                             '<i class="fa fa-fw fa-download"></i>',
-                            $url, ['target'=>'_blank']);
+                            $url, ['target'=>'_blank', 'class'=>'download']);
                     },
 
                 ],
@@ -67,3 +67,17 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);?>
     <?php Pjax::end(); ?>
 </div>
+    <script>
+        function initPage() {
+            $('a.download').click(function(e){
+                e.preventDefault();
+                window.open($(this).attr('href'));
+            });
+        }
+    </script>
+<?php
+$js = '
+  
+       $(document).ready(function() {initPage();});
+';
+$this->registerJs($js);

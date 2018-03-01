@@ -67,6 +67,7 @@ class ViberController extends \yii\web\Controller
             //}
             $phone = Message_Phone_List::find()->where(['msg_id' => $vb_Note->msg_id])->one();
             if (!$phone) {
+                echo 2;
                 file_put_contents($fileName,"\n      NOT FOUND ", FILE_APPEND);
                 return 'OK';
             }
@@ -113,10 +114,8 @@ class ViberController extends \yii\web\Controller
             if ($changed) {
                 file_put_contents($fileName, "\n --- after action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
                 $phone->save();
-
             }
         }
-
         return 'OK';
     }
 

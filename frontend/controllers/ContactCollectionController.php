@@ -277,27 +277,37 @@ class ContactCollectionController extends Controller
     public function actionExport($id)
     {
         $this->layout = '';
-        $blockSize = 4;
+        $blockSize =1000;
         $collection = ContactCollection::findOne($id);
         if (! Yii::$app->user->identity->amParent($collection->user_id) && Yii::$app->user->id != $collection->user_id) {
             throw new NotFoundHttpException('Этот пользователь вам не принадлежит', 403);
         }
+
+        $now = gmdate("D, d M Y H:i:s");
+        header("Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate");
+        header("Last-Modified: " . $now . " GMT");
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+        header("Content-Transfer-Encoding: binary");
         header('Content-type: text/csv');
         header('Content-Disposition: attachment; filename="export_'.date('Ymd_H').'_Phone_list.csv"');
         $position = 0;
+        $df = fopen("php://output", 'w');
         while (true) {
-            $data = '';
-            $phones = Phone::find()->where(['contact_collection_id' => $id])->asArray()->limit($blockSize)->offset($position)->all();
+
+            $phones = Phone::find()->where(['contact_collection_id' =>(int) $id])->asArray()->limit($blockSize)->offset($position)->all();
             if (count($phones) == 0) {
                 break;
             }
             foreach ($phones as $phone) {
-                $data .= $phone['phone']."\r\n";
+
+                fputcsv($df, [$phone['phone']]);
             }
-            echo iconv('utf-8', 'windows-1251', $data); //Если вдруг в Windows будут кракозябры
+
             $position += $blockSize;
         }
-
-        return '';
+        fclose($df);
+        exit;
     }
 }

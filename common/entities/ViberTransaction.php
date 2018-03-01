@@ -44,7 +44,9 @@ class ViberTransaction extends \yii\db\ActiveRecord
     const  VIEWED = 'viewed';
 
     const  READY = 'ready';
-    
+
+    const  WAIT_PAY = 'wait-pay';
+
     const ERROR = 'error';
 
     public static $statusSend = [
@@ -53,7 +55,8 @@ class ViberTransaction extends \yii\db\ActiveRecord
         self::DELIVERED => 'Доставлено',
         self::VIEWED => 'Просмотрено',
         self::READY => 'Готово',
-        self::ERROR => 'Ошибка'
+        self::ERROR => 'Ошибка',
+        self::WAIT_PAY => 'Ожидание платежа'
     ];
 
     /**
