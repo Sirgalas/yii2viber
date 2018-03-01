@@ -9,6 +9,9 @@ use kartik\widgets\Select2;
 use yii\helpers\Url;
 use kartik\datetime\DateTimePicker;
 
+use common\components\ViberIcons;
+
+$listIcons=explode(',', ViberIcons::iconListAsString());
 /* @var $this yii\web\View */
 /* @var $model common\entities\ViberMessage */
 /* @var $form yii\widgets\ActiveForm */
@@ -35,31 +38,21 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 'options' => ['enctype' => 'multipart/form-data'],
             ]);
                     ?>
-
-
             <div class="col-xs-12">
                 <?php if ($model->status == ViberMessage::STATUS_CHECK && Yii::$app->user->identity->isAdmin() && $model->cost>0) {
 
                     ?>
                 <?=$form->field($model, 'id')->hiddenInput()->label(false)?>
                 <div class="col-xs-3">
-
-
                     <input type="submit" class="btn btn-block btn-success btn-lg" id="moderation_on" name="allow"
                            value="Одобрить">
-
-
                 </div>
                 <div class="col-xs-3">
-
-
                     <input type="submit" class="btn btn-block btn-warning btn-lg" id="moderation_cancel"
                            value="Отправить на доработку" name="disallow">
                 </div>
                 <?php } ?>
                 <div class="col-xs-3 pull-right">
-
-
                     <input type="submit" class="btn btn-block btn-danger btn-lg" id="close"
                            value="Закрыть рассылку" name="close">
                 </div>
@@ -83,9 +76,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             <div class="col-md-7">
                 <div class="block-header">
                     Рассылка
-
                 </div>
-
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
                 <div class="form-group radio-toggle" style="display: none">
@@ -108,7 +99,18 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
             <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
-                <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;"></div>
+                <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;">
+                    <?php
+                    foreach ($listIcons as $icon){
+                        echo "<img class='viber-icon' data-text='$icon' title='$icon' src='" .  ViberIcons::ICON_PATH  . $icon. ".png'>";
+                    }
+                    ?>
+                    <style>
+                        .viber-icon {
+                            max-width: 25px;max-height: 25px;margin: 2px;cursor: pointer;
+                        }
+                    </style>
+                </div>
             </div>
             <div class="col-md-12" style="margin-top:-20px">
                 <div style="position: relative;">
@@ -117,14 +119,14 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         'id' => 'filed_text',
                         'rows' => 10,
                     ])?>
+
+
                     <div id="remaining_text"></div>
                 </div>
                 <?php if ($model->image) : ?>
                     <img src="/uploads/<?=$model->image?>" id="viber_image"
                          style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
-
                 <?php endif ?>
-
                 <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
                 <?php if ($model->hasErrors('image')) : ?>
                     <div style="color: #b66161;margin-top: -10px;margin-bottom: 15px;"><?=
@@ -152,6 +154,11 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     echo Html::submitButton('Прервать', ['class' => 'btn btn-primary right-20',   'name'=>'button' ,'value'=>'cancel']);
                 }
                 ?>
+
+
+
+
+
             </div>
         </div>
 
@@ -250,6 +257,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
         <?php ActiveForm::end(); ?>
     </div>
     <script>
+        var text_size_limit = 1000;
         function calcRemaining(obj, maxCount) {
             var val = ($(obj).val());
             if (val.length > maxCount) {
@@ -262,7 +270,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
         }
 
         function informToptext(obj) {
-            var txt = calcRemaining(obj, 1000);
+            var txt = calcRemaining(obj, text_size_limit);
             $('#remaining_text').html(txt);
         }
 
@@ -273,6 +281,13 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 informToptext(this);
             })
 
+            $('.viber-icon').click(function(){
+                var code = $(this).attr('data-text');
+                var fild_text =  $('#filed_text');
+                var txt = fild_text.val();
+                fild_text.val(txt + '(' + code + ')');
+                informToptext(fild_text);
+            });
             function manageVisible() {
 
                 var type = $('#field_type').val();

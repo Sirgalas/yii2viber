@@ -6,6 +6,7 @@ use common\entities\ContactCollection;
 use common\entities\MessageContactCollection;
 use common\entities\mongo\Phone;
 use frontend\entities\User;
+use PHPUnit\Framework\MockObject\RuntimeException;
 use Yii;
 use common\entities\ViberMessage;
 use common\entities\ViberMessageSearch;
@@ -14,6 +15,8 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use frontend\services\message\ViberMessageServices;
+use yii\web\UploadedFile;
 
 /**
  * ViberMessageController implements the CRUD actions for ViberMessage model.
@@ -76,58 +79,38 @@ class ViberMessageController extends Controller
     {
         if ($id) {
             $model = $this->findModel($id);
-            if (!Yii::$app->user->identity->isAdmin()  && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
-
+            if (! Yii::$app->user->identity->isAdmin() && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
                 throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
             }
         } else {
-
             $model = new ViberMessage();
         }
-
-        if (!$model->status){
-
+        if (! $model->status) {
             $model->status = ViberMessage::STATUS_PRE;
         }
-
-        if (isset($_POST['button']) && $_POST['button'] == 'cancel'){
-            $model->Cancel();
-            return $this->redirect(['index']);
-        }
-
         if ($model->load(Yii::$app->request->post())) {
-            if ($model->status && !$model->isEditable()){
+            $services= new ViberMessageServices();
+            try{
+                if(!$services->send(Yii::$app->request->post(),$model))
+                    throw new \RuntimeException('сообщение не отпавилось обратитесь к администратору');
+                
                 return $this->redirect(['index']);
-            }
-            if ($model->getAttribute('status') && $model->isEditable()) {
-
-                if ($model->validate() && $model->send()) {
-                    if ($_POST['button'] == 'check'){
-                        $model->scenario = ViberMessage::SCENARIO_HARD;
-                        $model->status=ViberMessage::STATUS_CHECK;
-                        if ($model->validate() && $model->send()) {
-                            return $this->redirect(['index']);
-                        }
-                        print_r($model->getErrors());exit;
-                    }
-                    return $this->redirect(['index']);
-                }
+            }catch (RuntimeException $ex) {
+                Yii::$app->errorHandler->logException($ex->getMessage());
+                Yii::$app->session->setFlash('error',$ex->getMessage());
             }
         }
 
-        $model->setAttribute('status',$model->getOldAttribute('status'));
-        $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id? $model->user_id: Yii::$app->user->identity->id])->select([
+        $model->setAttribute('status', $model->getOldAttribute('status'));
+        $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id ? $model->user_id : Yii::$app->user->identity->id])->select([
             'id',
             'title',
         ])->orderBy('title')->asArray()->all();
         $contact_collections = ArrayHelper::map($contact_collections, 'id', 'title');
-
         $model->assign_collections = MessageContactCollection::find()->select(['contact_collection_id'])->andWhere(['viber_message_id' => $id])->column();
-
         $clients = ArrayHelper::map(User::find()->where(['dealer_id' => Yii::$app->user->identity->id])->all(), 'id',
             'username');
         $clients[Yii::$app->user->identity->id] = Yii::$app->user->identity->username;
-
         return $this->render('viberForm', compact('model', 'contact_collections', 'clients'));
     }
 
@@ -143,14 +126,14 @@ class ViberMessageController extends Controller
         $transaction = Yii::$app->db->beginTransaction();
 
         try {
-            $model=$this->findModel($id);
-            if (!Yii::$app->user->identity->isAdmin()  && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
+            $model = $this->findModel($id);
+            if (! Yii::$app->user->identity->isAdmin() && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
                 throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
             }
-            if ($model->isDeleteble()){
+            if ($model->isDeleteble()) {
                 throw new NotFoundHttpException('Удаление этой рассылка невозможно', 403);
             }
-            $model ->delete();
+            $model->delete();
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();
@@ -162,12 +145,16 @@ class ViberMessageController extends Controller
         return $this->redirect(['index']);
     }
 
+    /***
+     * Расчет стоимости рассылки (ajax)
+     * @return array
+     */
     public function actionCost()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $data = Yii::$app->request->post('data');
         try {
-                $cost = ViberMessage::Cost($data);
+            $cost = ViberMessage::Cost($data);
             if (Yii::$app->request->post('id')) {
                 $entities = ViberMessage::findOne(Yii::$app->request->post('id'));
                 $balance = $entities->userBalanse($cost);
@@ -175,10 +162,10 @@ class ViberMessageController extends Controller
                 $balance = Yii::$app->user->identity->balance - $cost;
             }
 
-
             return ['cost' => $cost, 'balance' => $balance, 'result' => 'ok'];
         } catch (\Exception $ex) {
             Yii::$app->errorHandler->logException($ex);
+
             return ['result' => 'error', 'message' => $ex->getMessage()];
         }
     }
@@ -217,28 +204,25 @@ class ViberMessageController extends Controller
         }
     }
 
-    public function actionModerate(){
+    public function actionModerate()
+    {
 
         $data = Yii::$app->request->post();
-
 
         if (Yii::$app->user->identity->isAdmin()) {
 
             $vm = $this->findModel($data['ViberMessage']['id']);
-            if (isset($_POST['allow'])){
+            if (isset($_POST['allow'])) {
                 $vm->status = ViberMessage::STATUS_NEW;
                 $vm->save();
-
             }
-            if (isset($_POST['disallow'])){
+            if (isset($_POST['disallow'])) {
                 $vm->status = ViberMessage::STATUS_FIX;
                 $vm->save();
-
             }
-            if (isset($_POST['close'])){
+            if (isset($_POST['close'])) {
                 $vm->status = ViberMessage::STATUS_CLOSED;
                 $vm->save();
-
             }
 
             return $this->redirect('/viber-message');

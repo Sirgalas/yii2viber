@@ -162,6 +162,12 @@ class ClientController extends Controller
             return ['output' => '', 'message' => 'error:: ' . $e->getMessage() ];
         }
     }
+
+    /**
+     * Изменение баланса вышестоящим дилером
+     * @param $id
+     * @return array
+     */
     public function actionChangeBalance($id){
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (!Yii::$app->user->identity->amParent($id)){
@@ -197,6 +203,11 @@ class ClientController extends Controller
         }
     }
 
+    /**
+     * Заявка клиента "хочу стать дилером"
+     * @return string
+     * @throws \Exception
+     */
     public function actionWantDealer(){
         if(!Yii::$app->user->isGuest && Yii::$app->user->identity->isClient()){
             $user=User::findOne(Yii::$app->user->identity->id);
@@ -219,6 +230,11 @@ class ClientController extends Controller
         }
     }
 
+    /**
+     * Переключение роли пользователя
+     * @param null $id
+     * @return array|\yii\web\Response
+     */
     public function actionSwitch($id = null){
         if(!$id && Yii::$app->session->has(self::ORIGINAL_USER_SESSION_KEY)) {
             $user = $this->findModel(Yii::$app->session->get(self::ORIGINAL_USER_SESSION_KEY));

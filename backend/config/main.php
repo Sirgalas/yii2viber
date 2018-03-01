@@ -69,6 +69,7 @@ return [
         'urlManager' => function () {
             return Yii::$app->get('backendUrlManager');
         },
+
         'frontendUrlManager' => require __DIR__.'/../../frontend/config/urlManager.php',
     ],
     'as access' => [

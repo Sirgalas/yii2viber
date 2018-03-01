@@ -45,6 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'date_finish',
 //            'time_start',
 //            'time_finish',
+
         [
             'attribute' => 'status',
             'value' => function ($model) {

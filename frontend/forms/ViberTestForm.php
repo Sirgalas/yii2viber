@@ -150,6 +150,7 @@ class ViberTestForm extends Model
             'user_id' => \Yii::$app->user->id,
             'title' => 'База для рассылки <'. $this->title . '> - ' . time(),
             'type' => 'viber',
+            'size'=> count($phones),
             'created_at' => time(),
         ]);
         $vm = new ViberMessage([
@@ -182,6 +183,7 @@ class ViberTestForm extends Model
                 $upload_file->saveAs($path);
             }
         }
+
         $vm->image = $this->image;
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
@@ -190,6 +192,8 @@ class ViberTestForm extends Model
                 $phone = new Phone();
                 if ($phone->importText($cc->id, implode(',', $phones)) == 'ok') {
 
+
+                    //списание баланса
                     Yii::$app->user->identity->balance -= count($phones);
                     Yii::$app->user->identity->save();
 
@@ -223,11 +227,22 @@ class ViberTestForm extends Model
 
             return false;
         }
+
+
+
         if ($this->just_now) {
             $vm->alpha_name ='TEST';
             $v = new Viber($vm, $phones);
-            $v->prepareTransaction();
-            $v->sendMessage();
+            echo 'Send   00`1';
+
+            if ($v->prepareTransaction()) {
+                echo 'Send   0';
+                $v->sendMessage();
+
+                $vm->setWait();
+            } else {
+                return false;
+            }
         }
 
         return true;
