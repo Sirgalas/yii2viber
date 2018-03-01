@@ -12,7 +12,7 @@ class ViberLog extends FileTarget
 {
     public function formatMessage($message)
     {
-        echo "HERERERERRREERRERE";
+
         list($text, $level, $category, $timestamp) = $message;
 
         $level = Logger::getLevelName($level);

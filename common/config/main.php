@@ -22,10 +22,11 @@ return [
             'basePath' => dirname(dirname(__DIR__)).'/files',
             'baseUrl' => '/files',
         ],
-        'cache' => [
-            'class' => 'yii\caching\MemCache',
-            'useMemcached' => true,
-        ],
+//        вынести в локал
+//        'cache' => [
+//            'class' => 'yii\caching\MemCache',
+//            'useMemcached' => true,
+//        ],
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'dateFormat' => 'php:d.m.Y',

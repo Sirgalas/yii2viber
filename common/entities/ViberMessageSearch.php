@@ -31,6 +31,7 @@ class ViberMessageSearch extends ViberMessage
 
     public function search($params)
     {
+        $this->date_start=0;
 
         $ids=[Yii::$app->user->identity->id];
         if (Yii::$app->user->identity->isAdmin()){
@@ -60,8 +61,8 @@ class ViberMessageSearch extends ViberMessage
         $query->andFilterWhere([
             'id' => $this->id,
 
-            'date_start' => $this->date_start,
-            'date_finish' => $this->date_finish,
+            //'date_start' => $this->date_start,
+            //'date_finish' => $this->date_finish,
             'limit_messages' => $this->limit_messages,
             'cost' => $this->cost,
             'balance' => $this->balance,
@@ -74,8 +75,8 @@ class ViberMessageSearch extends ViberMessage
             ->andFilterWhere(['like', 'url_button', $this->url_button])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'alpha_name', $this->alpha_name])
-            ->andFilterWhere(['like', 'time_start', $this->time_start])
-            ->andFilterWhere(['like', 'time_finish', $this->time_finish])
+            //->andFilterWhere(['like', 'time_start', $this->time_start])
+            //->andFilterWhere(['like', 'time_finish', $this->time_finish])
             ->andFilterWhere(['like', 'status', $this->status])
             ->andFilterWhere(['like', 'user.username', $this->username]);
         return $dataProvider;

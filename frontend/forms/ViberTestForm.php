@@ -233,12 +233,8 @@ class ViberTestForm extends Model
         if ($this->just_now) {
             $vm->alpha_name ='TEST';
             $v = new Viber($vm, $phones);
-            echo 'Send   00`1';
-
             if ($v->prepareTransaction()) {
-                echo 'Send   0';
                 $v->sendMessage();
-
                 $vm->setWait();
             } else {
                 return false;
