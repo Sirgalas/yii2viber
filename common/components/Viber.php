@@ -204,12 +204,10 @@ class Viber
         if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
             return;
         }
-
         $viber_transaction = ViberTransaction::find()->isNew($this->viber_message->id)->one();
         if (! $viber_transaction) {
             return $this->viber_message->setWait();
         }
-
         $phonesArray = Message_Phone_List::find()->indexBy('phone')->where(['transaction_id' => $viber_transaction->id])->all();
         $phones = [];
         $phonesA = [];
@@ -279,7 +277,6 @@ class Viber
     {
 
         $db = Yii::$app->db;
-
         $transaction = $db->beginTransaction();
         $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
         foreach ($contact_collection_ids as $k => $v) {
@@ -289,40 +286,31 @@ class Viber
                 $contact_collection_ids[] = (int) $v;
             }
         }
-
         try {
             if (count($this->phones) > 0) {
                 $phones = $this->phones;
             } else {
                 $phones = Phone::find()->select(['phone'])->where(['in','contact_collection_id', $contact_collection_ids ])->distinct('phone');
             }
-
             $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
             if ($user->balance < count($phones)) {
                 throw new \Exception('balance is small, not save');
             }
-
             $tPhones = [];
-
             foreach ($phones as $phone) {
                 $tPhones[] = ['phone' => $phone, 'status' => 'new', 'message_id' => $this->viber_message->id];
                 if (count($tPhones) >= Yii::$app->params['viber']['transaction_size_limit']) {
-
-                    echo "\n prepared ", count($tPhones);
                     $this->saveNewTransaction($tPhones);
                     $tPhones = [];
                 }
             }
-
             if (count($tPhones) > 0) {
-                print_r($tPhones);
                 $this->saveNewTransaction($tPhones);
             }
-
             $this->viber_message->status = ViberMessage::STATUS_PROCESS;
             $this->viber_message->save();
-
             $transaction->commit();
+            return true;
         } catch (\Exception $e) {
             $transaction->rollback();
             echo "\n Error ", $e->getMessage();
