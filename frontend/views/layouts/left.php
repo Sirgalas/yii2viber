@@ -26,7 +26,7 @@ $action = Yii::$app->controller->action->id;
                     }
                     ?>
                 </p>
-                <p><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь </br> не авторизован';?></p>
+                <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь </br> не авторизован';?></p>
 
 
             </div>
