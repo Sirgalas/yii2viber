@@ -6,10 +6,7 @@ $controller = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
 ?>
 <aside class="main-sidebar">
-
     <section class="sidebar">
-
-        <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
                 <img src="/images/logo.png" class="img-circle" alt="User Image"/>
@@ -27,11 +24,8 @@ $action = Yii::$app->controller->action->id;
                     ?>
                 </p>
                 <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь </br> не авторизован';?></p>
-
-
             </div>
         </div>
-        
         <?php
         $menuItems = [
             ['label' => 'Меню приложения', 'options' => ['class' => 'header']],
@@ -65,9 +59,5 @@ $action = Yii::$app->controller->action->id;
             $id = Yii::$app->user->identity->dealer_id;
         }
         echo \frontend\widgets\DealerViews::widget(['id' => $id]) ?>
-
-
     </section>
-
 </aside>
->>>>>>> 42662a3ec9eb4b86452adc1412e96e97ec2af8dc

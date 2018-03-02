@@ -37,10 +37,9 @@ use dmstr\widgets\Alert;
 
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
-        <b>Version</b> 2.0
+        <b>Версия</b> 0.01
     </div>
-    Copyright &copy; 2016-2018  <strong><a href="http://vibershop24.ru/">ViberShop</a>.</strong> All rights
-    reserved.
+    <strong><a href="http://vibershop24.ru/">ViberShop24</a>.</strong>
 </footer>
 
 <!-- Control Sidebar -->
