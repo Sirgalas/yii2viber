@@ -21,13 +21,10 @@ class ViberMessageServices
                 if ($model->validate()) {
                     $model->upload_file=UploadedFile::getInstance($model,'upload_file');
                     $model->send();
-                    /*if(!$model->send())
-                        throw new \RuntimeException('сообщение не отправлено');*/
                     if ($post['button'] == 'check') {
                         $model->scenario = ViberMessage::SCENARIO_HARD;
                         $model->status = ViberMessage::STATUS_CHECK;
                         if ($model->validate() && $model->send()) {
-
                             return true;
                         }
                     }
