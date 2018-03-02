@@ -26,7 +26,7 @@ $action = Yii::$app->controller->action->id;
                     }
                     ?>
                 </p>
-                <p><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'User not Auth';?></p>
+                <p><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь не авторизован';?></p>
 
 
             </div>
@@ -47,8 +47,8 @@ $action = Yii::$app->controller->action->id;
             ['label' => 'Меню приложения', 'options' => ['class' => 'header']],
         ];
         if (Yii::$app->user->isGuest) {
-            $menuItems[] = ['label' => 'Signup', 'url' => ['/user/registration/register']];
-            $menuItems[] = ['label' => 'Login', 'url' => ['/user/security/login']];
+            $menuItems[] = ['label' => 'Регистрация', 'url' => ['/user/registration/register']];
+            $menuItems[] = ['label' => 'Логин', 'url' => ['/user/security/login']];
         } else {
             $menuItems[] = ['label' => 'Главная', 'url' => Url::toRoute(['/'])];
             $menuItems[] = ['label' => 'Базы номеров', 'url' => Url::toRoute(['/contact-collection']),'options'=>['class'=>($controller=='contact-collection')?'active':'not-active']];
