@@ -39,7 +39,7 @@ use dmstr\widgets\Alert;
     <div class="pull-right hidden-xs">
         <b>Версия</b> 0.01
     </div>
-    <strong><a href="http://vibershop24.ru/">ViberShop24</a>.</strong>
+    <strong><a href="http://vibershop24.ru/">ViberShop24</a></strong>
 </footer>
 
 <!-- Control Sidebar -->
