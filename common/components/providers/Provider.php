@@ -33,19 +33,16 @@ abstract class Provider
     /**
      * Viber constructor.
      *
-     * @param $from
-     * @param $type_message
-     * @param $text
-     * @param $title_button
-     * @param $url_button
-     * @param $image
-     * @param $params
-     * @param $image_id
+     * @param $params array
      */
     public function __construct(
+        $params
+    ) {
+        $this->params = $params;
+    }
 
+    public function setMessage(
         $from,
-        $params,
         $type_message,
         $text,
         $title_button = '',
@@ -53,25 +50,23 @@ abstract class Provider
         $image = '',
         $image_id = 0
     ) {
-
         $this->from = $from;
         $this->type = $type_message;
         $this->text = $text;
         $this->title_button = $title_button;
         $this->url_button = $url_button;
         $this->image = $image;
-        $this->params = $params;
         $this->image_id = $image_id;
     }
 
-
     /**
      * отправка запроса на отправку данных провайдеру
+     *
      * @param $phones
      * @param $transaction_id
      * @return mixed (в штатном режиме xml)
      */
-    abstract function sendToViber($phones, $transaction_id);
+    abstract public function sendToViber($phones, $transaction_id);
 
     /**
      * Разбираем ответ провайдера и меняем статусы телефона
@@ -80,7 +75,5 @@ abstract class Provider
      * @param $phonesArray - массив [Message_Phone_list]
      * @return bool
      */
-    abstract function parseSendResult($xml, $phonesArray);
-
-
+    abstract public function parseSendResult($xml, $phonesArray);
 }

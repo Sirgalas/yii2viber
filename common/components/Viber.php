@@ -75,9 +75,7 @@ class Viber
         if (! $viber_transaction) {
             return $this->viber_message->setWait();
         }
-        $phonesArray = Message_Phone_List::find()->indexBy('phone')->where(['transaction_id' => $viber_transaction->id])
-            ->all()
-        ;
+        $phonesArray = Message_Phone_List::find()->indexBy('phone')->where(['transaction_id' => $viber_transaction->id])->all();
         $phones = [];
         $phonesA = [];
         foreach ($phonesArray as $phone) {
@@ -105,10 +103,11 @@ class Viber
         }
 
         // Отправка сообщения
-        $provider = new  SmsOnline($this->viber_message->alpha_name, Yii::$app->params['viber'],
-                                   $this->viber_message->type, $this->viber_message->text,
-                                   $this->viber_message->title_button, $this->viber_message->url_button,
-                                   $this->viber_message->image, $this->viber_message->viber_image_id);
+        $provider = new  SmsOnline(Yii::$app->params['viber'], $this->viber_message->type, $this->viber_message->text);
+
+        $provider->setMessage($this->viber_message->alpha_name, $this->viber_message->title_button,
+                              $this->viber_message->url_button, $this->viber_message->image,
+                              $this->viber_message->viber_image_id);
 
         $result = $provider->sendToViber($phones, $viber_transaction->id);
         if ($provider->image_id) {
@@ -134,11 +133,11 @@ class Viber
     private function saveNewTransaction(array $phones)
     {
         $tVM = new ViberTransaction([
-                                        'user_id'          => $this->viber_message->user_id,
+                                        'user_id' => $this->viber_message->user_id,
                                         'viber_message_id' => $this->viber_message->id,
-                                        'status'           => 'new',
-                                        'size'             => count($phones),
-                                        'created_at'       => time(),
+                                        'status' => 'new',
+                                        'size' => count($phones),
+                                        'created_at' => time(),
                                     ]);
         $tVM->save();
         Message_Phone_List::deleteAll(['transaction_id' => $tVM->id]);
@@ -153,22 +152,21 @@ class Viber
 
     /**
      * Подготовка транзакций
-     * генерация записей в таблице Viber_transaction :: разбиваем список телефонов входящих в рассылку на блоки
+     * генерация записей в таблице Viber_transaction :: разбиваем список
+     * телефонов входящих в рассылку на блоки
      * и для каждого блока создаем заготовку транзакции
      *
      * @return bool
+     * @throws \yii\db\Exception
      */
     public function prepareTransaction()
     {
 
         $db = Yii::$app->db;
         $transaction = $db->beginTransaction();
-        $contact_collection_ids = $this->viber_message->getMessageContactCollections()
-            ->select(['contact_collection_id'])
-            ->distinct('contact_collection_id')->column()
-        ;
+        $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
         foreach ($contact_collection_ids as $k => $v) {
-            if (is_integer($v)) {
+            if (is_int($v)) {
                 $contact_collection_ids[] = (string)$v;
             } else {
                 $contact_collection_ids[] = (int)$v;
@@ -182,8 +180,7 @@ class Viber
                                                                       'in',
                                                                       'contact_collection_id',
                                                                       $contact_collection_ids,
-                                                                  ])->distinct('phone')
-                ;
+                                                                  ])->distinct('phone');
             }
             $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
             if ($user->balance < count($phones)) {
@@ -208,6 +205,7 @@ class Viber
         } catch (\Exception $e) {
             $transaction->rollback();
             echo "\n Error ", $e->getMessage();
+
             return false;
         }
     }
