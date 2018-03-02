@@ -32,7 +32,7 @@ $action = Yii::$app->controller->action->id;
         ];
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Регистрация', 'url' => ['/user/registration/register']];
-            $menuItems[] = ['label' => 'Логин', 'url' => ['/user/security/login']];
+            $menuItems[] = ['label' => 'Вход', 'url' => ['/user/security/login']];
         } else {
             $menuItems[] = ['label' => 'Тестовая рассылка', 'url' => Url::toRoute(['/'])];
             $menuItems[] = ['label' => 'Базы номеров', 'url' => Url::toRoute(['/contact-collection']),'options'=>['class'=>($controller=='contact-collection')?'active':'not-active']];
