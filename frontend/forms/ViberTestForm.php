@@ -1,4 +1,4 @@
-ы<?php
+<?php
 /**
  * Created by PhpStorm.
  * User: mike
@@ -147,24 +147,24 @@ class ViberTestForm extends Model
             return false;
         }
         $cc = new ContactCollection([
-            'user_id' => \Yii::$app->user->id,
-            'title' => 'База для рассылки <'. $this->title . '> - ' . time(),
-            'type' => 'viber',
-            'size'=> count($phones),
-            'created_at' => time(),
-        ]);
+                                        'user_id' => \Yii::$app->user->id,
+                                        'title' => 'База для рассылки <'. $this->title . '> - ' . time(),
+                                        'type' => 'viber',
+                                        'size'=> count($phones),
+                                        'created_at' => time(),
+                                    ]);
         $vm = new ViberMessage([
-            'user_id' => \Yii::$app->user->id,
-            'title' => $this->title,
-            'type' => $this->type,
-            'text' => $this->text,
-            'image' => $this->image,
-            'title_button' => $this->title_button,
-            'url_button' => $this->url_button,
-            'status' => ViberMessage::STATUS_NEW,
-            'cost' => count($phones),
+                                   'user_id' => \Yii::$app->user->id,
+                                   'title' => $this->title,
+                                   'type' => $this->type,
+                                   'text' => $this->text,
+                                   'image' => $this->image,
+                                   'title_button' => $this->title_button,
+                                   'url_button' => $this->url_button,
+                                   'status' => ViberMessage::STATUS_NEW,
+                                   'cost' => count($phones),
 
-        ]);
+                               ]);
         if ($this->just_now) {
             $vm->date_start = time();
             $vm->time_start = '00:00';
@@ -201,10 +201,10 @@ class ViberTestForm extends Model
 
                         $this->viber_message_id = $vm->id;
                         $vm_cc = new MessageContactCollection([
-                            'contact_collection_id' => $cc->id,
-                            'viber_message_id' => $vm->id,
-                            'title' => $this->title.time(),
-                        ]);
+                                                                  'contact_collection_id' => $cc->id,
+                                                                  'viber_message_id' => $vm->id,
+                                                                  'title' => $this->title.time(),
+                                                              ]);
                         if ($vm_cc->save()) {
                             $transaction->commit();
                         } else {
@@ -243,5 +243,4 @@ class ViberTestForm extends Model
 
         return true;
     }
-
 }
