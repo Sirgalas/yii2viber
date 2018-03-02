@@ -425,19 +425,21 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function uploadFile()
     {
-        // get the uploaded file instance
-        $image = UploadedFile::getInstance($this, 'upload_file');
-
-        // if no image was uploaded abort the upload
-        if (empty($image)) {
+        if (empty($this->upload_file)) {
             return false;
         }
-
-        // generate random name for the file
-        $this->image = time().'.'.$image->extension;
-
-        // the uploaded image instance
-        return $image;
+        $imageName=time().'.'.$this->upload_file->extension;
+        $filepath='image/'.date('m_Y',time()).'/'.Yii::$app->user->identity->username;
+        FileHelper::createDirectory($filepath,0777);
+        if(!$this->upload_file->saveAs($filepath.'/'.$imageName))
+            throw new \RuntimeException('ошибка загрузки файла');
+        $cloud = new \Friday14\Mailru\Cloud(Yii::$app->params['cloud'], Yii::$app->params['cloudpass'], 'mail.ru');
+        $file = new \SplFileObject($filepath.'/'.$imageName,"r");
+        $cloud->upload($file,$filepath.'/'.$imageName);
+        $cloudImageLink=$cloud->getLink($filepath.'/'.$imageName);
+        unlink($filepath.'/'.$imageName);
+        $this->upload_file=null;
+        return $cloudImageLink;
     }
 
     /**
