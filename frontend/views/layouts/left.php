@@ -26,22 +26,12 @@ $action = Yii::$app->controller->action->id;
                     }
                     ?>
                 </p>
-                <p><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь не авторизован';?></p>
+                <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь </br> не авторизован';?></p>
 
 
             </div>
         </div>
-
-        <!-- search form -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search..."/>
-                <span class="input-group-btn">
-                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-            </div>
-        </form>
+        
         <?php
         $menuItems = [
             ['label' => 'Меню приложения', 'options' => ['class' => 'header']],
@@ -80,3 +70,4 @@ $action = Yii::$app->controller->action->id;
     </section>
 
 </aside>
+>>>>>>> 42662a3ec9eb4b86452adc1412e96e97ec2af8dc
