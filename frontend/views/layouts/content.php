@@ -40,7 +40,6 @@ use dmstr\widgets\Alert;
         <b>Версия</b> 0.01
     </div>
     <strong><a href="http://vibershop24.ru/">ViberShop24</a></strong>
-    <strong><a href="http://vibershop24.ru/">ViberShop24</a>Вы вошли в систему по отправке сообщений vibershop24.ru</strong>
 </footer>
 
 <!-- Control Sidebar -->
