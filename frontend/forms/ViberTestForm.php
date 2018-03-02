@@ -194,8 +194,8 @@ class ViberTestForm extends Model
 
 
                     //списание баланса
-                    Yii::$app->user->identity->balance -= count($phones);
-                    Yii::$app->user->identity->save();
+                    //Yii::$app->user->identity->balance -= count($phones);
+                    //Yii::$app->user->identity->save();
 
                     if ($vm->save()) {
 
