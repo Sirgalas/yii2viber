@@ -76,7 +76,7 @@ class Viber
             return $this->viber_message->setWait();
         }
         $phonesArray = Message_Phone_List::find()->indexBy('phone')->where(['transaction_id' => $viber_transaction->id])
-                                         ->all()
+            ->all()
         ;
         $phones = [];
         $phonesA = [];
@@ -164,8 +164,8 @@ class Viber
         $db = Yii::$app->db;
         $transaction = $db->beginTransaction();
         $contact_collection_ids = $this->viber_message->getMessageContactCollections()
-                                                      ->select(['contact_collection_id'])
-                                                      ->distinct('contact_collection_id')->column()
+            ->select(['contact_collection_id'])
+            ->distinct('contact_collection_id')->column()
         ;
         foreach ($contact_collection_ids as $k => $v) {
             if (is_integer($v)) {
