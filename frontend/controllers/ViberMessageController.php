@@ -91,9 +91,9 @@ class ViberMessageController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $services= new ViberMessageServices();
             try{
-                if(!$services->send(Yii::$app->request->post(),$model))
+                if(!$services->send(Yii::$app->request->post(),$model)) {
                     throw new \RuntimeException('сообщение не отпавилось обратитесь к администратору');
-                
+                }
                 return $this->redirect(['index']);
             }catch (RuntimeException $ex) {
                 Yii::$app->errorHandler->logException($ex->getMessage());
