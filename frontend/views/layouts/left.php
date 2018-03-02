@@ -58,6 +58,8 @@ $action = Yii::$app->controller->action->id;
         } else {
             $id = Yii::$app->user->identity->dealer_id;
         }
-        echo \frontend\widgets\DealerViews::widget(['id' => $id]) ?>
+        if (!Yii::$app->user->isGuest){
+            echo \frontend\widgets\DealerViews::widget(['id' => $id]);
+        }?>
     </section>
 </aside>
