@@ -38,31 +38,21 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 'options' => ['enctype' => 'multipart/form-data'],
             ]);
                     ?>
-
-
             <div class="col-xs-12">
                 <?php if ($model->status == ViberMessage::STATUS_CHECK && Yii::$app->user->identity->isAdmin() && $model->cost>0) {
 
                     ?>
                 <?=$form->field($model, 'id')->hiddenInput()->label(false)?>
                 <div class="col-xs-3">
-
-
                     <input type="submit" class="btn btn-block btn-success btn-lg" id="moderation_on" name="allow"
                            value="Одобрить">
-
-
                 </div>
                 <div class="col-xs-3">
-
-
                     <input type="submit" class="btn btn-block btn-warning btn-lg" id="moderation_cancel"
                            value="Отправить на доработку" name="disallow">
                 </div>
                 <?php } ?>
                 <div class="col-xs-3 pull-right">
-
-
                     <input type="submit" class="btn btn-block btn-danger btn-lg" id="close"
                            value="Закрыть рассылку" name="close">
                 </div>
@@ -86,9 +76,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             <div class="col-md-7">
                 <div class="block-header">
                     Рассылка
-
                 </div>
-
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
                 <div class="form-group radio-toggle" style="display: none">
@@ -138,9 +126,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <?php if ($model->image) : ?>
                     <img src="/uploads/<?=$model->image?>" id="viber_image"
                          style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
-
                 <?php endif ?>
-
                 <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
                 <?php if ($model->hasErrors('image')) : ?>
                     <div style="color: #b66161;margin-top: -10px;margin-bottom: 15px;"><?=
