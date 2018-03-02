@@ -63,7 +63,7 @@ class ViberTestForm extends Model
                 },
             ],
             [['phone1', 'title'], 'required'],
-            [['title'], 'string', 'max' => 50],
+            [['title'], 'string', 'max' => 50, 'min'=>3],
             [['text'], 'string', 'max' => 1000],
             [['image', 'url_button'], 'string', 'max' => 255],
             [

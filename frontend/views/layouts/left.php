@@ -34,7 +34,7 @@ $action = Yii::$app->controller->action->id;
             $menuItems[] = ['label' => 'Регистрация', 'url' => ['/user/registration/register']];
             $menuItems[] = ['label' => 'Логин', 'url' => ['/user/security/login']];
         } else {
-            $menuItems[] = ['label' => 'Главная', 'url' => Url::toRoute(['/'])];
+            $menuItems[] = ['label' => 'Тестовая рассылка', 'url' => Url::toRoute(['/'])];
             $menuItems[] = ['label' => 'Базы номеров', 'url' => Url::toRoute(['/contact-collection']),'options'=>['class'=>($controller=='contact-collection')?'active':'not-active']];
             $menuItems[] = ['label' => 'Создать рассылки', 'url' => Url::toRoute(['/viber-message']),'options'=>['class'=>($controller=='viber-message')?'active':'not-active']];
 
