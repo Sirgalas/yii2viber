@@ -23,7 +23,7 @@ $action = Yii::$app->controller->action->id;
                     }
                     ?>
                 </p>
-                <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Пользователь </br> не авторизован';?></p>
+                <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Гость</br> зарегистрируйся';?></p>
             </div>
         </div>
         <?php
@@ -45,8 +45,8 @@ $action = Yii::$app->controller->action->id;
             }
             $menuItems[] = ['label' => 'Все отчеты', 'url' => Url::toRoute(['/report']),'options'=>['class'=>($controller=='report')?'active':'not-active']];
             $menuItems[] = ['label' => 'Вся статистика', 'url' => Url::toRoute(['/statistics']),'options'=>['class'=>($controller=='statistics')?'active':'not-active']];
+            $menuItems[] = ['label' => 'Реклама', 'url' => Url::toRoute(['/site/advertising']),'options'=>['class'=>($controller=='site'&&$action=='advertising')?'active':'not-active']];
         }
-        $menuItems[] = ['label' => 'Реклама', 'url' => Url::toRoute(['/site/advertising']),'options'=>['class'=>($controller=='site'&&$action=='advertising')?'active':'not-active']];
         ?>
         <?=dmstr\widgets\Menu::widget([
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget' => 'tree'],
@@ -58,8 +58,7 @@ $action = Yii::$app->controller->action->id;
         } else {
             $id = Yii::$app->user->identity->dealer_id;
         }
-        if (!Yii::$app->user->isGuest){
             echo \frontend\widgets\DealerViews::widget(['id' => $id]);
-        }?>
+        ?>
     </section>
 </aside>
