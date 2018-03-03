@@ -54,40 +54,40 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public $assign_collections;
 
-    public const ONLYTEXT = 'only_text';
+     const ONLYTEXT = 'only_text';
 
-    public const ONLYIMAGE = 'only_image';
+    const ONLYIMAGE = 'only_image';
 
-    public const TEXTBUTTON = 'txt_btn';
+    const TEXTBUTTON = 'txt_btn';
 
-    public const TEXTBUTTONIMAGE = 'all';
+    const TEXTBUTTONIMAGE = 'all';
 
-    public const SCENARIO_DEFAULT = 'default';
+    const SCENARIO_DEFAULT = 'default';
 
-    public const SCENARIO_HARD = 'hard';
+    const SCENARIO_HARD = 'hard';
 
     //new:check:checked:process:wait:ready:error:cancel:closed
     //renew
     //
-    public const STATUS_PRE = 'pre';
+    const STATUS_PRE = 'pre';
 
-    public const STATUS_FIX = 'fix';
+    const STATUS_FIX = 'fix';
 
-    public const STATUS_CHECK = 'check';
+    const STATUS_CHECK = 'check';
 
-    public const STATUS_NEW = 'new';
+    const STATUS_NEW = 'new';
 
-    public const STATUS_WAIT = 'wait';
+    const STATUS_WAIT = 'wait';
 
-    public const STATUS_PROCESS = 'process';
+    const STATUS_PROCESS = 'process';
 
-    public const STATUS_READY = 'ready';
+    const STATUS_READY = 'ready';
 
-    public const STATUS_ERROR = 'error';
+    const STATUS_ERROR = 'error';
 
-    public const STATUS_CLOSED = 'closed';
+    const STATUS_CLOSED = 'closed';
 
-    public const STATUS_CANCEL = 'cancel';
+    const STATUS_CANCEL = 'cancel';
 
     /**
      *

@@ -12,12 +12,13 @@ use common\components\providers\Provider;
 use common\entities\ViberMessage;
 use Yii;
 use common\entities\Scenario;
+use infobip\api\configuration\BasicAuthConfiguration;
 
 class InfoBip extends Provider
 {
     private $viberMessage;
 
-    private $sceanrio;
+    private $scenario;
 
     public function setMessage(ViberMessage $viberMessage
 
@@ -30,7 +31,7 @@ class InfoBip extends Provider
     {
         $data = [
             'bulkId' => $transaction_id,
-            'scenarioKey' => $this->sceanrio->prvider_scenario_id,
+            'scenarioKey' => $this->scenario->provider_scenario_id,
             'destinations' => [],
             'viber' => [
                 'isPromotional' => $this->viberMessage->isPromotional(),
@@ -50,8 +51,10 @@ class InfoBip extends Provider
 
         foreach ($phones as $phone) {
             $data['destinations'][] = [
+                'messageId'=>(string)$phone->_id,
                 'to' => [
-                    'phoneNumber' => $phone,
+                    'phoneNumber' => $phone->phone,
+
                 ],
             ];
         }
@@ -68,6 +71,8 @@ class InfoBip extends Provider
     public function sendToViber($phones, $transaction_id)
     {
 
+        $this->err='';
+        $this->answer='';
         $IBScenario = new InfoBipScenario($this->viberMessage, $this->config);
         if ($IBScenario->defineScenario()) {
             $this->scenario = $IBScenario->getScenario();
@@ -79,52 +84,38 @@ class InfoBip extends Provider
             return false;
         }
 
-        $from = $this->from;
-        $encoded = urlencode('user').'='.urlencode($this->params['login']).'&';
-        $encoded .= urlencode('from').'='.urlencode($from).'&';
-        $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
-        $signString = Yii::$app->params['smsonline']['login'].$from;
+        $curl = curl_init();
 
-        foreach ($phones as $phone) {
-            $encoded .= urlencode('phone').'='.urlencode($phone).'&';
-            $signString .= $phone;
+        $bpAuth = new BasicAuthConfiguration($this->config['login'], $this->config['password']);
+        curl_setopt_array($curl, [
+            CURLOPT_URL => "http://api.infobip.com/omni/1/advanced",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $this->toJson($phones, $transaction_id),
+
+            CURLOPT_HTTPHEADER => [
+                "accept: application/json",
+                "authorization: ".$bpAuth->getAuthenticationHeader(),
+                "content-type: application/json",
+            ],
+        ]);
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            $this->error = $err;
+        } else {
+            $this->answer = $response;
         }
 
-        if ($this->type !== ViberMessage::ONLYIMAGE) {
-            $encoded .= urlencode('txt').'='.urlencode($this->text).'&';
-            $signString .= $this->text;
-        }
-
-        if ($this->type === ViberMessage::ONLYIMAGE || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
-            if (! $this->image_id) {
-                if (! $this->sendImage()) {
-                    echo 'Error of image sending';
-                    throw new \RuntimeException('Image Sending error.');
-                }
-            }
-            $encoded .= urlencode('image_id').'='.$this->image_id.'&';
-        }
-
-        if ($this->type === ViberMessage::TEXTBUTTON || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
-            $encoded .= urlencode('button_text').'='.urlencode($this->title_button).'&';
-            $encoded .= urlencode('button_link').'='.urlencode($this->url_button).'&';
-        }
-        $encoded .= urlencode('p_transaction_id').'='.((int)$transaction_id).'&';
-        $encoded .= urlencode('dlr').'=1&';
-        $encoded .= urlencode('dlr_timeout').'=360&';
-
-        $signString .= $this->params['secret'];
-        $this->viberQuery = $encoded.urlencode('sign').'='.md5($signString);
-
-        //echo "\n\n", $encoded, "\n";
-        $ch = curl_init(Yii::$app->params['smsonline']['url']);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->viberQuery);
-        $result = curl_exec($ch);
-
-        return $result;
+        return $response;
     }
 
     /**
@@ -134,18 +125,28 @@ class InfoBip extends Provider
      * @param $phonesArray
      * @return bool
      */
-    public function parseSendResult($xml, $phonesArray)
+    public function parseSendResult( $phonesArray)
     {
-        if (is_string($xml)) {
-            $xml = simplexml_load_string($xml);
-            if ($xml->code == 0) {
-                foreach ($xml->msg_id as $key => $msg) {
-                    $attr = $msg->attributes();
-                    $msg = ((string)$msg);
-                    $mPhone = $phonesArray[''.$attr['phone']];
-                    $mPhone['status'] = 'sended';
-                    $mPhone['msg_id'] = $msg;
-                    $mPhone->save();
+        if (is_string($this->answer)) {
+            $json = \GuzzleHttp\json_decode($this->answer,1);
+            if (isset($json['messages'])) {
+                foreach ($json['messages'] as $message) {
+                  Yii::warning('Message_Response:'.print_r($message, 1));
+                  $message_id = $message['messageId'];
+                  $phone = $message['to']['phoneNumber'];
+                    if (isset($phonesArray[''.$phone])) {
+                        $mPhone = $phonesArray[''.$phone];
+                        if ($mPhone['msg_id'] != $message_id) {
+                            Yii::error('Msg_id not equal');
+                            Yii::error('Phone_Query:'.print_r($mPhone, 1));
+                            Yii::error('Message_Response:'.print_r($message, 1));
+                        }
+                        $mPhone['status'] = 'sended';
+                        $mPhone->save();
+                    } else {
+                        Yii::error('Response has uncnoun phone');
+                        Yii::error('Message_Response:'.print_r($message, 1));
+                    }
                 }
 
                 return true;
@@ -155,4 +156,5 @@ class InfoBip extends Provider
         //TODO SendAdminNotification
         return false;
     }
+    public function getDeliveryReport(){}
 }

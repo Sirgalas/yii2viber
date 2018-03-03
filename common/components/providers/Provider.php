@@ -15,6 +15,7 @@ abstract class Provider
     protected $from;
 
     protected $type;
+
     protected $message_type;
 
     protected $text;
@@ -25,11 +26,16 @@ abstract class Provider
 
     protected $image;
 
-    protected $params;
+    protected $config;
 
     public $image_id;
 
     public $viberQuery;
+
+    public $err;
+
+    public $answer;
+
 
     public $debug = true;
 
@@ -38,22 +44,24 @@ abstract class Provider
      *
      * @param $params array
      */
-    public function __construct($params)
+    public function __construct($config)
     {
-        $this->params = $params;
+        $this->config = $config;
+
+
     }
 
     public function setMessage(ViberMessage $viberMessage
 
     ) {
-        $this->from = $viberMessage->from;
+        $this->from = $viberMessage->alpha_name;
         $this->type = $viberMessage->type;
         $this->message_type = $viberMessage->message_type;
         $this->text = $viberMessage->text;
         $this->title_button = $viberMessage->title_button;
         $this->url_button = $viberMessage->url_button;
         $this->image = $viberMessage->image;
-        $this->image_id = $viberMessage->image_id;
+        $this->image_id = $viberMessage->viber_image_id;
     }
 
     /**
@@ -68,9 +76,10 @@ abstract class Provider
     /**
      * Разбираем ответ провайдера и меняем статусы телефона
      *
-     * @param $xml
      * @param $phonesArray - массив [Message_Phone_list]
      * @return bool
      */
-    abstract public function parseSendResult($xml, $phonesArray);
+    abstract public function parseSendResult(  $phonesArray);
+
+    abstract public function getDeliveryReport();
 }
