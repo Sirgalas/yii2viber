@@ -90,17 +90,9 @@ class ViberMessageController extends Controller
         }
         if ($model->load(Yii::$app->request->post())) {
             $services= new ViberMessageServices();
-            try{
-                if(!$services->send(Yii::$app->request->post(),$model)) {
-                    throw new \RuntimeException('сообщение не отпавилось обратитесь к администратору');
-                }
+            if($services->send(Yii::$app->request->post(),$model))
                 return $this->redirect(['index']);
-            }catch (RuntimeException $ex) {
-                Yii::$app->errorHandler->logException($ex->getMessage());
-                Yii::$app->session->setFlash('error',$ex->getMessage());
-            }
         }
-
         $model->setAttribute('status', $model->getOldAttribute('status'));
         $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id ? $model->user_id : Yii::$app->user->identity->id])->select([
             'id',

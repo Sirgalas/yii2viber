@@ -52,7 +52,7 @@ class SmsOnline extends Provider
         $encoded = urlencode('user').'='.urlencode($this->params['login']).'&';
         $encoded .= urlencode('from').'='.urlencode($from).'&';
         $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
-        $signString = Yii::$app->params['viber']['login'].$from;
+        $signString = Yii::$app->params['smsonline']['login'].$from;
 
         foreach ($phones as $phone) {
             $encoded .= urlencode('phone').'='.urlencode($phone).'&';
@@ -86,7 +86,7 @@ class SmsOnline extends Provider
         $this->viberQuery = $encoded.urlencode('sign').'='.md5($signString);
 
         //echo "\n\n", $encoded, "\n";
-        $ch = curl_init(Yii::$app->params['viber']['url']);
+        $ch = curl_init(Yii::$app->params['smsonline']['url']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);

@@ -539,11 +539,9 @@ class ViberMessage extends \yii\db\ActiveRecord
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash($ex->getMessage());
             $transaction->rollBack();
-
             return false;
         }
         if ($this->just_now && $this->status == self::STATUS_NEW) {
-
             $v = new Viber($this);
             $v->prepareTransaction();
             $v->sendMessage();
