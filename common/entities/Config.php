@@ -70,7 +70,7 @@ class Config extends \yii\db\ActiveRecord
     }
 
     public function getUploadUrl(){
-        return 'http://'.Yii::$app->params['frontendHostInfo'].'/'.self::URL;
+        return Yii::$app->params['frontendHostInfo'].'/'.self::URL;
     }
     
     public function getImageUrl(){
