@@ -32,6 +32,10 @@ return [
                 '::1',
             ],
         ],
+        'homepage' => [
+            'class' => 'backend\modules\homepage\Homepage',
+        ],
+
     ],
     'components' => [
         'request' => [

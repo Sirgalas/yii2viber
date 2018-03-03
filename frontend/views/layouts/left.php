@@ -23,7 +23,7 @@ $action = Yii::$app->controller->action->id;
                     }
                     ?>
                 </p>
-                <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Гость</br> зарегистрируйся';?></p>
+                <p class="notAuth"><?=is_object(Yii::$app->user->identity) ? Yii::$app->user->identity->username : 'Гость,</br> зарегистрируйся';?></p>
             </div>
         </div>
         <?php
