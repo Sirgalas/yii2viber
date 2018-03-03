@@ -6,53 +6,84 @@
  * Time: 15:19
  */
 
-namespace common\components\providers;
+namespace common\components\providers\infobip;
 
+use common\components\providers\Provider;
 use common\entities\ViberMessage;
 use Yii;
+use common\entities\Scenario;
 
-class SmsOnline extends Provider
+class InfoBip extends Provider
 {
-    public function sendImage()
-    {
-        $filePath = realpath($this->image);
-        $sign = md5($this->params['login'].md5_file($filePath).$this->params['secret']);
-        $ch = curl_init('http://media.sms-online.com/upload/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, [
-            'login' => $this->params['login'],
-            'image' => new  \CURLFile(realpath($filePath)),
-            'sign' => $sign,
-        ]);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Content-Type:multipart/form-data",
-        ]);
-        $result = curl_exec($ch);
-        $result = json_decode($result, true);
-        curl_close($ch);
-        $imageId = false;
-        if (! empty($result['image_id'])) {
-            $imageId = $result['image_id'];
-        }
-        $this->image_id = $imageId;
+    private $viberMessage;
 
-        return $imageId !== false;
+    private $sceanrio;
+
+    public function setMessage(ViberMessage $viberMessage
+
+    ) {
+        parent::setMessage($viberMessage);
+        $this->viberMessage = $viberMessage;
+    }
+
+    private function toJson($phones, $transaction_id)
+    {
+        $data = [
+            'bulkId' => $transaction_id,
+            'scenarioKey' => $this->sceanrio->prvider_scenario_id,
+            'destinations' => [],
+            'viber' => [
+                'isPromotional' => $this->viberMessage->isPromotional(),
+            ],
+        ];
+
+        if (! $this->type !== ViberMessage::ONLYIMAGE) {
+            $data['viber']['text'] = $this->text;
+        }
+        if ($this->type === ViberMessage::ONLYIMAGE || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
+            $data['viber']['imageURL'] = $this->image;
+        }
+        if ($this->type === ViberMessage::TEXTBUTTON || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
+            $data['viber']['buttonText'] = $this->title_button;
+            $data['viber']['buttonURL'] = $this->url_button;
+        }
+
+        foreach ($phones as $phone) {
+            $data['destinations'][] = [
+                'to' => [
+                    'phoneNumber' => $phone,
+                ],
+            ];
+        }
+
+        return json_encode($data);
     }
 
     /**
      * @param $phones
      * @param $transaction_id
      * @return mixed (в штатном режиме xml)
+     * @throws \Exception
      */
     public function sendToViber($phones, $transaction_id)
     {
+
+        $IBScenario = new InfoBipScenario($this->viberMessage, $this->config);
+        if ($IBScenario->defineScenario()) {
+            $this->scenario = $IBScenario->getScenario();
+            if ($this->viberMessage->scenario_id !== $this->scenario->id) {
+                $this->viberMessage->scenario_id = $this->scenario->id;
+                $this->viberMessage->save();
+            }
+        } else {
+            return false;
+        }
+
         $from = $this->from;
         $encoded = urlencode('user').'='.urlencode($this->params['login']).'&';
         $encoded .= urlencode('from').'='.urlencode($from).'&';
         $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
-        $signString = Yii::$app->params['viber']['login'].$from;
+        $signString = Yii::$app->params['smsonline']['login'].$from;
 
         foreach ($phones as $phone) {
             $encoded .= urlencode('phone').'='.urlencode($phone).'&';
@@ -86,12 +117,13 @@ class SmsOnline extends Provider
         $this->viberQuery = $encoded.urlencode('sign').'='.md5($signString);
 
         //echo "\n\n", $encoded, "\n";
-        $ch = curl_init(Yii::$app->params['viber']['url']);
+        $ch = curl_init(Yii::$app->params['smsonline']['url']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->viberQuery);
         $result = curl_exec($ch);
+
         return $result;
     }
 
@@ -115,9 +147,11 @@ class SmsOnline extends Provider
                     $mPhone['msg_id'] = $msg;
                     $mPhone->save();
                 }
+
                 return true;
             }
         }
+
         //TODO SendAdminNotification
         return false;
     }

@@ -46,3 +46,5 @@ composer.lock
 
 
 /composer.lock
+/frontend/web/image
+/composer.lock

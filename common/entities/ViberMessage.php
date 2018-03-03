@@ -12,6 +12,7 @@ use yii\helpers\FileHelper;
 
 use common\entities\mongo\Phone;
 use Friday14\Mailru\Cloud;
+
 /**
  * This is the model class for table "viber_message".
  *
@@ -36,6 +37,8 @@ use Friday14\Mailru\Cloud;
  * @property string $cost Стоимость
  * @property string $balance Сколько средств уже потрачено
  * @property int date_send_finish время окончания рассылки
+ * @property string provider ид сценария, который будет использоваться для рассылки
+ * @property int scenario_id ид сценария, который будет использоваться для рассылки
  *
  * @property ContactCollection $contactCollection
  * @property MessageContactCollection[] $messageContactCollections
@@ -51,40 +54,40 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public $assign_collections;
 
-    const ONLYTEXT = 'only_text';
+    public const ONLYTEXT = 'only_text';
 
-    const ONLYIMAGE = 'only_image';
+    public const ONLYIMAGE = 'only_image';
 
-    const TEXTBUTTON = 'txt_btn';
+    public const TEXTBUTTON = 'txt_btn';
 
-    const TEXTBUTTONIMAGE = 'all';
+    public const TEXTBUTTONIMAGE = 'all';
 
-    const SCENARIO_DEFAULT = 'default';
+    public const SCENARIO_DEFAULT = 'default';
 
-    const SCENARIO_HARD = 'hard';
+    public const SCENARIO_HARD = 'hard';
 
     //new:check:checked:process:wait:ready:error:cancel:closed
     //renew
     //
-    const STATUS_PRE = 'pre';
+    public const STATUS_PRE = 'pre';
 
-    const STATUS_FIX = 'fix';
+    public const STATUS_FIX = 'fix';
 
-    const STATUS_CHECK = 'check';
+    public const STATUS_CHECK = 'check';
 
-    const STATUS_NEW = 'new';
+    public const STATUS_NEW = 'new';
 
-    const STATUS_WAIT = 'wait';
+    public const STATUS_WAIT = 'wait';
 
-    const STATUS_PROCESS = 'process';
+    public const STATUS_PROCESS = 'process';
 
-    const STATUS_READY = 'ready';
+    public const STATUS_READY = 'ready';
 
-    const STATUS_ERROR = 'error';
+    public const STATUS_ERROR = 'error';
 
-    const STATUS_CLOSED = 'closed';
+    public const STATUS_CLOSED = 'closed';
 
-    const STATUS_CANCEL = 'cancel';
+    public const STATUS_CANCEL = 'cancel';
 
     /**
      *
@@ -172,6 +175,11 @@ class ViberMessage extends \yii\db\ActiveRecord
         return false;
     }
 
+    public function isPromotional()
+    {
+        return (strtolower($this->message_type) !== 'информация');
+    }
+
     /**
      * @inheritdoc
      */
@@ -188,7 +196,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
         return [
             [['user_id', 'date_start', 'date_finish', 'limit_messages'], 'default', 'value' => null],
-            [['user_id', 'limit_messages'], 'integer'],
+            [['user_id', 'limit_messages', 'scenario_id'], 'integer'],
             ['dlr_timeout', 'integer', 'max' => 86400, 'min' => 0],
             [['title'], 'required'],
             [['cost', 'balance'], 'number'],
@@ -216,7 +224,8 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'image',
                 'required',
                 'when' => function ($model) {
-                    return ($model->scenario === 'hard' && ($model->type == self::ONLYIMAGE || $model->type == self::TEXTBUTTONIMAGE));
+                    return ($model->scenario === 'hard'
+                        && ($model->type == self::ONLYIMAGE || $model->type == self::TEXTBUTTONIMAGE));
                 },
             ],
 
@@ -224,10 +233,13 @@ class ViberMessage extends \yii\db\ActiveRecord
                 ['title_button', 'url_button'],
                 'required',
                 'when' => function ($model) {
-                    return ($model->scenario === 'hard' && ($model->type == self::TEXTBUTTON || $model->type == self::TEXTBUTTONIMAGE));
+                    return ($model->scenario === 'hard'
+                        && ($model->type == self::TEXTBUTTON || $model->type == self::TEXTBUTTONIMAGE)
+                    );
                 },
             ],
-            [['title_button', 'alpha_name'], 'string', 'max' => 25],
+            [['title_button'], 'string', 'max' => 20],
+            [['alpha_name', 'provider'], 'string', 'max' => 25],
             ['just_now', 'boolean'],
             ['type', 'in', 'range' => array_keys(static::listTypes())],
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
@@ -367,7 +379,23 @@ class ViberMessage extends \yii\db\ActiveRecord
             $this->date_finish = strtotime($this->date_finish);
         }
 
+        $this->defineProvider();
+
         return parent::beforeValidate();
+    }
+
+    public function defineProvider()
+    {
+        if ($this->provider) {
+            return $this->provider;
+        }
+        if ($this->id) {
+            $this->provider = 'smsonline';
+        } else {
+            $this->provider = 'infobip';
+        }
+
+        return $this->provider;
     }
 
     /**
@@ -406,7 +434,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             $this->dlr_timeout = 24 * 3600;
         }
         if (! $this->alpha_name) {
-            $this->alpha_name = Yii::$app->params['viber']['from'];
+            $this->alpha_name = Yii::$app->params['smsonline']['from'];
         }
         if (is_a(Yii::$app, 'yii\web\Application')) {
 
@@ -437,7 +465,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         $file = new \SplFileObject($filepath.'/'.$imageName,"r");
         $cloud->upload($file,$filepath.'/'.$imageName);
         $cloudImageLink=$cloud->getLink($filepath.'/'.$imageName);
-        unlink($filepath.'/'.$imageName);
+        @unlink(\Yii::getAlias('@frontend').'/web/' . $filepath.'/'.$imageName);
         $this->upload_file=null;
         return $cloudImageLink;
     }
@@ -502,8 +530,8 @@ class ViberMessage extends \yii\db\ActiveRecord
     public function getContactCollection()
     {
         return $this->hasMany(ContactCollection::className(),
-            ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(),
-            ['viber_message_id' => 'id']);
+                              ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(),
+                                                                           ['viber_message_id' => 'id']);
     }
 
     public function delete()
@@ -516,21 +544,18 @@ class ViberMessage extends \yii\db\ActiveRecord
         return parent::delete(); // TODO: Change the autogenerated stub
     }
 
-    public function send()
+     public function send()
     {
         $upload_file = $this->uploadFile();
         $transaction = Yii::$app->db->beginTransaction();
         try {
-
+            if ($upload_file) {
+                $this->image = $upload_file;
+            }
             if ($this->save()) {
-                if ($upload_file !== false) {
-                    $path = $this->getUploadedFile();
-                    $upload_file->saveAs($path);
-                }
                 $result = MessageContactCollection::assign($this->id, $this->user_id, $this->assign_collections);
                 if ($result !== 'ok') {
                     $this->addError('assign_collections', $result);
-
                     return false;
                 }
             } else {
@@ -541,6 +566,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash($ex->getMessage());
             $transaction->rollBack();
+
             return false;
         }
         if ($this->just_now && $this->status == self::STATUS_NEW) {
@@ -548,7 +574,6 @@ class ViberMessage extends \yii\db\ActiveRecord
             $v->prepareTransaction();
             $v->sendMessage();
         }
-
         return true;
     }
 
@@ -558,30 +583,6 @@ class ViberMessage extends \yii\db\ActiveRecord
     public function getMessagePhoneList()
     {
         return $this->hasMany(Message_Phone_List::className(), ['message_id' => 'id']);
-    }
-
-    public function getAlphaNames()
-    {
-        return [
-            'TEST' => 'TEST',
-            'Clickbonus' => 'Бонус',
-            //'SALE'=>'SALE',
-            //
-            'Promo1' => 'Promo',
-            'deliverydel' => 'Delivery',
-            'InfoDostavk' => 'Dostavka',
-            'EXPRESSS' => 'EXPRESS',
-            'SHOPSHOP' => 'SHOP',
-            'SMSfeedback' => 'Feedback',
-            'sushilot' => 'Sushi',
-            'Taxis' => 'Taxi',
-            'Klinika' => 'Klinika',
-            'Bazakvartir' => 'Недвижимость',
-            'FastFitnes' => 'Фитнес',
-            'ChatTest' => 'ChatTest',
-            'Documents' => 'Documents',
-            'AUTO' => 'AUTO',
-        ];
     }
 
     public function getAlphaNamesOptions()

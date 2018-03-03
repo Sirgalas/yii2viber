@@ -73,7 +73,7 @@ use yii\helpers\Url;
                 'maxlength' => true,
             ])?>
             <?php
-            $items = ViberMessage::getAlphaNames();
+            $items = \common\entities\Provider::getAlphaNames('smsonline');
             $options = [];
             foreach ($items as $key => $val) {
                 if ($key != 'TEST') {

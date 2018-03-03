@@ -45,7 +45,7 @@ class ViberCronHandler
                 $v=new Viber($vm);
                 $v->sendMessage();
             }
-            sleep(Yii::$app->params['viber']['min_delay']);
+            sleep(Yii::$app->params['smsonline']['min_delay']);
         }
     }
 }

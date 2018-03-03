@@ -4,19 +4,19 @@ namespace frontend\controllers;
 
 use common\entities\ContactCollection;
 use common\entities\MessageContactCollection;
-use common\entities\mongo\Phone;
+
 use frontend\entities\User;
-use PHPUnit\Framework\MockObject\RuntimeException;
+
 use Yii;
 use common\entities\ViberMessage;
 use common\entities\ViberMessageSearch;
-use yii\db\Exception;
+
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use frontend\services\message\ViberMessageServices;
-use yii\web\UploadedFile;
 
 /**
  * ViberMessageController implements the CRUD actions for ViberMessage model.
@@ -27,7 +27,7 @@ class ViberMessageController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -39,6 +39,7 @@ class ViberMessageController extends Controller
      * Lists all ViberMessage models.
      *
      * @return mixed
+     * @throws \yii\base\InvalidArgumentException
      */
     public function actionIndex()
     {
@@ -56,6 +57,7 @@ class ViberMessageController extends Controller
      *
      * @param integer $id
      * @return mixed
+     * @throws \yii\web\NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -63,17 +65,19 @@ class ViberMessageController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('view', ['model' => $model]);
         }
+
+        return $this->render('view', ['model' => $model]);
     }
 
     /**
      * Updates an existing ViberMessage model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string|\yii\web\Response
+     * @throws \yii\base\InvalidArgumentException
+     * @throws \yii\web\NotFoundHttpException
      */
     public function actionUpdate($id = 0)
     {
@@ -90,11 +94,12 @@ class ViberMessageController extends Controller
         }
         if ($model->load(Yii::$app->request->post())) {
             $services= new ViberMessageServices();
-            if($services->send(Yii::$app->request->post(),$model))
+            if($services->send(Yii::$app->request->post(),$model)) {
                 return $this->redirect(['index']);
+            }
         }
         $model->setAttribute('status', $model->getOldAttribute('status'));
-        $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id ? $model->user_id : Yii::$app->user->identity->id])->select([
+        $contact_collections = ContactCollection::find()->andWhere(['user_id' => $model->user_id ?: Yii::$app->user->identity->id])->select([
             'id',
             'title',
         ])->orderBy('title')->asArray()->all();
@@ -103,7 +108,7 @@ class ViberMessageController extends Controller
         $clients = ArrayHelper::map(User::find()->where(['dealer_id' => Yii::$app->user->identity->id])->all(), 'id',
             'username');
         $clients[Yii::$app->user->identity->id] = Yii::$app->user->identity->username;
-        return $this->render('viberForm', compact('model', 'contact_collections', 'clients'));
+        return $this->render('viberForm', compact('model', 'contact_collections'));
     }
 
     /**
@@ -112,6 +117,7 @@ class ViberMessageController extends Controller
      *
      * @param integer $id
      * @return mixed
+     * @throws \yii\db\Exception
      */
     public function actionDelete($id)
     {
@@ -174,9 +180,9 @@ class ViberMessageController extends Controller
     {
         if (($model = ViberMessage::findOne($id)) !== null) {
             return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     public function actionAssignCollection($id)
@@ -219,5 +225,6 @@ class ViberMessageController extends Controller
 
             return $this->redirect('/viber-message');
         }
+        throw new ForbiddenHttpException();
     }
 }
