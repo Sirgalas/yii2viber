@@ -2,88 +2,40 @@
 
 namespace console\controllers;
 
+use common\components\providers\infobip\InfoBipScenario;
+use common\components\providers\ProviderFactory;
 use yii\console\Controller;
 use Yii;
 use common\components\Viber;
 use common\entities\ViberMessage;
 use common\entities\ViberTransaction;
 
-class CronController extends Controller
+class IbController extends Controller
 {
     const VIBER_TIME_LIMIT = 30;
 
     private $time_stop;
 
-    public function actionMarkWaitAsReady()
+
+    public function  actionScenario()
     {
-
-        $wait_ids = ViberMessage::find()->where(['status' => 'wait'])->select("id")->limit(3)->orderBy('id')->column();
-
-        $ids = ViberTransaction::find()->where(['!=', 'status', 'ready'])->andWhere([
-            'in',
-            'viber_message_id',
-            $wait_ids,
-        ])->select(['viber_message_id'])->distinct()->column();
-
-        $id_ready = array_diff($wait_ids, $ids);
-
-        $wait_ids2 = ViberMessage::find()->where(['status' => 'wait'])->andWhere("date_send_finish + coalesce(dlr_timeout, 24*3600) < ".time())->select("id")->limit(3)->orderBy('id')->column();
-
-        $id_ready = array_merge($id_ready, $wait_ids2);
-
-        $r = ViberMessage::updateAll(['status' => 'ready'], ['in', 'id', $id_ready]);
-        echo $r;
-    }
-
-    public function ViberQueueHandle() {
-
-        $this->actionMarkWaitAsReady();
-
-        $this->time_stop = time() + self::VIBER_TIME_LIMIT;
-
-        while ($this->time_stop > time()) {
-
-            $vm = '';
-            $vm = ViberMessage::find()->isProcess()->one();
-            if ($vm) {
-                echo "\nfound $vm->id";
-            }
-            if (! $vm) {
-                echo " Vm for process not found\n";
-                $id = ViberMessage::find()->select('viber_message.id')
-                    ->joinWith('user')
-                    ->where('"user"."balance" >= "viber_message"."cost"')
-                    ->isNew()->scalar();
-                if (! $id) {
-                    echo 'Queue is empty !';
-
-                    return;
-                }
-                $vm=ViberMessage::findOne($id);
-                $v = new Viber($vm);
-                $v->prepareTransaction();
-            }
-
-            if ($vm) {
-                echo 'SEND ', $vm->id, $vm->title, $vm->user_id;
-                $v = new Viber($vm);
-                $v->sendMessage();
-            }
-
-            sleep(Yii::$app->params['smsonline']['min_delay']);
+        Yii::warning('test123456','viber');
+        $vm = ViberMessage::find()
+            ->where(['in','id',['109']])->one();
+        $pf = new ProviderFactory();
+        $provider=$pf->createProvider($vm);
+        $IBScenario = new InfoBipScenario($vm, Yii::$app->params['infobip']);
+        if ($IBScenario->defineScenario()){
+            $scenario=$IBScenario->getScenario();
+            print_r($scenario->getAttributes());
+            $vm->scenario_id = $scenario->id;
+            $vm->save();
+        } else {
+            echo "\nError " . $IBScenario->getError();
         }
+
     }
 
-    public function  actionViberQueueHandle()
-    {
-        return $this->ViberQueueHandle();
-    }
 
-    public function  actionTestViberQueueHandle()
-    {
-
-        Yii::$app->params['smsonline'] = Yii::$app->params['viber-test'];
-        return $this->ViberQueueHandle();
-    }
 
 }

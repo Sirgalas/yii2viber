@@ -6,23 +6,51 @@
  * Time: 3:45
  */
 
-namespace common\components\providers\infobup;
+namespace common\components\providers\infobip;
 
 use common\entities\Scenario;
 use common\entities\ViberMessage;
 use infobip\api\configuration\BasicAuthConfiguration;
-class InfoBupScenario
+use Yii;
+
+class InfoBipScenario
 {
     private $viberMessage;
 
+    private $config;
+
+    private $error;
+
+    private $answer;
+
+    private $scenario;
+
     /**
-     * InfoBupScenario constructor.
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScenario():Scenario
+    {
+        return $this->scenario;
+    }
+
+    /**
+     * InfoBipScenario constructor.
      *
      * @param $viberMessage
+     * @param $config
      */
-    public function __construct(ViberMessage $viberMessage)
+    public function __construct(ViberMessage $viberMessage, $config)
     {
         $this->viberMessage = $viberMessage;
+        $this->config = $config;
     }
 
     /**
@@ -30,42 +58,70 @@ class InfoBupScenario
      */
     private function buildScenario()
     {
-        $scenario = new Scenario([
-                                     'name' => $this->viberMessage->alpha_name.'_viber',
-                                     'provider' => $this->viberMessage->provider,
-                                     'from1' => $this->viberMessage->alpha_name,
-                                     'channel1' => 'Viber',
-                                     'default' => false,
-                                     'created_at' => time(),
+        $this->scenario = new Scenario([
+                                           'name' => $this->viberMessage->alpha_name.'_viber',
+                                           'provider' => $this->viberMessage->provider,
+                                           'from1' => $this->viberMessage->alpha_name,
+                                           'channel1' => 'VIBER',
+                                           'default' => false,
+                                           'created_at' => time(),
 
-                                 ]);
-        $scenario->save();
-        $this->viberMessage->scenario_id = $scenario->id;
+                                       ]);
 
-        return $scenario;
+        return $this->scenario->save();
     }
 
     /**
      * @return \common\entities\Scenario
      * @throws \Exception
      */
-    public function defineScenario():Scenario
+    public function defineScenario()
     {
-        $scenario = Scenario::find()->where([
-                                                'provider' => $this->viberMessage->provider,
-                                                'from1' => $this->viberMessage->alpha_name,
-                                            ])->one();
-        if (! $scenario) {
-            $scenario = $this->buildScenario();
+        $this->scenario = Scenario::find()->where([
+                                                      'provider' => $this->viberMessage->provider,
+                                                      'from1' => $this->viberMessage->alpha_name,
+                                                  ])->one();
+        if (! $this->scenario) {
+            $this->scenario = $this->buildScenario();
         }
-        if (! $scenario) {
-            throw new \Exception('Error of scenario '.print_r($scenario->getErrors(), 1));
+        if (! $this->scenario) {
+            throw new \Exception('Error of scenario '.print_r($this->scenario->getErrors(), 1));
         }
-        if (! $scenario->provider_scenario_id) {
-            $this->createQuery($scenario);
+        if (! $this->scenario->provider_scenario_id) {
+            $this->createQuery();
+            if ($this->error || ! $this->parseAnswer()) {
+                Yii::warning('InfoBipScenario:'.$this->toJson(), "\ Error: ".$this->error);
+                return false;
+            }
         }
+        return true;
+    }
 
-        return $scenario;
+    private function parseAnswer()
+    {
+        if (! $this->answer) {
+            $this->error .= 'Empty infobip answer';
+
+            return false;
+        }
+        $json = json_decode($this->answer, 1);
+        if (isset($json['requestError'])) {
+            $this->error .= serialize($json['requestError']);
+
+            return false;
+        }
+        if (! isset($json['key'])) {
+            $this->error .= 'json error';
+
+            return false;
+        }
+        $this->scenario->provider_scenario_id = $json['key'];
+        if ($this->scenario->save()) {
+            return true;
+        }
+        $this->error = ['Scanario save error', $this->scenario->getErrors()];
+
+        return false;
     }
 
     public function updateScenario()
@@ -80,19 +136,29 @@ class InfoBupScenario
     {
     }
 
-    private function createQuery(Scenario $scenario)
+    private function toJson()
     {
-        $curl = curl_init();
         $data = [
-            'name' => $scenario->name,
+            'name' => $this->scenario->name,
             'flow' => [
                 [
-                    'from' => $scenario->from1,
-                    'channel' => $scenario->channel1,
+                    'from' => $this->scenario->from1,
+                    'channel' => $this->scenario->channel1,
                 ],
             ],
-            'default' => $scenario->default,
+            'default' => $this->scenario->default,
         ];
+
+        return json_encode($data);
+    }
+
+    private function createQuery()
+    {
+        $this->error = '';
+        $this->answer = '';
+        $curl = curl_init();
+
+        $bpAuth = new BasicAuthConfiguration($this->config['login'], $this->config['password']);
         curl_setopt_array($curl, [
             CURLOPT_URL => "http://api.infobip.com/omni/1/scenarios",
             CURLOPT_RETURNTRANSFER => true,
@@ -101,10 +167,11 @@ class InfoBupScenario
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_POSTFIELDS => $this->toJson(),
+
             CURLOPT_HTTPHEADER => [
                 "accept: application/json",
-                "authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+                "authorization: ".$bpAuth->getAuthenticationHeader(),
                 "content-type: application/json",
             ],
         ]);
@@ -115,9 +182,9 @@ class InfoBupScenario
         curl_close($curl);
 
         if ($err) {
-            echo "cURL Error #:".$err;
+            $this->error = $err;
         } else {
-            echo $response;
+            $this->answer = $response;
         }
     }
 }

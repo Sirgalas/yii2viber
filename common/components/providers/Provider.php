@@ -8,11 +8,14 @@
 
 namespace common\components\providers;
 
+use common\entities\ViberMessage;
+
 abstract class Provider
 {
     protected $from;
 
     protected $type;
+    protected $message_type;
 
     protected $text;
 
@@ -35,28 +38,22 @@ abstract class Provider
      *
      * @param $params array
      */
-    public function __construct(
-        $params
-    ) {
+    public function __construct($params)
+    {
         $this->params = $params;
     }
 
-    public function setMessage(
-        $from,
-        $type_message,
-        $text,
-        $title_button = '',
-        $url_button = '',
-        $image = '',
-        $image_id = 0
+    public function setMessage(ViberMessage $viberMessage
+
     ) {
-        $this->from = $from;
-        $this->type = $type_message;
-        $this->text = $text;
-        $this->title_button = $title_button;
-        $this->url_button = $url_button;
-        $this->image = $image;
-        $this->image_id = $image_id;
+        $this->from = $viberMessage->from;
+        $this->type = $viberMessage->type;
+        $this->message_type = $viberMessage->message_type;
+        $this->text = $viberMessage->text;
+        $this->title_button = $viberMessage->title_button;
+        $this->url_button = $viberMessage->url_button;
+        $this->image = $viberMessage->image;
+        $this->image_id = $viberMessage->image_id;
     }
 
     /**

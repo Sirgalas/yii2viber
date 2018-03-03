@@ -12,12 +12,12 @@ class Provider
 {
     public static function getProviders()
     {
-        return ['infoBup', 'smsonline'];
+        return ['infobip', 'smsonline'];
     }
 
-    public static function getAlphaNames($provider)
+    public static function getAlphaNames($provider = 'smsonline')
     {
-        if ($provider == 'infoBup') {
+        if ($provider == 'infobip') {
             return [
                 'IBViber' => 'IBViber',
             ];
@@ -44,4 +44,6 @@ class Provider
             ];
         }
     }
+
+
 }

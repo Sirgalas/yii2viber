@@ -6,32 +6,79 @@
  * Time: 15:19
  */
 
-namespace common\components\providers\infobup;
+namespace common\components\providers\infobip;
 
 use common\components\providers\Provider;
 use common\entities\ViberMessage;
 use Yii;
+use common\entities\Scenario;
 
-class InfoBup extends Provider
+class InfoBip extends Provider
 {
     private $viberMessage;
+
+    private $sceanrio;
+
     public function setMessage(ViberMessage $viberMessage
 
     ) {
         parent::setMessage($viberMessage);
-        $this->viberMessage =$viberMessage;
+        $this->viberMessage = $viberMessage;
     }
 
+    private function toJson($phones, $transaction_id)
+    {
+        $data = [
+            'bulkId' => $transaction_id,
+            'scenarioKey' => $this->sceanrio->prvider_scenario_id,
+            'destinations' => [],
+            'viber' => [
+                'isPromotional' => $this->viberMessage->isPromotional(),
+            ],
+        ];
 
+        if (! $this->type !== ViberMessage::ONLYIMAGE) {
+            $data['viber']['text'] = $this->text;
+        }
+        if ($this->type === ViberMessage::ONLYIMAGE || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
+            $data['viber']['imageURL'] = $this->image;
+        }
+        if ($this->type === ViberMessage::TEXTBUTTON || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
+            $data['viber']['buttonText'] = $this->title_button;
+            $data['viber']['buttonURL'] = $this->url_button;
+        }
 
+        foreach ($phones as $phone) {
+            $data['destinations'][] = [
+                'to' => [
+                    'phoneNumber' => $phone,
+                ],
+            ];
+        }
+
+        return json_encode($data);
+    }
 
     /**
      * @param $phones
      * @param $transaction_id
      * @return mixed (в штатном режиме xml)
+     * @throws \Exception
      */
     public function sendToViber($phones, $transaction_id)
     {
+
+        $IBScenario = new InfoBipScenario($this->viberMessage, $this->config);
+        if ($IBScenario->defineScenario()) {
+            $this->scenario = $IBScenario->getScenario();
+            if ($this->viberMessage->scenario_id !== $this->scenario->id) {
+                $this->viberMessage->scenario_id = $this->scenario->id;
+                $this->viberMessage->save();
+            }
+        } else {
+            return false;
+        }
+
         $from = $this->from;
         $encoded = urlencode('user').'='.urlencode($this->params['login']).'&';
         $encoded .= urlencode('from').'='.urlencode($from).'&';
@@ -76,6 +123,7 @@ class InfoBup extends Provider
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->viberQuery);
         $result = curl_exec($ch);
+
         return $result;
     }
 
@@ -99,9 +147,11 @@ class InfoBup extends Provider
                     $mPhone['msg_id'] = $msg;
                     $mPhone->save();
                 }
+
                 return true;
             }
         }
+
         //TODO SendAdminNotification
         return false;
     }

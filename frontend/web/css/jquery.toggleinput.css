@@ -13,7 +13,7 @@
   overflow: hidden;
   cursor: pointer;
   text-align: center;
-  width: 170px;
+  width: 48%;
 }
 
 .has-toggle-input label.active {
@@ -27,3 +27,6 @@
 .has-toggle-input label:first-of-type { margin-left: auto; }
 
 .has-toggle-input label:last-of-type { }
+.radio-toggle{
+  min-height: 95px;
+}

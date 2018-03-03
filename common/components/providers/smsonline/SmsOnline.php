@@ -6,8 +6,9 @@
  * Time: 15:19
  */
 
-namespace common\components\providers;
+namespace common\components\providers\smsonline;
 
+use common\components\providers\Provider;
 use common\entities\ViberMessage;
 use Yii;
 
@@ -54,7 +55,7 @@ class SmsOnline extends Provider
         $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
         $signString = Yii::$app->params['smsonline']['login'].$from;
 
-        foreach ($phones as $phone) {
+        foreach ($phones as $phone=>$rec) {
             $encoded .= urlencode('phone').'='.urlencode($phone).'&';
             $signString .= $phone;
         }

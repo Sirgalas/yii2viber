@@ -8,13 +8,15 @@
 
 namespace common\components;
 
+use common\components\providers\ProviderFactory;
 use common\entities\mongo\Phone;
 use common\entities\mongo\Message_Phone_List;
 use common\entities\user\User;
 use common\entities\ViberMessage;
 use common\entities\ViberTransaction;
-use common\components\providers\SmsOnline;
+
 use Yii;
+use yii\web\NotFoundHttpException;
 
 class Viber
 {
@@ -37,6 +39,7 @@ class Viber
      *
      * @param \common\entities\ViberMessage $viber_message
      * @param array $phones
+     * @throws \yii\web\NotFoundHttpException
      */
     public function __construct(ViberMessage $viber_message, array $phones = [])
     {
@@ -48,15 +51,15 @@ class Viber
         $this->phones = $phones;
     }
 
-    private function wrtieToTextLog($result, $viber_transaction, $phones)
+    private function writeToTextLog($result, $viber_transaction, $phones): void
     {
         $path = \Yii::getAlias('@frontend').'/runtime/viber_report';
         $fileName = $path.'/query_'.$viber_transaction->id.'_'.date('Ymd_H').'.txt';
         file_put_contents($fileName, "\n".$this->viberQuery, FILE_APPEND);
         file_put_contents($fileName, "\n".'=================='.date('H:i:s').'====================', FILE_APPEND);
-        if ($viber_transaction->status == 'error') {
+        if ($viber_transaction->status === 'error') {
             file_put_contents($fileName, "\n".'=================='.date('H:i:s').'====================', FILE_APPEND);
-            file_put_contents($fileName, print_r($phones, 1), FILE_APPEND);
+            file_put_contents($fileName, implode(',', $phones), FILE_APPEND);
             file_put_contents($fileName, "\n".'======================================', FILE_APPEND);
             file_put_contents($fileName, $result, FILE_APPEND);
             file_put_contents($fileName, "\n".'======================================', FILE_APPEND);
@@ -65,53 +68,47 @@ class Viber
 
     /**
      *
+     * @throws \Exception
      */
-    public function sendMessage()
+    public function sendMessage(): bool
     {
         if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
-            return;
+            return false;
         }
         $viber_transaction = ViberTransaction::find()->isNew($this->viber_message->id)->one();
         if (! $viber_transaction) {
             return $this->viber_message->setWait();
         }
         $phonesArray = Message_Phone_List::find()->indexBy('phone')->where(['transaction_id' => $viber_transaction->id])->all();
-        $phones = [];
+
         $phonesA = [];
         foreach ($phonesArray as $phone) {
-            $phones[] = $phone->phone;
             $phonesA[$phone->phone] = $phone;
         }
-        if (! $phones) {
+        if (! $phonesA) {
             $viber_transaction->status = 'error';
             $viber_transaction->save();
 
-            return;
+            return false;
         }
-
         // списание баланса
         $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
-        if ($user->balance < count($phones)) {
+        if ($user->balance < \count($phonesA)) {
             $this->viber_message->setWaitPay();
 
             return false;
         }
-
-        $user->balance = $user->balance - count($phones);
+        $user->balance -= \count($phonesA);
         if (! $user->save()) {
-            throw new \Exception('not save');
+            throw new \RuntimeException('not save');
         }
-
         // Отправка сообщения
-        $provider = new  SmsOnline(Yii::$app->params['viber'], $this->viber_message->type, $this->viber_message->text);
+        $pf = new ProviderFactory();
+        $provider = $pf->createProvider($this->viber_message);
+        $provider->setMessage($this->viber_message);
+        $result = $provider->sendToViber($phonesA, $viber_transaction->id);
 
-        $provider->setMessage($this->viber_message->alpha_name, $this->viber_message->title_button,
-                              $this->viber_message->url_button, $this->viber_message->image,
-                              $this->viber_message->viber_image_id);
-
-        $result = $provider->sendToViber($phones, $viber_transaction->id);
         if ($provider->image_id) {
-
             $this->viber_message->viber_image_id = $provider->image_id;
         }
 
@@ -121,7 +118,7 @@ class Viber
             $viber_transaction->status = 'error';
             Yii::error($result);
         }
-        $this->wrtieToTextLog($result, $viber_transaction, $phones);
+        $this->writeToTextLog($result, $viber_transaction, array_keys($phonesA));
 
         return $viber_transaction->save();
     }
@@ -130,13 +127,13 @@ class Viber
      * @param array $phones
      * @throws \Exception
      */
-    private function saveNewTransaction(array $phones)
+    private function saveNewTransaction(array $phones): void
     {
         $tVM = new ViberTransaction([
                                         'user_id' => $this->viber_message->user_id,
                                         'viber_message_id' => $this->viber_message->id,
                                         'status' => 'new',
-                                        'size' => count($phones),
+                                        'size' => \count($phones),
                                         'created_at' => time(),
                                     ]);
         $tVM->save();
@@ -146,7 +143,7 @@ class Viber
         }
         // echo "\n created phones ", count($phones), ' transaction id=', $tVM->id;
         if (! Yii::$app->mongodb->getCollection(Message_Phone_List::collectionName())->batchInsert($phones)) {
-            throw new \Exception('not save');
+            throw new \RuntimeException('not save');
         }
     }
 
@@ -159,21 +156,21 @@ class Viber
      * @return bool
      * @throws \yii\db\Exception
      */
-    public function prepareTransaction()
+    public function prepareTransaction(): ?bool
     {
 
         $db = Yii::$app->db;
         $transaction = $db->beginTransaction();
         $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
         foreach ($contact_collection_ids as $k => $v) {
-            if (is_int($v)) {
+            if (\is_int($v)) {
                 $contact_collection_ids[] = (string)$v;
             } else {
                 $contact_collection_ids[] = (int)$v;
             }
         }
         try {
-            if (count($this->phones) > 0) {
+            if (\count($this->phones) > 0) {
                 $phones = $this->phones;
             } else {
                 $phones = Phone::find()->select(['phone'])->where([
@@ -183,18 +180,18 @@ class Viber
                                                                   ])->distinct('phone');
             }
             $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
-            if ($user->balance < count($phones)) {
-                throw new \Exception('balance is small, not save');
+            if ($user->balance < \count($phones)) {
+                throw new \RuntimeException('balance is small, not save');
             }
             $tPhones = [];
             foreach ($phones as $phone) {
                 $tPhones[] = ['phone' => $phone, 'status' => 'new', 'message_id' => $this->viber_message->id];
-                if (count($tPhones) >= Yii::$app->params['viber']['transaction_size_limit']) {
+                if (\count($tPhones) >= Yii::$app->params['smsonline']['transaction_size_limit']) {
                     $this->saveNewTransaction($tPhones);
                     $tPhones = [];
                 }
             }
-            if (count($tPhones) > 0) {
+            if (\count($tPhones) > 0) {
                 $this->saveNewTransaction($tPhones);
             }
             $this->viber_message->status = ViberMessage::STATUS_PROCESS;
@@ -203,7 +200,7 @@ class Viber
 
             return true;
         } catch (\Exception $e) {
-            $transaction->rollback();
+            $transaction->rollBack();
             echo "\n Error ", $e->getMessage();
 
             return false;

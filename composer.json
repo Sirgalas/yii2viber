@@ -39,7 +39,8 @@
         "sirgalas/yii2-morrisjs": "^2.0",
         "2amigos/yii2-tinymce-widget": "~1.1",
         "yiisoft/yii2-redis": "^2.0",
-        "friday14/cloud-mail-ru": "@dev"
+        "friday14/cloud-mail-ru": "@dev",
+        "infobip/infobip-api-php-client": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

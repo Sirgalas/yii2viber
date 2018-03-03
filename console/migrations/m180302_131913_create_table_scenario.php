@@ -20,12 +20,9 @@ class m180302_131913_create_table_scenario extends Migration
         'channel3'=>$this->string(),
         'default'=>$this->boolean()->defaultValue(false),
         'provider_scenario_id'=>$this->string(),
-        'created_at'=>$this->dateTime(),
+        'created_at'=>$this->integer(),
     ]);
-    $this->execute('
-        ALTER TABLE "public"."viber_message"
-        ALTER COLUMN "scenario_id" TYPE integer
-    ');
+    $this->addColumn('{{%viber_message}}', 'scenario_id',$this->integer()->after('type'));
 }
 
 
@@ -34,12 +31,9 @@ class m180302_131913_create_table_scenario extends Migration
      */
     public function safeDown()
     {
-        $this->execute('
-           ALTER TABLE "public"."viber_message"
-           DROP COLUMN "scenario_id"
-        ');
+        $this->dropColumn('{{%viber_message}}', 'scenario_id');
         $this->dropTable('{{%scenario}}');
 
-        return false;
+        return true;
     }
 }

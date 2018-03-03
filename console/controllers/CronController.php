@@ -70,7 +70,7 @@ class CronController extends Controller
                 $v->sendMessage();
             }
 
-            sleep(Yii::$app->params['viber']['min_delay']);
+            sleep(Yii::$app->params['smsonline']['min_delay']);
         }
     }
 
@@ -82,7 +82,7 @@ class CronController extends Controller
     public function  actionTestViberQueueHandle()
     {
 
-        Yii::$app->params['viber'] = Yii::$app->params['viber-test'];
+        Yii::$app->params['smsonline'] = Yii::$app->params['viber-test'];
         return $this->ViberQueueHandle();
     }
 

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 use common\entities\ViberMessage;
+use common\entities\Provider;
 use kartik\checkbox\CheckboxX;
 use kartik\widgets\Select2;
 use yii\helpers\Url;
@@ -99,7 +100,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             </div>
             <div class="col-md-5" style="  z-index: 9999;text-align: center;">
                 <div class="block-header">&nbsp;</div>
-                <div id="smiles_block" style="width: 100%;height:150px;overflow: auto;">
+                <div id="smiles_block" style="width: 100%;height:205px;overflow: auto;">
                     <?php
                     foreach ($listIcons as $icon){
                         echo "<img class='viber-icon' data-text='$icon' title='$icon' src='" .  ViberIcons::ICON_PATH  . $icon. ".png'>";
@@ -168,8 +169,8 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             <?=$form->field($model, 'title')->textInput([
                 'maxlength' => true,
             ])?>
-            <?=$form->field($model, 'alpha_name')->dropDownList(ViberMessage::getAlphaNames(),
-                ['maxlength' => true, 'options' => ViberMessage::getAlphaNamesOptions()])?>
+            <?=$form->field($model, 'alpha_name')->dropDownList(Provider::getAlphaNames($model->defineProvider()),
+                ['maxlength' => true, 'options' => []])?>
             <?php
 
             echo $form->field($model, 'assign_collections')->widget(Select2::class, [
@@ -280,7 +281,8 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             $('#filed_text').keyup(function () {
                 informToptext(this);
             })
-
+            $('.radio-toggle').toggleInput();
+            $('.radio-toggle').show();
             $('.viber-icon').click(function(){
                 var code = $(this).attr('data-text');
                 var fild_text =  $('#filed_text');
