@@ -306,3 +306,8 @@ aside .sidebar-menu > li > a {
 aside .user-panel > .info > p.notAuth{
     font-size: 18px;
 }
+
+.grid-view-message-picture{
+    max-height: 60px;
+    max-width: 70px;
+}

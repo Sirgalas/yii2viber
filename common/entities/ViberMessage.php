@@ -177,7 +177,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function isPromotional()
     {
-        return ($this->message_type !== 'информация');
+        return (strtolower($this->message_type) !== 'информация');
     }
 
     /**
@@ -465,7 +465,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         $file = new \SplFileObject($filepath.'/'.$imageName,"r");
         $cloud->upload($file,$filepath.'/'.$imageName);
         $cloudImageLink=$cloud->getLink($filepath.'/'.$imageName);
-        unlink($filepath.'/'.$imageName);
+        @unlink(\Yii::getAlias('@frontend').'/web/' . $filepath.'/'.$imageName);
         $this->upload_file=null;
         return $cloudImageLink;
     }
@@ -549,7 +549,9 @@ class ViberMessage extends \yii\db\ActiveRecord
         $upload_file = $this->uploadFile();
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            $this->image=$upload_file;
+            if ($upload_file) {
+                $this->image = $upload_file;
+            }
             if ($this->save()) {
                 $result = MessageContactCollection::assign($this->id, $this->user_id, $this->assign_collections);
                 if ($result !== 'ok') {

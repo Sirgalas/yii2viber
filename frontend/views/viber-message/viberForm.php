@@ -113,7 +113,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     </style>
                 </div>
             </div>
-            <div class="col-md-12" style="margin-top:-20px">
+            <div class="col-md-12" style="">
                 <div style="position: relative;">
                     <?=$form->field($model, 'text')->textarea([
                         'maxlength' => true,
@@ -125,7 +125,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     <div id="remaining_text"></div>
                 </div>
                 <?php if ($model->image) : ?>
-                    <img src="/uploads/<?=$model->image?>" id="viber_image"
+                    <img src="<?=$model->image?>" id="viber_image"
                          style="max-width: 100%;max-height: 20vh;border: black solid 1px;">
                 <?php endif ?>
                 <?=$form->field($model, 'upload_file')->fileInput(['maxlength' => true, 'id' => 'field_image'])?>
@@ -170,7 +170,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 'maxlength' => true,
             ])?>
             <?=$form->field($model, 'alpha_name')->dropDownList(Provider::getAlphaNames($model->defineProvider()),
-                ['maxlength' => true, 'options' => []])?>
+                ['maxlength' => true,])?>
             <?php
 
             echo $form->field($model, 'assign_collections')->widget(Select2::class, [

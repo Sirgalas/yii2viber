@@ -36,7 +36,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'value' => 'user.username',
         ],
         'title',
-        'image:image',
+        [
+            'attribute' => 'image',
+            'value' => function ($model) {
+                if ($model->image) {
+                    return '<img src="' . $model->image . '" class="grid-view-message-picture">';
+                }
+                return '';
+            },
+            'contentOptions' => ['class' => 'text-center'],
+            'format' => 'raw',
+        ],
 //            'title_button',
 //            'url_button:url',
         'type',
@@ -75,13 +85,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'template' => '{update}{delete}',
             'buttons' => [
                 'delete' => function ($url, $model) {
-                    if ($model->isDeleteble() ) {
+                    if ($model->isDeleteble()) {
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                             'data' => ['method' => 'post',],
                             'title' => Yii::t('app', 'Delete'),
                             'class' => '',
                         ]);
-                    } else return '';
+                    } else {
+                        return '';
+                    }
                 },
             ],
         ],
@@ -92,24 +104,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
     Pjax::begin();
     echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => $columns,
-        'responsive' => true,
-        'hover' => true,
-        'condensed' => true,
-        'floatHeader' => true,
+                              'dataProvider' => $dataProvider,
+                              'filterModel' => $searchModel,
+                              'columns' => $columns,
+                              'responsive' => true,
+                              'hover' => true,
+                              'condensed' => true,
+                              'floatHeader' => true,
 
-        'panel' => [
-            'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
-            'type' => 'info',
-            'before' => Html::a('<i class="glyphicon glyphicon-plus"></i> Новая рассылка', ['update'],
-                ['class' => 'btn btn-success']),
-            'after' => Html::a('<i class="glyphicon glyphicon-repeat"></i> Обновить', ['index'],
-                ['class' => 'btn btn-info']),
-            'showFooter' => false,
-        ],
-    ]);
+                              'panel' => [
+                                  'heading' => '<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
+                                  'type' => 'info',
+                                  'before' => Html::a('<i class="glyphicon glyphicon-plus"></i> Новая рассылка',
+                                                      ['update'], ['class' => 'btn btn-success']),
+                                  'after' => Html::a('<i class="glyphicon glyphicon-repeat"></i> Обновить', ['index'],
+                                                     ['class' => 'btn btn-info']),
+                                  'showFooter' => false,
+                              ],
+                          ]);
     Pjax::end(); ?>
 
 </div>
