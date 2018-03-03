@@ -11,6 +11,9 @@ return [
         'common\bootstrap\SetUp',
     ],
     'components' => [
+        'config'=> [
+            'class' => 'common\components\ConfigСomponent'
+        ],
         'redis' => [
             'class' => 'yii\redis\Connection',
             'hostname' => 'localhost',

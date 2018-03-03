@@ -10,15 +10,14 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'defaultRoute' => 'home/default/index',
     'controllerNamespace' => 'frontend\controllers',
-    'name'=>"Управление рассылками Viber",
+    'name'=>"ViberShop24",
     'language'=>'ru',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
-
                 'cookieValidationKey' => 'KMIAhRwevYKdPhMvNWAhzxbeFRsFfNCD',
-
         ],
         'user' => [
             'identityCookie' => [
@@ -72,6 +71,10 @@ return [
                 'LoginForm' => 'dektrium\user\models\LoginForm',
             ],
         ],
+        'home' => [
+            'class' => 'frontend\modules\home\Home',
+        ],
+
     ],
     'params' => $params,
 ];

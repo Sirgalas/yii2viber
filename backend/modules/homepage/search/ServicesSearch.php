@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\search;
+namespace backend\modules\homepage\search;
 
 use Yii;
 use yii\base\Model;
@@ -8,9 +8,9 @@ use yii\data\ActiveDataProvider;
 use common\entities\Config;
 
 /**
- * SliderSearch represents the model behind the search form of `common\entities\Config`.
+ * ServicesSearch represents the model behind the search form of `common\entities\Config`.
  */
-class SliderSearch extends Config
+class ServicesSearch extends Config
 {
     /**
      * @inheritdoc
@@ -60,7 +60,7 @@ class SliderSearch extends Config
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'description'=>'slider'
+            'description'=>'services'
         ]);
 
         $query->andFilterWhere(['ilike', 'param', $this->param])

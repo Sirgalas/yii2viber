@@ -3,8 +3,8 @@
 return [
     'class'=>'yii\web\UrlManager',
     'hostInfo'=>$params['backendHostInfo'],
-    'enablePrettyUrl' => false,
-    'showScriptName' => true,
+    'enablePrettyUrl' => true,
+    'showScriptName' => false,
 
     'rules' => [
         '' => 'site/index',
