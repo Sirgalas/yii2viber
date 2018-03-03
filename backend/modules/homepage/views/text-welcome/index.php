@@ -23,15 +23,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
             'param',
             [
                 'attribute'=>'text',
                 'format'=>'raw'
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{update}{update-back}{delete}{view}',
+                'buttons' => [
+                    'update-back' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-picture"></span>',$url);
+                    }
+                ],
+            ],
         ],
     ]); ?>
 </div>

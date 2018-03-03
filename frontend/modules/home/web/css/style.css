@@ -30,7 +30,8 @@ h5 a {
 h2 a:hover,
 h3 a:hover,
 h4 a:hover,
-h5 a:hover {
+h5 a:hover,
+h3:hover{
   color: #9B59B6;
 }
 * {
@@ -66,6 +67,41 @@ h5 a:hover {
 }
 #header nav {
   float: right;
+}
+
+.pricing {
+  /*padding: 70px 45px;*/
+  background: #fff;
+  margin-top: 50px;
+  border: 1px solid #9B59B6;
+}
+.pricing header{
+  background: #9B59B6;
+  padding: 70px 45px 20px 45px;
+}
+.pricing header h4{
+  margin-top: 0;
+  color: #fff;
+}
+.pricing header span{
+  color: #313131;
+  font-size: 26px;
+}
+.pricing header p{
+  color: #313131;
+  text-align: center;
+}
+.pricing ul{
+  padding: 20px 45px 40px 45px;
+}
+.pricing ul li{
+  color: #313131;
+  font-size: 20px;
+  line-height: 40px;
+}
+
+.owl-carousel .grid_4{
+  margin-left: 0;
 }
 @media only screen and (max-width: 767px) {
   #header {

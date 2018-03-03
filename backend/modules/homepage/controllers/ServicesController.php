@@ -74,7 +74,8 @@ class ServicesController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
-    }/**
+    }
+    /**
      * Creates a new Config model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -100,6 +101,35 @@ class ServicesController extends Controller
             }
         }
         return $this->render('create-back', [
+            'model' => $model,
+        ]);
+    }
+    /**
+     * Creates a new Config model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionUpdateBack($id)
+    {
+        $model = $this->findModel($id);
+        $model->description='services';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->upload_file = UploadedFile::getInstance($model, 'upload_file');
+            try{
+                if (!($text=$model->upload()))
+                    throw new \RuntimeException('Сохранить картинку не удалось');
+                $model->text=$text;
+                if(!$model->save()){
+                    foreach ($model->getErrors()as $errors)
+                        $erorr[]=$errors[0];
+                    throw new \RuntimeException('Сохранить слайдер не удалось '.implode(', ',$erorr));
+                }
+                return $this->redirect(['view', 'id' => $model->id]);
+            }catch (\RuntimeException $e){
+                Yii::$app->session->setFlash($e->getMessage());
+            }
+        }
+        return $this->render('update-back', [
             'model' => $model,
         ]);
     }
