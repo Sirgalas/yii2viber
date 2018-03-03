@@ -17,13 +17,13 @@ class SmsOnline extends Provider
     public function sendImage()
     {
         $filePath = realpath($this->image);
-        $sign = md5($this->params['login'].md5_file($filePath).$this->params['secret']);
+        $sign = md5($this->config['login'].md5_file($filePath).$this->config['secret']);
         $ch = curl_init('http://media.sms-online.com/upload/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
-            'login' => $this->params['login'],
+            'login' =>$this->config['login'],
             'image' => new  \CURLFile(realpath($filePath)),
             'sign' => $sign,
         ]);
@@ -49,11 +49,14 @@ class SmsOnline extends Provider
      */
     public function sendToViber($phones, $transaction_id)
     {
+        $this->err='';
+        $this->answer='';
+
         $from = $this->from;
-        $encoded = urlencode('user').'='.urlencode($this->params['login']).'&';
+        $encoded = urlencode('user').'='.urlencode($this->config['login']).'&';
         $encoded .= urlencode('from').'='.urlencode($from).'&';
         $encoded .= urlencode('sending_method').'='.urlencode('viber').'&';
-        $signString = Yii::$app->params['smsonline']['login'].$from;
+        $signString = $this->config['login'].$from;
 
         foreach ($phones as $phone=>$rec) {
             $encoded .= urlencode('phone').'='.urlencode($phone).'&';
@@ -83,17 +86,27 @@ class SmsOnline extends Provider
         $encoded .= urlencode('dlr').'=1&';
         $encoded .= urlencode('dlr_timeout').'=360&';
 
-        $signString .= $this->params['secret'];
+        $signString .= $this->config['secret'];
         $this->viberQuery = $encoded.urlencode('sign').'='.md5($signString);
 
         //echo "\n\n", $encoded, "\n";
-        $ch = curl_init(Yii::$app->params['smsonline']['url']);
+        $ch = curl_init($this->config['url']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->viberQuery);
         $result = curl_exec($ch);
-        return $result;
+        $err = curl_error($ch);
+
+        curl_close($ch);
+
+        if ($err) {
+            $this->error = $err;
+            return false;
+        } else {
+            $this->answer = $result;
+        }
+        return true;
     }
 
     /**
@@ -103,10 +116,10 @@ class SmsOnline extends Provider
      * @param $phonesArray
      * @return bool
      */
-    public function parseSendResult($xml, $phonesArray)
+    public function parseSendResult(  $phonesArray)
     {
-        if (is_string($xml)) {
-            $xml = simplexml_load_string($xml);
+        if (is_string($this->answer)) {
+            $xml = simplexml_load_string($this->answer);
             if ($xml->code == 0) {
                 foreach ($xml->msg_id as $key => $msg) {
                     $attr = $msg->attributes();
@@ -122,4 +135,6 @@ class SmsOnline extends Provider
         //TODO SendAdminNotification
         return false;
     }
+
+    public function getDeliveryReport(){}
 }

@@ -110,6 +110,7 @@ class Viber
 
         if ($provider->image_id) {
             $this->viber_message->viber_image_id = $provider->image_id;
+            $this->viber_message->save();
         }
 
         if ($provider->parseSendResult($result, $phonesA)) {
