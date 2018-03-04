@@ -1,7 +1,7 @@
 <?php /**
 * @var $config common\entities\Config
 */
-if($confug) {
+if(isset($confug)) {
     for ($i = 1; $i <= count($config); $i++) {
         $service = 'service_services_' . $i;
         ?>
