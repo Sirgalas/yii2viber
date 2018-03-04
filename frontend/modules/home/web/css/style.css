@@ -68,6 +68,14 @@ h3:hover{
 #header nav {
   float: right;
 }
+.parallax-block p{
+  font-size: 26px;
+  color: #fff;
+  line-height: 30px;
+}
+.block-2 .blue{
+  color:#337ab7;
+}
 
 .pricing {
   /*padding: 70px 45px;*/
@@ -792,8 +800,8 @@ p {
   background: #9B59B6;
   text-decoration: none;
   position: fixed;
-  bottom: 80px;
-  right: 30px;
+  bottom: 58px;
+  right: 237px;
   overflow: hidden;
   border: none;
   color: #fff;

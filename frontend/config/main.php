@@ -10,7 +10,7 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-    'defaultRoute' => 'home/default/index',
+    'defaultRoute' => '/home/default/index',
     'controllerNamespace' => 'frontend\controllers',
     'name'=>"ViberShop24",
     'language'=>'ru',

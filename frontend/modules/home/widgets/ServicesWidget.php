@@ -10,8 +10,11 @@ class ServicesWidget extends Widget
     public function run()
     {
         $config=Config::find()->where(['description'=>'services'])->andWhere(['like','param','service_services_'])->all();
+        $text=false;
+        
         return $this->render('services',[
-            'config'=>$config
+            'config'=>$config,
+            'text'=>$text
         ]);
     }
 
