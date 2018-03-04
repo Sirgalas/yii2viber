@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\modules\homepage\search\ServicesSearch */
@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute'=> 'text',
+                'width'=>'200px',
                 'format'=>'raw',
                 'value'=>function($model){
                     if($model->param=='service_background')
@@ -39,7 +40,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{update}{update-back}{delete}{view}',
+                'buttons' => [
+                    'update-back' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-picture"></span>',$url);
+                    }
+                ],
+            ],
         ],
     ]); ?>
 </div>

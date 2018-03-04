@@ -29,14 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format'=>'raw'
             ],
 
-            ['class' => 'yii\grid\ActionColumn',
-                'template' => '{update}{update-back}{delete}{view}',
-                'buttons' => [
-                    'update-back' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-picture"></span>',$url);
-                    }
-                ],
-            ],
+            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 </div>
