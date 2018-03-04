@@ -147,11 +147,8 @@ class ClientController extends Controller
         $transaction = $db->beginTransaction();
         try {
             $edidableIndex= $_POST['editableIndex'];
-
             $value=$_POST['Client'][$edidableIndex]['cost'] ;
-
             $user->cost = $value;
-
             if(!$user->save())
                 throw new \Exception(json_encode($user->getErrors()));
 
