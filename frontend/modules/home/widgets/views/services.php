@@ -12,7 +12,7 @@ if(isset($confug)) {
         </div>
     <?php }
 }else{ ?>
-    <div class="grid_8">
+    <div class="grid_12">
         <div class="element">
             <h3><?= Yii::$app->config->get('service_text'); ?></h3>
         </div>
