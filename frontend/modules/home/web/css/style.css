@@ -77,6 +77,12 @@ h3:hover{
   color:#337ab7;
 }
 
+.copyright{
+  font-size: 26px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+}
+
 .pricing {
   /*padding: 70px 45px;*/
   background: #fff;
