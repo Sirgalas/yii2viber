@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('Редактировать картинку', ['update-back', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('На главную', ['index', ], ['class' => 'btn btn-default']) ?>
     </p>
 

@@ -161,4 +161,12 @@ class TestController extends Controller
 
         exit;
     }
+    
+    public function actionAddToken(){
+        $users=User::find()->all();
+        foreach ($users as $user){
+            $user->token=Yii::$app->security->generateRandomString(12);
+            $user->save();
+        }
+    }
 }

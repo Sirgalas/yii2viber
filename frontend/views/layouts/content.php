@@ -40,6 +40,9 @@ use dmstr\widgets\Alert;
         <b>Версия</b> 0.01
     </div>
     <strong><a href="http://vibershop24.ru/">ViberShop24</a></strong>
+    <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
+            ссылка для регистариции ваших клиентов <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
+    <?php } ?>
 </footer>
 
 <!-- Control Sidebar -->
