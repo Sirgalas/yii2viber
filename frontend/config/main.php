@@ -50,6 +50,19 @@ return [
             return Yii::$app->get('frontendUrlManager');
         },
         'backendUrlManager' => require  __DIR__.'/../../backend/config/urlManager.php',
+        'reCaptcha' => [
+            'name' => 'reCaptcha',
+            'class' => 'himiklab\yii2\recaptcha\ReCaptcha',
+            'siteKey' => '6Lct8zAUAAAAAA_1RA6j_X1-jGbkZjDv1gjx1m8A',
+            'secret' => '6Lct8zAUAAAAABfgswO3Z8E0fB2uyR-mKkr_7MgW',
+        ],
+        'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@dektrium/user/views' => '@app/views/user'
+                ],
+            ],
+        ],
     ],
    /* 'as access' => [
         'class' => 'yii\filters\AccessControl',
@@ -68,7 +81,7 @@ return [
             'urlPrefix'=>'auth',
             'modelMap' => [
                 'User' => 'frontend\entities\User',
-                'LoginForm' => 'dektrium\user\models\LoginForm',
+                'LoginForm' => 'frontend\forms\LoginForm',
                 'RegistrationForm' => 'frontend\forms\RegistrationForm',
             ],
             'controllerMap' => [

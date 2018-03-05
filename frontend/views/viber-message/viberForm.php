@@ -113,7 +113,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     </style>
                 </div>
             </div>
-            <div class="col-md-12" style="">
+            <div class="col-md-12" style="margin-bottom: 20px;">
                 <div style="position: relative;">
                     <?=$form->field($model, 'text')->textarea([
                         'maxlength' => true,
