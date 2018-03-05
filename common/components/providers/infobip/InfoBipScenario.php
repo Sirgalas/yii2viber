@@ -36,9 +36,52 @@ class InfoBipScenario
     /**
      * @return mixed
      */
-    public function getScenario():Scenario
+    public function getScenario()
     {
         return $this->scenario;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScenarios($id='')
+    {
+        $curl = curl_init();
+        $bpAuth = new BasicAuthConfiguration($this->config['login'], $this->config['password']);
+        $url="http://api.infobip.com/omni/1/scenarios";
+        if ($id){
+            $url.='/'.$id;
+        }
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_POSTFIELDS => "",
+            CURLOPT_HTTPHEADER => array(
+                "accept: application/json",
+                "authorization: " . $bpAuth->getAuthenticationHeader()
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            var_dump( json_decode($response,1));
+        }
+        Yii::warning('Get scenario ');
+        Yii::warning($url);
+        Yii::warning($response);
+
+        return true;
     }
 
     /**

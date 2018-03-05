@@ -37,9 +37,16 @@ class IbController extends Controller
 
     }
 
+    public function actionScenarios(){
+        $vm = ViberMessage::find()
+            ->where(['in','id',['111']])->one();
+        $IBScenario = new InfoBipScenario($vm, Yii::$app->params['infobip']);
+        $IBScenario->getScenarios('D7D60E85152AC4C18E0B28EBBE2A3884');
+    }
+
     public function  actionSend()
     {
-        $message_id=111;
+        $message_id=116;
         $vm = ViberMessage::find()
             ->where(['in','id',[$message_id]])->one();
         $vm->status='new';
@@ -77,5 +84,36 @@ class IbController extends Controller
         $provider->parseSendResult($phonesA);
     }
 
+    public function actionAnswer(){
+        $message_id=111;
+        $vm = ViberMessage::find()
+            ->where(['in','id',[$message_id]])->one();
+        $pf = new ProviderFactory();
+        $provider=$pf->createProvider($vm);
 
+        $viber_transaction = ViberTransaction::find()->where(['viber_message_id'=>$vm->id ])->one();
+        if (!$viber_transaction){
+            die('Транзакция не найдена');
+        }
+        $phonesArray = Message_Phone_List::find()->indexBy('phone')->where(['transaction_id' => $viber_transaction->id])->all();
+
+        $phonesA = [];
+        foreach ($phonesArray as $phone) {
+            $phonesA[$phone->phone] = $phone;
+        }
+
+        $provider->setMessage($vm);
+        $provider->answer = '{"bulkId":"201","messages":[{"to":{"phoneNumber":"79135701037"},"status":{"groupId":1,"groupName":"PENDING","id":7,"name":"PENDING_ENROUTE","description":"Message sent to next instance"},"messageId":"5a9bdf2442914a8564002df2"}]}';
+        $provider->parseSendResult($phonesA);
+
+    }
+
+    public function actionReport(){
+        $message_id=111;
+        $vm = ViberMessage::find()
+            ->where(['in','id',[$message_id]])->one();
+        $pf = new ProviderFactory();
+        $provider=$pf->createProvider($vm);
+        $provider->getDeliveryReport();
+    }
 }

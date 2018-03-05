@@ -113,7 +113,7 @@ class Viber
             $this->viber_message->save();
         }
 
-        if ($provider->parseSendResult($result, $phonesA)) {
+        if ($provider->parseSendResult( $phonesA)) {
             $viber_transaction->status = 'sended';
         } else {
             $viber_transaction->status = 'error';

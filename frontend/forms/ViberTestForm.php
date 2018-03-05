@@ -163,6 +163,7 @@ class ViberTestForm extends Model
                                    'url_button' => $this->url_button,
                                    'status' => ViberMessage::STATUS_NEW,
                                    'cost' => count($phones),
+                                   'provider' => 'smsonline'
 
                                ]);
         if ($this->just_now) {
