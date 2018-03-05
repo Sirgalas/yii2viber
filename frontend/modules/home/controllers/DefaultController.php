@@ -17,8 +17,12 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        if(!Yii::$app->user->isGuest)
-            return $this->redirect('/site/index');
+
+        if (Yii::$app->user->isGuest){
+            if(Yii::$app->request->get('id'))
+                return $this->redirect(['auth/register','id'=>Yii::$app->request->get('id')]);
+            return $this->render('index');
+        };
         $config=new Config();
         return $this->render('index',[
             'config'=>$config

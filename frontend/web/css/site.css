@@ -311,3 +311,8 @@ aside .user-panel > .info > p.notAuth{
     max-height: 60px;
     max-width: 70px;
 }
+
+.skin-blue .main-header .navbar .nav > li{
+    color: #fff;
+    font-size: 20px;
+}

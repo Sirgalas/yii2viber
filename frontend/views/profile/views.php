@@ -43,6 +43,16 @@ $this->params['breadcrumbs'][] = $this->title ?>
             'attribute'=>'time_work',
             'label'=>'Время работы'
         ],
+        [
+            'attribute'=>'url',
+            'label'=>'Ссылка для регистариции клиентов',
+            'value'=>function()use($entities){
+                if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){
+                    return "ссылка для регистариции ваших клиентов ".Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token;
+                }
+                return 'Вы не можете регистрировать клиентов';
+            }
+        ]
     ],
 ]); ?>
 

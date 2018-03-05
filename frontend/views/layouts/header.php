@@ -26,7 +26,11 @@ if (Yii::$app->user->isGuest){
 
             ?>
             <ul class="nav navbar-nav">
-
+                <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
+                    <li>
+                        ссылка для регистариции ваших клиентов</br> <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
+                    </li>
+                <?php } ?>
                 <!-- Messages: style can be found in dropdown.less -->
                     <?= WantDealer::widget(); ?>
                 <!--<li class="dropdown notifications-menu">
@@ -154,6 +158,7 @@ if (Yii::$app->user->isGuest){
                     </ul>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
+
                 <li>
                     <?php
                     if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USER_SESSION_KEY)){
@@ -179,13 +184,19 @@ if (Yii::$app->user->isGuest){
                                 <?php if (is_object(Yii::$app->user->identity)):  ?>
                                 <?= Yii::$app->user->identity->username; ?>111
                                 <small>Member since Nov. <?= date('Y-m-d',Yii::$app->user->identity->created_at) ?></small>
+                                <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
+                                    <p>
+                                        ссылка для регистариции ваших клиентов <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
+                                    </p>
+                                    <?php } ?>
                                 <?php else: ?>
                                 Не авторизован
                                 <?php endif ?>
                             </p>
                         </li>
                         <!-- Menu Body -->
-
+                        <?php if(!Yii::$app->user->isGuest){ ?>
+                        <?php } ?>
                         <!-- Menu Footer-->
                         <?php if (is_object(Yii::$app->user->identity)):  ?>
                         <li class="user-footer">

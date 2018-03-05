@@ -74,6 +74,8 @@ class SiteController extends Controller
     public function actionIndex()
     {
         if (Yii::$app->user->isGuest){
+            if(Yii::$app->request->get('id'))
+                return $this->redirect(['auth/register','id'=>Yii::$app->request->get('id')]);
             return $this->render('index');
         };
         $model = new ViberTestForm();

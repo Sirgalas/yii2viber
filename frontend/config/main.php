@@ -69,6 +69,10 @@ return [
             'modelMap' => [
                 'User' => 'frontend\entities\User',
                 'LoginForm' => 'dektrium\user\models\LoginForm',
+                'RegistrationForm' => 'frontend\forms\RegistrationForm',
+            ],
+            'controllerMap' => [
+                'registration' => 'frontend\controllers\RegistrationController'
             ],
         ],
         'home' => [
