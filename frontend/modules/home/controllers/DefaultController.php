@@ -20,7 +20,7 @@ class DefaultController extends Controller
         $config=new Config();
         if (Yii::$app->user->isGuest){
             if(Yii::$app->request->get('id'))
-                return $this->redirect(['auth/register','id'=>Yii::$app->request->get('id')]);
+                return $this->redirect(['/auth/register','id'=>Yii::$app->request->get('id')]);
             return $this->render('index',['config'=>$config]);
         };
         ;
