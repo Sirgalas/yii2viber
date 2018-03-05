@@ -17,15 +17,13 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-
+        $config=new Config();
         if (Yii::$app->user->isGuest){
             if(Yii::$app->request->get('id'))
                 return $this->redirect(['auth/register','id'=>Yii::$app->request->get('id')]);
-            return $this->render('index');
+            return $this->render('index',['config'=>$config]);
         };
-        $config=new Config();
-        return $this->render('index',[
-            'config'=>$config
-        ]);
+        ;
+        return $this->redirect('/site/index');
     }
 }
