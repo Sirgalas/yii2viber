@@ -41,7 +41,7 @@ use yii\helpers\Url;
                     'class' => 'labelLess form-control',
                 ])->label(false)?>
             </div>
-            <div class="col-md-12" style="margin-top:-55px">
+            <div class="col-md-12" style="margin-top:-55px;margin-bottom:20px;">
                 <div style="position: relative;">
                     <?=$form->field($model, 'text')->textarea([
                         'maxlength' => true,

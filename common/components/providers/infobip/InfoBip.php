@@ -114,7 +114,8 @@ class InfoBip extends Provider
         } else {
             $this->answer = $response;
         }
-
+        Yii::warning('Query:: ' . $this->toJson($phones, $transaction_id));
+        Yii::warning('Response:: ' . $response);
         return $response;
     }
 
@@ -136,9 +137,9 @@ class InfoBip extends Provider
                   $phone = $message['to']['phoneNumber'];
                     if (isset($phonesArray[''.$phone])) {
                         $mPhone = $phonesArray[''.$phone];
-                        if ($mPhone['msg_id'] != $message_id) {
-                            Yii::error('Msg_id not equal');
-                            Yii::error('Phone_Query:'.print_r($mPhone, 1));
+                        if ((string)$mPhone->_id != $message_id) {
+                            Yii::error('Msg_id not equal  ' . $message_id);
+                            Yii::error('Phone_Query:'.print_r($mPhone->getAttributes(), 1));
                             Yii::error('Message_Response:'.print_r($message, 1));
                         }
                         $mPhone['status'] = 'sended';
@@ -156,5 +157,38 @@ class InfoBip extends Provider
         //TODO SendAdminNotification
         return false;
     }
-    public function getDeliveryReport(){}
+
+    /**
+     *
+     */
+    public function getDeliveryReport(){
+
+        $curl = curl_init();
+        $bpAuth = new BasicAuthConfiguration($this->config['login'], $this->config['password']);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "http://api.infobip.com/omni/1/reports?channel=VIBER",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_POSTFIELDS => "",
+            CURLOPT_HTTPHEADER => array(
+                "accept: application/json",
+                "authorization: ".$bpAuth->getAuthenticationHeader(),
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            echo $response;
+        }
+    }
 }
