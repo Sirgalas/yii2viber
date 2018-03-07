@@ -1,5 +1,7 @@
 /index.php
 /index-test.php
 /robots.txt
-/uploads
+/uploads        
+/image
+/images
 .htaccess
