@@ -421,7 +421,7 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         $this->status = self::STATUS_WAIT;
         $this->date_send_finish = time();
-        $this->save();
+        return $this->save();
     }
 
     /**
