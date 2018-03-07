@@ -106,7 +106,7 @@ class InfoBipScenario
                                            'provider' => $this->viberMessage->provider,
                                            'from1' => $this->viberMessage->alpha_name,
                                            'channel1' => 'VIBER',
-                                           'default' => false,
+                                           'default' => true,
                                            'created_at' => time(),
 
                                        ]);

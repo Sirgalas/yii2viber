@@ -13,7 +13,10 @@ namespace common\entities\mongo;
  * @property int $date_viewed;
  * @property string $msg_id;
  * @property ViberMessage viberMessage
- * @property ViberTransaction viberTransaction
+ * @property int error
+ * @property int messageCount
+ * @property string currency
+ * @property string pricePerMessage
  */
 use common\entities\ViberMessage;
 use common\entities\ViberTransaction;

@@ -235,6 +235,12 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return implode(',</br>', $phone);
     }
 
+    public function checkReady(){
+        if ($this->viewed +$this->delivered>=$this->size){
+            $this->status=self::READY;
+        }
+    }
+
     public function Status()
     {
         $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
