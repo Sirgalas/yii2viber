@@ -30,6 +30,7 @@ class ViberMessageController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
+                    'moderate' => ['post'],
                 ],
             ],
         ];
@@ -128,16 +129,16 @@ class ViberMessageController extends Controller
             if (! Yii::$app->user->identity->isAdmin() && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
                 throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
             }
-            if ($model->isDeleteble()) {
+            if (!$model->isDeleteble()) {
                 throw new NotFoundHttpException('Удаление этой рассылка невозможно', 403);
             }
             $model->delete();
             $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();
-            Yii::$app->session->setFlash('error', 'Ошибка удаления.'
+            Yii::$app->session->setFlash('error', 'Ошибка удаления. ' . $e->getMessage());
 
-            );
+
         }
 
         return $this->redirect(['index']);

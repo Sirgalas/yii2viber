@@ -51,7 +51,7 @@ class Viber
         $this->phones = $phones;
     }
 
-    private function writeToTextLog($result, $viber_transaction, $phones): void
+    private function writeToTextLog($result, $viber_transaction, $phones)
     {
         $path = \Yii::getAlias('@frontend').'/runtime/viber_report';
         $fileName = $path.'/query_'.$viber_transaction->id.'_'.date('Ymd_H').'.txt';
@@ -70,7 +70,7 @@ class Viber
      *
      * @throws \Exception
      */
-    public function sendMessage(): bool
+    public function sendMessage()
     {
         if ($this->viber_message->status !== ViberMessage::STATUS_PROCESS) {
             return false;
@@ -128,7 +128,7 @@ class Viber
      * @param array $phones
      * @throws \Exception
      */
-    private function saveNewTransaction(array $phones): void
+    private function saveNewTransaction(array $phones)
     {
         $tVM = new ViberTransaction([
                                         'user_id' => $this->viber_message->user_id,
@@ -157,12 +157,12 @@ class Viber
      * @return bool
      * @throws \yii\db\Exception
      */
-    public function prepareTransaction(): ?bool
+    public function prepareTransaction()
     {
-
         $db = Yii::$app->db;
         $transaction = $db->beginTransaction();
         $contact_collection_ids = $this->viber_message->getMessageContactCollections()->select(['contact_collection_id'])->distinct('contact_collection_id')->column();
+
         foreach ($contact_collection_ids as $k => $v) {
             if (\is_int($v)) {
                 $contact_collection_ids[] = (string)$v;
@@ -187,7 +187,7 @@ class Viber
             $tPhones = [];
             foreach ($phones as $phone) {
                 $tPhones[] = ['phone' => $phone, 'status' => 'new', 'message_id' => $this->viber_message->id];
-                if (\count($tPhones) >= Yii::$app->params['smsonline']['transaction_size_limit']) {
+                if (\count($tPhones) >= Yii::$app->params[$this->viber_message->provider]['transaction_size_limit']) {
                     $this->saveNewTransaction($tPhones);
                     $tPhones = [];
                 }

@@ -209,10 +209,13 @@ class InfoBip extends Provider
             }
             $commandsCount += 1;
             $command->addUpdate($where,$update);
+
+            print_r(['W:'=>$where,'U:'=>$update]);
         }
         if ($commandsCount) {
             $command->addUpdate(['status'=>Message_Phone_List::VIEWED, 'date_delivered'=>null],$update);
             $r = $command->executeBatch(Message_Phone_List::collectionName());
+            var_dump($r);
         }
         return true;
     }

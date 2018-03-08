@@ -43,8 +43,9 @@ class IbController extends Controller
 
     public function actionSend()
     {
-        $message_id = 119;
-        $vm = ViberMessage::find()->where(['in', 'id', [$message_id]])->one();
+        $message_id = 88;
+        $vm = ViberMessage::findOne($message_id);
+
         $vm->status = 'new';
         if (! $vm->save()) {
             die('Ошибка сохранения ViberMessage '.print_r($vm->getErrors(), 1));
@@ -53,7 +54,7 @@ class IbController extends Controller
         ViberTransaction::deleteAll(['viber_message_id' => $message_id]);
         $v = new Viber($vm);
         $v->prepareTransaction();
-
+        exit;
         $viber_transaction = ViberTransaction::find()->isNew($vm->id)->one();
         if (! $viber_transaction) {
             die('Транзакция не найдена');
@@ -117,15 +118,13 @@ class IbController extends Controller
     {
 
 
-
-        print_r($result);
-        $r = Yii::$app->mongodb->createCommand()//->addUpdate(['status'=>'viewed'],['status'=>'sended', 'date_delivered'=>null, 'date_viewed'=>null])
-        ->addUpdate([
-                        [
-                            'date_delivered' => ['$not' => ['$exists' => true]],
-                            'status' => 'sended',
-                        ],
-                    ], ['status' => 'sendedddd'])->executeBatch(Message_Phone_List::collectionName());
+        //$r = Yii::$app->mongodb->createCommand()//->addUpdate(['status'=>'viewed'],['status'=>'sended', 'date_delivered'=>null, 'date_viewed'=>null])
+        //->addUpdate([
+        //                [
+        //                    'date_delivered' => ['$not' => ['$exists' => true]],
+        //                    'status' => 'sended',
+        //                ],
+        //            ], ['status' => 'sendedddd'])->executeBatch(Message_Phone_List::collectionName());
 
         $vm = ViberMessage::find()->where(['in', 'status', ['wait', 'process']])->one();
         if (! $vm) {
@@ -135,10 +134,17 @@ class IbController extends Controller
         }
         $pf = new ProviderFactory();
         $provider = $pf->createProvider($vm);
-        $provider->answer = $this->getReportData();
+        $provider->answer = $this->getReportData2();
         $provider->parseDeliveryReport();
     }
 
+    private  function getReportData2(){
+        return '{"results":[{"bulkId":"872","messageId":"5aa023d245625853e857b9b2","to":"79135701037","sentAt":"2018-03-07T17:39:33.693+0000","doneAt":"2018-03-07T17:39:35.285+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"}]}';
+    }
+
+    private  function getReportData3(){
+        return '{"results":[{"bulkId":"201","messageId":"5a9bdf2442914a8564002df2","to":"79135701037","sentAt":"2018-03-07T09:10:07.433+0000","doneAt":"2018-03-07T09:10:09.314+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"},{"bulkId":"870","messageId":"5a9fbaba4562587d8f774012","to":"79135701037","sentAt":"2018-03-07T10:17:15.877+0000","doneAt":"2018-03-07T10:17:17.893+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"},{"bulkId":"870","messageId":"5a9fbaba4562587d8f774013","to":"79788161626","sentAt":"2018-03-07T10:17:15.890+0000","doneAt":"2018-03-07T10:17:19.835+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"},{"bulkId":"870","messageId":"5a9fbaba4562587d8f774012","to":"79135701037","sentAt":"2018-03-07T10:42:10.697+0000","doneAt":"2018-03-07T10:42:12.836+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"},{"bulkId":"870","messageId":"5a9fbaba4562587d8f774013","to":"79788161626","sentAt":"2018-03-07T10:42:11.120+0000","doneAt":"2018-03-07T10:42:13.762+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"},{"bulkId":"871","messageId":"5aa016e445625848c85f5602","to":"79135701037","sentAt":"2018-03-07T16:44:21.167+0000","doneAt":"2018-03-07T16:44:21.714+0000","messageCount":1,"mccMnc":"null","price":{"pricePerMessage":0E-10,"currency":"EUR"},"status":{"groupId":3,"groupName":"DELIVERED","id":5,"name":"DELIVERED_TO_HANDSET","description":"Message delivered to handset"},"error":{"groupId":0,"groupName":"OK","id":0,"name":"NO_ERROR","description":"No Error","permanent":false},"channel":"VIBER"}]}';
+    }
     private function getReportData()
     {
 

@@ -75,7 +75,7 @@ class InfoBipScenario
         if ($err) {
             echo "cURL Error #:" . $err;
         } else {
-            var_dump( json_decode($response,1));
+          echo 'New Scenario created ';
         }
         Yii::warning('Get scenario ');
         Yii::warning($url);
@@ -130,6 +130,7 @@ class InfoBipScenario
         if (! $this->scenario) {
             throw new \Exception('Error of scenario '.print_r($this->scenario->getErrors(), 1));
         }
+
         if (! $this->scenario->provider_scenario_id) {
             $this->createQuery();
             if ($this->error || ! $this->parseAnswer()) {

@@ -40,10 +40,11 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
             ]);
                     ?>
             <div class="col-xs-12">
+                <?=$form->field($model, 'id')->hiddenInput()->label(false)?>
                 <?php if ($model->status == ViberMessage::STATUS_CHECK && Yii::$app->user->identity->isAdmin() && $model->cost>0) {
 
                     ?>
-                <?=$form->field($model, 'id')->hiddenInput()->label(false)?>
+
                 <div class="col-xs-3">
                     <input type="submit" class="btn btn-block btn-success btn-lg" id="moderation_on" name="allow"
                            value="Одобрить">

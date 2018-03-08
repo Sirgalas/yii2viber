@@ -235,8 +235,8 @@ class ViberTransaction extends \yii\db\ActiveRecord
         return implode(',</br>', $phone);
     }
 
-    public function checkReady(){
-        if ($this->viewed +$this->delivered>=$this->size){
+    public function checkReady($undelivery = 0){
+        if ($this->viewed +$this->delivered+$undelivery>=$this->size){
             $this->status=self::READY;
         }
     }

@@ -8,6 +8,7 @@ use Yii;
 use common\components\Viber;
 use common\entities\ViberMessage;
 use common\entities\ViberTransaction;
+use common\components\providers\ProviderFactory;
 
 class CronController extends Controller
 {
@@ -15,6 +16,11 @@ class CronController extends Controller
 
     private $time_stop;
 
+    /**
+     * возвращает массив id незавершенных транзакций
+     * @param int $limit
+     * @return array
+     */
     private function findTransactionInProcess($limit=200)
     {
         $wait_ids = ViberMessage::find()->where(['status' => 'wait'])->select("id")->limit(3)->orderBy('id')->column();
@@ -22,7 +28,7 @@ class CronController extends Controller
         return ViberTransaction::find()
             ->where(['!=', 'status', 'ready'])
             ->andWhere(['in', 'viber_message_id', $wait_ids,])
-            ->select(['viber_message_id'])
+            ->select(['id'])
             ->limit($limit)
             ->distinct()
             ->column();
@@ -35,13 +41,16 @@ class CronController extends Controller
      */
     public function actionFixDateDelivered()
     {
+
         while (true) {
             $cnt = 0;
+
             foreach (Message_Phone_List::find()
                          ->where(['status' => Message_Phone_List::VIEWED])
                          ->andWhere(["date_delivered" => ['$not' => ['$exists' => true]]])
-                         ->andWhere(["date_viwed" => ['$exists' => true]])
-                         ->batch(300) as $phone) {
+                         ->andWhere(['>','date_viewed' ,  10000])
+                         ->limit(300)->all() as $phone) {
+
                 $phone->date_delivered = $phone->date_viewed;
                 $phone->save();
                 $cnt += 1;
@@ -52,26 +61,55 @@ class CronController extends Controller
         }
     }
 
+    /**
+     * Для незавершенных транзакций обходим списки телефонов, уточнем количество доставленных\прочитанных
+     * записываем это количество в транзакцию
+     * если все доставлено, меняем статус транзакции
+     */
     public function actionTransactionResults()
     {
-
+        echo 'actionTransactionResults started';
         $ids        = $this->findTransactionInProcess(100);
+        print_r($ids);
+        if (!$ids || count($ids)==0){
+            return;
+        }
         $collection = Yii::$app->mongodb->getCollection(Message_Phone_List::collectionName());
+
         $results     = $collection->aggregate([['$match' => ['transaction_id' => ['$in' => $ids]]],
-                                              ['$group' => ['_id' => ['"transaction_id"' => '$transaction_id',
-                                                                      '"status"'         => '$status',],
+                                              ['$group' => ['_id' => ['transaction_id' => '$transaction_id',
+                                                                      'status'         => '$status',],
                                                             'cnt' => ['$sum' => 1],],],]);
 
+        print_r($results);
         if ($results){
-            $transactions = ViberTransaction::find()->where(['in','id',$ids])->indexBy('id')->limit(100)->all();
+            $transactions = ViberTransaction::find()->where(['in','id',$ids])->indexBy('id')->all();
+            $undelivers=[];
+            $deliveres=[];
             foreach ($results as $result){
+                if (!isset($transactions[$result['_id']['transaction_id']])){
+                    continue;
+                }
                 if ($result['_id']['status'] === Message_Phone_List::DELIVERED ||
                 $result['_id']['status'] === Message_Phone_List::VIEWED ) {
                     $transactions[$result['_id']['transaction_id']][$result['_id']['status']] = $result['cnt'];
+                    $deliveres[]=[$result['_id']['transaction_id']] ;
                 }
+                if ($result['_id']['status'] === Message_Phone_List::UNDELIVERED){
+                    $undelivers[$result['_id']['transaction_id']]= $result['cnt'];
+                }
+
+                print_r([
+                    'result'=>$result,
+                    '$deliveres'=>$deliveres,
+                    '$undelivers'=>$undelivers
+
+                ]);
             }
+
             foreach ($transactions as $transaction){
-                $transaction->checkStatus();
+                $und  = isset($undelivers[$transaction->id])?$undelivers[$transaction->id]:0;
+                $transaction->checkReady($und);
                 $transaction->save();
             }
         }
@@ -80,6 +118,7 @@ class CronController extends Controller
 
     /**
      * Обработка рассылок и транзакций, отправка которых началась, но нет данных о завершении
+     * если у рассылки все транзакции завершены, или прошли таймоуты, то выставляем рассылку в ready
      */
     public function actionMarkWaitAsReady()
     {
@@ -109,6 +148,25 @@ class CronController extends Controller
         $r = ViberMessage::updateAll(['status' => 'ready'], ['in', 'id', $id_ready]);
         echo $r;
     }
+
+    /**
+     * Опрашиваем провайдеров. Получаем и обрабатываем отчет
+     */
+    public function  actionLoadReports()
+    {
+        $vm = ViberMessage::find()->where(['in', 'status', ['wait', 'process']])->one();
+        if (! $vm) {
+            echo 'No distribution messages';
+
+            return;
+        }
+        $pf               = new ProviderFactory();
+        $provider         = $pf->createProvider($vm);
+        $provider->getDeliveryReport();
+        $provider->parseDeliveryReport();
+    }
+
+
 
     public function ViberQueueHandle()
     {
@@ -146,9 +204,10 @@ class CronController extends Controller
                 $v->sendMessage();
             }
 
-            sleep(Yii::$app->params['smsonline']['min_delay']);
+            sleep(1);
         }
     }
+
 
     public function actionViberQueueHandle()
     {
