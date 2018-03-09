@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use common\notifications\RegisterNotification;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -47,6 +48,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        RegisterNotification::create(RegisterNotification::KEY_NEW_ACCOUNT, ['user' => Yii::$app->user->identity])
+            ->send();
         return $this->render('index');
     }
 

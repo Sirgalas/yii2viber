@@ -107,7 +107,32 @@ return [
             'autoWidget' => true,
         ],
 
-
+        'notifications' => [
+            'class' => 'webzop\notifications\Module',
+            'channels' => [
+                'screen' => [
+                    'class' => 'webzop\notifications\channels\ScreenChannel',
+                ],
+                'adminEmail' => [
+                    'class' => 'webzop\notifications\channels\EmailChannel',
+                    'message' => [
+                        'from' => 'notify@vibershop24.ru'
+                    ],
+                ],
+                //'telegram' => [
+                //    'class' => 'webzop\notifications\channels\EmailChannel',
+                //    'message' => [
+                //        'from' => 'notify@vibershop24.ru'
+                //    ],
+                //],
+                'email' => [
+                    'class' => 'webzop\notifications\channels\EmailChannel',
+                    'message' => [
+                        'from' => 'notify@vibershop24.ru'
+                    ],
+                ],
+            ],
+        ],
 
     ],
 ];

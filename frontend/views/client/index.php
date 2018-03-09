@@ -16,6 +16,108 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
 } else {
     $template = '{update} {delete}';
 }
+
+$columns = [
+    ['class' => 'yii\grid\SerialColumn'],
+    [
+        'attribute' => 'id',
+        'headerOptions' => ['width' => '40'],
+    ],
+    'email:email',
+    'attribute'=>'username'
+    ];
+if (Yii::$app->user->identity->isAdmin()) {
+    $columns[]=['attribute' => 'created_at', 'value' => function ($model) {
+        return date('Y-m-d', $model->created_at).' '.date('H:i', $model->created_at);
+    }, 'format'  => 'raw', 'label' => 'Дата. Регист.'];
+    }
+    //'password_hash',
+    //'auth_key',
+$columns[]=    [
+        'attribute' => 'confirmed_at',
+        'label' => 'Одбр.',
+        'headerOptions' => ['width' => '30'],
+        'value' => function ($model) {
+            if ($model->confirmed_at) {
+                return 'Yes';
+            } else {
+                return 'No';
+            };
+        },
+        'filter' => ['Yes', 'No'],
+    ];
+$columns[]=    [
+        'attribute' => 'blocked_at',
+        'label' => 'Блк.',
+        'headerOptions' => ['width' => '30'],
+        'value' => function ($model) {
+            if ($model->blocked_at) {
+                return 'Yes';
+            } else {
+                return 'No';
+            };
+        },
+        'filter' => ['Yes', 'No'],
+    ];
+
+$columns[]=    [
+        'attribute' => 'type',
+        'label'=>'Статус',
+        'filter' => ['dealer' => 'dealer', 'client' => 'client'],
+        'value'=>function($model){
+            return $model->theStatus;
+        }
+    ];
+
+$columns[]=    [
+        'class'=>'kartik\grid\EditableColumn',
+        'attribute'=>'cost',
+        'label'=>'Цена ',
+        'value'=>function($model){return number_format($model->cost,2) ; },
+
+        'editableOptions'=> function ($model, $key, $index) {
+            return [
+                'header'=>Yii::t('front','edit_cost'),
+
+                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                'formOptions' => [
+                    'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
+                ]
+            ];
+        }
+    ];
+$columns[]=    [
+        'class'=>'kartik\grid\EditableColumn',
+        'attribute'=>'balance',
+        'label'=>'Баланс SMS',
+        'value'=>function($model){return number_format($model->balance); },
+
+        'editableOptions'=> function ($model, $key, $index) {
+            return [
+                'header'=>Yii::t('front','edit_balance'),
+
+                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                'formOptions' => [
+                    'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-balance'),
+                ]
+            ];
+        }
+    ];
+
+$columns[]=    [
+        'class' => 'yii\grid\ActionColumn',
+        'template' => '{update}{delete}{switch}',//{balance}{password}
+        'buttons' => [
+            'balance' => function ($url, $model) {
+                return Html::a('<i class="fa fa-fw   fa-money"></i>', $url);
+            },
+
+            'switch' => function ($url, $model) {
+                return Html::a('<i class="fa fa-fw  fa-user-secret"></i>', $url);
+            },
+        ],
+    ];
+
 ?>
 <div class="user-index">
 
@@ -39,123 +141,8 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
 
                                 ],
                             ],
-                            'columns' => [
-                                ['class' => 'yii\grid\SerialColumn'],
+                            'columns' =>  $columns
 
-                                [
-                                    'attribute' => 'id',
-                                    'headerOptions' => ['width' => '40'],
-                                ],
-
-                                'email:email',
-                                'attribute'=>'username',
-                                [
-                                    'attribute'=>'created_at',
-                                    'value' => function ($model) {
-                                         return date('Y-m-d',$model->created_at) .' ' .  date('H:i',$model->created_at);
-                                    },
-                                    'format'=>'raw',
-                                    'label'=>'Дата. Регист.'
-                                ],
-                                //'password_hash',
-                                //'auth_key',
-                                [
-                                    'attribute' => 'confirmed_at',
-                                    'label' => 'Одбр.',
-                                    'headerOptions' => ['width' => '30'],
-                                    'value' => function ($model) {
-                                        if ($model->confirmed_at) {
-                                            return 'Yes';
-                                        } else {
-                                            return 'No';
-                                        };
-                                    },
-                                    'filter' => ['Yes', 'No'],
-                                ],
-                                [
-                                    'attribute' => 'blocked_at',
-                                    'label' => 'Блк.',
-                                    'headerOptions' => ['width' => '30'],
-                                    'value' => function ($model) {
-                                        if ($model->blocked_at) {
-                                            return 'Yes';
-                                        } else {
-                                            return 'No';
-                                        };
-                                    },
-                                    'filter' => ['Yes', 'No'],
-                                ],
-                                //'unconfirmed_email:email',
-
-                                //'registration_ip',
-                                //'created_at',
-                                //'updated_at',
-                                //'flags',
-                                //'last_login_at',
-                                [
-                                    'attribute' => 'type',
-                                    'label'=>'Статус',
-                                    'filter' => ['dealer' => 'dealer', 'client' => 'client'],
-                                    'value'=>function($model){
-                                        return $model->theStatus;
-                                    }
-                                ],
-                                //'dealer_id',
-                                [
-                                    'class'=>'kartik\grid\EditableColumn',
-                                    'attribute'=>'cost',
-                                    'label'=>'Цена (руб.)',
-                                    'value'=>function($model){return number_format($model->cost,2) ; },
-
-                                    'editableOptions'=> function ($model, $key, $index) {
-                                        return [
-                                            'header'=>Yii::t('front','edit_cost'),
-                                            'size'=>'md',
-                                            'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-                                            'formOptions' => [
-                                                'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
-                                            ]
-                                        ];
-                                    }
-                                ],
-                                [
-                                    'class'=>'kartik\grid\EditableColumn',
-                                    'attribute'=>'balance',
-                                    'label'=>'Баланс SMS',
-                                    'value'=>function($model){return number_format($model->balance); },
-
-                                     'editableOptions'=> function ($model, $key, $index) {
-                                        return [
-                                            'header'=>Yii::t('front','edit_balance'),
-                                            'size'=>'md',
-                                            'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-                                            'formOptions' => [
-                                                'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-balance'),
-                                            ]
-                                        ];
-                                    }
-                                ],
-                                [
-                                    'attribute'=>'dealer_confirmed',
-                                    'label'=>'подтв. дилер',
-                                    'format'=>'boolean',
-                                ],
-                                //'image',
-
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{update}{delete}{switch}',//{balance}{password}
-                                    'buttons' => [
-                                        'balance' => function ($url, $model) {
-                                            return Html::a('<i class="fa fa-fw   fa-money"></i>', $url);
-                                        },
-
-                                        'switch' => function ($url, $model) {
-                                            return Html::a('<i class="fa fa-fw  fa-user-secret"></i>', $url);
-                                        },
-                                    ],
-                                ],
-                            ],
                         ]);?>
     <?php Pjax::end(); ?>
 </div>
