@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\entities\BalanceLog;
 use common\entities\user\User;
 use common\mailers\WantDealer;
 use Yii;
@@ -9,6 +10,7 @@ use common\entities\user\Client;
 use common\entities\user\ClientSearch;
 use yii\db\Exception;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -110,7 +112,15 @@ class ClientController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        if (!Yii::$app->user->identity->isAdmin()){
+            throw new ForbiddenHttpException();
+        }
+        $user = $this->findModel($id);
+        if (BalanceLog::find()->where(['user_id'=>$id])->count()>0){
+            $user->block();
+        } else {
+            $user->delete();
+        }
 
         return $this->redirect(['index']);
     }

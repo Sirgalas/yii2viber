@@ -17,6 +17,7 @@ if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USE
     $template = '{update} {delete}';
 }
 
+//Yii::$app->timeZone = 'Europe/Kiev';
 $columns = [
     ['class' => 'yii\grid\SerialColumn'],
     [
@@ -28,11 +29,19 @@ $columns = [
     ];
 if (Yii::$app->user->identity->isAdmin()) {
     $columns[]=['attribute' => 'created_at', 'value' => function ($model) {
+        return Yii::$app->getFormatter()->asDatetime($model->created_at);
+        //return date('Y-m-d', $model->created_at).' '.date('H:i', $model->created_at);
+    }, 'format'  => 'raw', 'label' => 'Дата. Регист.'];
+    $columns[]=['attribute' => 'created_at', 'value' => function ($model) {
+
         return date('Y-m-d', $model->created_at).' '.date('H:i', $model->created_at);
     }, 'format'  => 'raw', 'label' => 'Дата. Регист.'];
+
+    //$columns[]='created_at:dateFormat';
     }
     //'password_hash',
     //'auth_key',
+
 $columns[]=    [
         'attribute' => 'confirmed_at',
         'label' => 'Одбр.',
@@ -73,12 +82,19 @@ $columns[]=    [
         'class'=>'kartik\grid\EditableColumn',
         'attribute'=>'cost',
         'label'=>'Цена ',
-        'value'=>function($model){return number_format($model->cost,2) ; },
+
+        'value'=>function($model){
+            if (!$model->cost){
+                return '0.00';
+            } else {
+                return $model->cost;
+            }
+        },
 
         'editableOptions'=> function ($model, $key, $index) {
             return [
-                'header'=>Yii::t('front','edit_cost'),
-
+                'header'=>Yii::t('front','Цену'),
+                'placement'=>'auto',
                 'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
                 'formOptions' => [
                     'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
@@ -94,8 +110,8 @@ $columns[]=    [
 
         'editableOptions'=> function ($model, $key, $index) {
             return [
-                'header'=>Yii::t('front','edit_balance'),
-
+                'header'=>Yii::t('front','Баланс'),
+                'placement'=>'auto',
                 'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
                 'formOptions' => [
                     'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-balance'),

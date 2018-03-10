@@ -22,7 +22,7 @@ use common\entities\BalanceLog;
  * @property bool $dealer_confirmed
  * @property string $image
  * @property integer want_dealer
- * @property  number cost
+ * @property  string cost
  * @property  string tel
  * @property  string time_work
  * @property  string first_name
@@ -106,7 +106,7 @@ class User extends BaseUser
         $rules['dealer_confirmed'] = ['dealer_confirmed', 'boolean'];
         $rules['dealer_id'] = ['dealer_id', 'integer'];
         //$rules['typeLength'] = ['dealer_id','exist','skipOnError' => true,'targetClass' => self::class,'targetAttribute' => ['dealer_id' => 'id'],];
-        $rules['cost'] = ['cost', 'number'];
+        $rules['cost'] = ['cost', 'string', 'max'=>12];
         $rules['tel'] = ['tel', 'string'];
         $rules['admin_comment'] = ['admin_comment', 'string', 'max'=>1024];
         $rules['first_name'] = ['first_name', 'string', 'max' => 100];
@@ -130,7 +130,7 @@ class User extends BaseUser
         $labels['dealer_confirmed'] = 'Статус дилера';
         $labels['dealer_id'] = 'Родительский дилер';
         $labels['image'] = 'Аватар';
-        $labels['cost'] = 'Цена за сообщение';
+
         $labels['tel'] = 'Телефон';
         $labels['time_work'] = 'Время работы';
         $labels['first_name'] = 'Время работы';
@@ -317,7 +317,7 @@ class User extends BaseUser
             $this->logBalance->save();
 
         } else if( $this->getAttribute('balance') != $this->getOldAttribute('balance')){
-            $this->logBalance = new BalanceLog(['user_id'=>$this->id, 'old_balance'=>''.$this->getOldAttribute('balance'), 'new_balance'=>''.$this->getAttribute('balance')] );
+            $this->logBalance = new BalanceLog(['user_id'=>$this->id, 'old_balance'=>''.($this->getOldAttribute('balance')*1), 'new_balance'=>''.$this->getAttribute('balance')] );
             $this->logBalance->save();
             $err=$this->logBalance->getErrors();
         }

@@ -5,7 +5,6 @@ use common\notifications\RegisterNotification;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use common\forms\LoginForm;
 
 /**
@@ -45,6 +44,7 @@ class SiteController extends Controller
      * Displays homepage.
      *
      * @return string
+     * @throws \Exception
      */
     public function actionIndex()
     {
@@ -57,6 +57,7 @@ class SiteController extends Controller
      * Login action.
      *
      * @return string
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionLogin()
     {

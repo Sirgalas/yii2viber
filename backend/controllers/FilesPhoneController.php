@@ -21,7 +21,7 @@ class FilesPhoneController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::class(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -31,7 +31,9 @@ class FilesPhoneController extends Controller
 
     /**
      * Lists all FilesPhone models.
+     *
      * @return mixed
+     * @throws \yii\base\InvalidArgumentException
      */
     public function actionIndex()
     {
@@ -48,6 +50,7 @@ class FilesPhoneController extends Controller
      * Displays a single FilesPhone model.
      * @param integer $id
      * @return mixed
+     * @throws \yii\base\InvalidArgumentException
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
@@ -61,6 +64,7 @@ class FilesPhoneController extends Controller
      * Creates a new FilesPhone model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws \yii\base\InvalidArgumentException
      */
     public function actionCreate()
     {
@@ -80,6 +84,7 @@ class FilesPhoneController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws \yii\base\InvalidArgumentException
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -98,9 +103,13 @@ class FilesPhoneController extends Controller
     /**
      * Deletes an existing FilesPhone model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     * @throws \yii\web\NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {

@@ -46,6 +46,8 @@ class ReportController extends Controller
         return $this->render('list', compact('searchModel','dataProvider'));
     }
 
-   
+   public function actionInfobip(){
+        return 'ok';
+   }
     
 }
