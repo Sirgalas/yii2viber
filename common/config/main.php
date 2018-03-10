@@ -30,12 +30,15 @@ return [
 //            'class' => 'yii\caching\MemCache',
 //            'useMemcached' => true,
 //        ],
+//        'timeZone' => 'Europe/Moscow',
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'dateFormat' => 'php:d.m.Y',
-            'datetimeFormat' => 'php:j F, H:i',
+            'datetimeFormat' => 'php:Y-m-d, H:i',
+
             'timeFormat' => 'php:H:i:s',
             'defaultTimeZone' => 'Europe/Moscow',
+            'timeZone' => 'GMT+3',
             'locale' => 'ru-RU',
             'currencyCode' => 'руб',
         ],
@@ -107,7 +110,32 @@ return [
             'autoWidget' => true,
         ],
 
-
+        'notifications' => [
+            'class' => 'webzop\notifications\Module',
+            'channels' => [
+                'screen' => [
+                    'class' => 'webzop\notifications\channels\ScreenChannel',
+                ],
+                'adminEmail' => [
+                    'class' => 'webzop\notifications\channels\EmailChannel',
+                    'message' => [
+                        'from' => 'notify@vibershop24.ru'
+                    ],
+                ],
+                //'telegram' => [
+                //    'class' => 'webzop\notifications\channels\EmailChannel',
+                //    'message' => [
+                //        'from' => 'notify@vibershop24.ru'
+                //    ],
+                //],
+                'email' => [
+                    'class' => 'webzop\notifications\channels\EmailChannel',
+                    'message' => [
+                        'from' => 'notify@vibershop24.ru'
+                    ],
+                ],
+            ],
+        ],
 
     ],
 ];

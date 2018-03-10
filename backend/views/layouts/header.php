@@ -28,8 +28,10 @@ use yii\helpers\Html;
                         <i class="fa fa-envelope-o"></i>
                         <span class="label label-success">4</span>
                     </a>
+                    <?php echo \webzop\notifications\widgets\Notifications::widget() ?>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 4 messages</li>
+
+                        <li class="header"></li>
                         <li>
                             <!-- inner menu: contains the actual data -->
                             <ul class="menu">

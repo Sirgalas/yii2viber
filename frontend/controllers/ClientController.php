@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\entities\BalanceLog;
 use common\entities\user\User;
 use common\mailers\WantDealer;
 use Yii;
@@ -9,6 +10,7 @@ use common\entities\user\Client;
 use common\entities\user\ClientSearch;
 use yii\db\Exception;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -110,7 +112,15 @@ class ClientController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        if (!Yii::$app->user->identity->isAdmin()){
+            throw new ForbiddenHttpException();
+        }
+        $user = $this->findModel($id);
+        if (BalanceLog::find()->where(['user_id'=>$id])->count()>0){
+            $user->block();
+        } else {
+            $user->delete();
+        }
 
         return $this->redirect(['index']);
     }
@@ -153,7 +163,7 @@ class ClientController extends Controller
                 throw new \Exception(json_encode($user->getErrors()));
 
             $transaction->commit();
-            return ['output' => number_format($user->cost,2) . ' руб' , 'message' => ''];
+            return ['output' => number_format($user->cost,2)   , 'message' => ''];
         } catch (\Exception $e){
             $transaction->rollBack();
             return ['output' => '', 'message' => 'error:: ' . $e->getMessage() ];
@@ -177,14 +187,23 @@ class ClientController extends Controller
         if ($user->id == Yii::$app->user->id && !Yii::$app->user->identity->isAdmin()) {
             return ['output'=>'', 'message'=>'Вы не можете править собственный баланс'];
         }
+        $edidableIndex= $_POST['editableIndex'];
+        $paramName = "client-$edidableIndex-balance-disp";
+        $value=1 * $_POST['Client'][$edidableIndex]['balance'] ;
+        if ($value<0){
+            return ['output'=>'', 'message'=>'Баланс не может быть отрицательным'];
+        }
+        $diff = $user->balance - $value;
+        if (Yii::$app->user->identity->balance + $diff <0){
+            return ['output'=>'', 'message'=>'У вас недостаточно средств для этой операции'];
+        }
         $db=Yii::$app->db;
         $transaction = $db->beginTransaction();
         try {
-            $edidableIndex= $_POST['editableIndex'];
-            $paramName = "client-$edidableIndex-balance-disp";
-            $value=$_POST['Client'][$edidableIndex]['balance'] ;
-            $diff = $user->balance - 1*$value;
+
+
             $user->balance = $value;
+
             Yii::$app->user->identity->balance +=$diff;
                 if(!$user->save())
                     throw new \Exception(json_encode($user->getErrors()));

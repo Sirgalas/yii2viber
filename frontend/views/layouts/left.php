@@ -6,7 +6,7 @@ $controller = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
 ?>
 <aside class="main-sidebar">
-    <section class="sidebar">
+    <section class="sidebar" style="padding-bottom: 220px">
         <div class="user-panel">
             <div class="pull-left image">
                 <img src="/images/logo.png" class="img-circle" alt="User Image"/>

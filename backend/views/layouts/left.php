@@ -26,6 +26,8 @@
                         ['label' => 'Цены', 'url' => ['/homepage/price']],
                         ],
                     ],
+                    ['label' => 'Баланс Лог', 'url' => ['/balance-log']],
+                    ['label' => 'Infobip Сценарии', 'url' => ['/scenario']],
                 ],
             ]
         ) ?>
