@@ -71,15 +71,10 @@ h3:hover{
 .parallax-block p{
   font-size: 26px;
   color: #fff;
+  line-height: 30px;
 }
 .block-2 .blue{
   color:#337ab7;
-}
-
-.copyright{
-  font-size: 26px;
-  margin-bottom: 5px;
-  padding-bottom: 5px;
 }
 
 .pricing {
@@ -101,7 +96,7 @@ h3:hover{
   font-size: 26px;
 }
 .pricing header p{
-  color: #fff;
+  color: #313131;
   text-align: center;
 }
 .pricing ul{
@@ -535,11 +530,6 @@ p {
   text-align: left;
 }
 
-@media only screen and (max-width: 979px) {
-  .index .block-3 h3 {
-    height: 100px;
-  }
-}
 @media only screen and (max-width: 767px) {
   .index .block-3 .element {
     padding: 0;
@@ -850,6 +840,9 @@ p {
   }
 }
 @media only screen and (max-width: 480px) {
+  #header h1{
+    padding: 0;
+  }
   .sample {
     height: auto;
     /*delete this class*/
