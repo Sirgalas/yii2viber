@@ -42,7 +42,8 @@
         "friday14/cloud-mail-ru": "@dev",
         "infobip/infobip-api-php-client": "dev-master",
         "himiklab/yii2-recaptcha-widget": "*",
-        "webzop/yii2-notifications": "*"
+        "webzop/yii2-notifications": "*",
+        "sonko-dmitry/yii2-telegram-bot-api": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
