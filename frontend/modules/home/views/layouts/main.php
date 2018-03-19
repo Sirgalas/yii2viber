@@ -27,7 +27,6 @@ $this->title=Yii::$app->name;
 <body>
 <?php $this->beginBody() ?>
 <body class="index">
-<?php var_dump(Yii::$app->bot); ?>
 <?= Alert::widget() ?>
 <?= $this->render('header.php') ?>
 <?= $content ?>
