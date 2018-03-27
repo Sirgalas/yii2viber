@@ -7,6 +7,7 @@ return  [
     'showScriptName' => false,
     'rules' => [
         //'' => 'site/index',
+        'report/infobip'=>'viber/infobip-report',
         'auth/register/<id:\w+>' => 'user/registration/register',
         'viber-message/moderate'=>'viber-message/moderate',
         '<_a:login|logout>' => 'site/<_a>',

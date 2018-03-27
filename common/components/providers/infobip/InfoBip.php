@@ -31,14 +31,8 @@ class InfoBip extends Provider
 
     private function toJson($phones, $transaction_id)
     {
-        $data = [
-            'bulkId' => $transaction_id,
-            'scenarioKey' => $this->scenario->provider_scenario_id,
-            'destinations' => [],
-            'viber' => [
-                'isPromotional' => $this->viberMessage->isPromotional(),
-            ],
-        ];
+        $data = ['bulkId'       => $transaction_id, 'scenarioKey' => $this->scenario->provider_scenario_id,
+                 'destinations' => [], 'viber' => ['isPromotional' => $this->viberMessage->isPromotional(),],];
 
         if (! $this->type !== ViberMessage::ONLYIMAGE) {
             $data['viber']['text'] = $this->text;
@@ -48,17 +42,13 @@ class InfoBip extends Provider
         }
         if ($this->type === ViberMessage::TEXTBUTTON || $this->type === ViberMessage::TEXTBUTTONIMAGE) {
             $data['viber']['buttonText'] = $this->title_button;
-            $data['viber']['buttonURL'] = $this->url_button;
+            $data['viber']['buttonURL']  = $this->url_button;
         }
 
         foreach ($phones as $phone) {
-            $data['destinations'][] = [
-                'messageId' => (string)$phone->_id,
-                'to' => [
-                    'phoneNumber' => $phone->phone,
+            $data['destinations'][] = ['messageId' => (string)$phone->_id, 'to' => ['phoneNumber' => $phone->phone,
 
-                ],
-            ];
+            ],];
         }
 
         return json_encode($data);
@@ -73,9 +63,9 @@ class InfoBip extends Provider
     public function sendToViber($phones, $transaction_id)
     {
 
-        $this->err = '';
+        $this->err    = '';
         $this->answer = '';
-        $IBScenario = new InfoBipScenario($this->viberMessage, $this->config);
+        $IBScenario   = new InfoBipScenario($this->viberMessage, $this->config);
         if ($IBScenario->defineScenario()) {
             $this->scenario = $IBScenario->getScenario();
             if ($this->viberMessage->scenario_id !== $this->scenario->id) {
@@ -89,25 +79,19 @@ class InfoBip extends Provider
         $curl = curl_init();
 
         $bpAuth = new BasicAuthConfiguration($this->config['login'], $this->config['password']);
-        curl_setopt_array($curl, [
-            CURLOPT_URL => 'http://api.infobip.com/omni/1/advanced',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $this->toJson($phones, $transaction_id),
+        curl_setopt_array($curl,
+                          [CURLOPT_URL            => 'http://api.infobip.com/omni/1/advanced',
+                           CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10,
+                           CURLOPT_TIMEOUT        => 30, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                           CURLOPT_CUSTOMREQUEST  => 'POST',
+                           CURLOPT_POSTFIELDS     => $this->toJson($phones, $transaction_id),
 
-            CURLOPT_HTTPHEADER => [
-                'accept: application/json',
-                'authorization: '.$bpAuth->getAuthenticationHeader(),
-                'content-type: application/json',
-            ],
-        ]);
+                           CURLOPT_HTTPHEADER => ['accept: application/json',
+                                                  'authorization: '.$bpAuth->getAuthenticationHeader(),
+                                                  'content-type: application/json',],]);
 
         $response = curl_exec($curl);
-        $err = curl_error($curl);
+        $err      = curl_error($curl);
 
         curl_close($curl);
 
@@ -137,7 +121,7 @@ class InfoBip extends Provider
                 foreach ($json['messages'] as $message) {
                     Yii::warning('Message_Response:'.print_r($message, 1));
                     $message_id = $message['messageId'];
-                    $phone = $message['to']['phoneNumber'];
+                    $phone      = $message['to']['phoneNumber'];
                     if (isset($phonesArray[''.$phone])) {
                         $mPhone = $phonesArray[''.$phone];
                         if ((string)$mPhone->_id !== $message_id) {
@@ -168,7 +152,7 @@ class InfoBip extends Provider
             return;
         }
         $answer = json_decode($this->answer, 1);
-        $err = json_last_error();
+        $err    = json_last_error();
         if ($err) {
             $this->error = $err;
             Yii::warning('GET INFOBIP PARSE REPORT JSON ERROR ::'.json_last_error_msg());
@@ -176,18 +160,18 @@ class InfoBip extends Provider
             return;
         }
         $transaction_ids = [];
-        $commandsCount = 0;
-        $command = Yii::$app->mongodb->createCommand();
+        $commandsCount   = 0;
+        $command         = Yii::$app->mongodb->createCommand();
         foreach ($answer['results'] as $result) {
-            $update = [];
+            $update           = [];
             $update['status'] = InfobipStatus::parseStatus($result);
-            $update['error'] = 0;
+            $update['error']  = 0;
             if (isset($result['error'])) {
                 $update['error'] = $result['error']['id'];
             }
             $update['messageCount'] = $result['messageCount'];
             if (isset($result['price']) && isset($result['price']['currency']) && isset($result['price']['pricePerMessage'])) {
-                $update['currency'] = $result['price']['currency'];
+                $update['currency']        = $result['price']['currency'];
                 $update['pricePerMessage'] = $result['price']['pricePerMessage'];
             }
             if (is_array($result['bulkId'])) {
@@ -208,15 +192,16 @@ class InfoBip extends Provider
                 $update['date_viewed'] = strtotime($result['doneAt']);
             }
             $commandsCount += 1;
-            $command->addUpdate($where,$update);
+            $command->addUpdate($where, $update);
 
-            print_r(['W:'=>$where,'U:'=>$update]);
+            print_r(['W:' => $where, 'U:' => $update]);
         }
         if ($commandsCount) {
-            $command->addUpdate(['status'=>Message_Phone_List::VIEWED, 'date_delivered'=>null],$update);
+            //$command->addUpdate(['status'=>Message_Phone_List::VIEWED, 'date_delivered'=>null],$update);
             $r = $command->executeBatch(Message_Phone_List::collectionName());
             var_dump($r);
         }
+
         return true;
     }
 
@@ -226,24 +211,16 @@ class InfoBip extends Provider
     public function getDeliveryReport()
     {
 
-        $curl = curl_init();
+        $curl   = curl_init();
         $bpAuth = new BasicAuthConfiguration($this->config['login'], $this->config['password']);
-        curl_setopt_array($curl, [
-            CURLOPT_URL => 'http://api.infobip.com/omni/1/reports?channel=VIBER',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_POSTFIELDS => '',
-            CURLOPT_HTTPHEADER => [
-                'accept: application/json',
-                'authorization: '.$bpAuth->getAuthenticationHeader(),
-            ],
-        ]);
+        curl_setopt_array($curl, [CURLOPT_URL            => 'http://api.infobip.com/omni/1/reports?channel=VIBER',
+                                  CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10,
+                                  CURLOPT_TIMEOUT        => 30, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                  CURLOPT_CUSTOMREQUEST  => 'GET', CURLOPT_POSTFIELDS => '',
+                                  CURLOPT_HTTPHEADER     => ['accept: application/json',
+                                                             'authorization: '.$bpAuth->getAuthenticationHeader(),],]);
         $response = curl_exec($curl);
-        $err = curl_error($curl);
+        $err      = curl_error($curl);
         curl_close($curl);
 
         if ($err) {
@@ -253,5 +230,69 @@ class InfoBip extends Provider
             $this->answer = $response;
             Yii::warning('GET INFOBIP REPORT::'.$response);
         }
+    }
+
+    public function logNificationQuery()
+    {
+        $path = \Yii::getAlias('@frontend').'/runtime/infobip_report';
+        $data = file_get_contents("php://input");
+        if (! file_exists($path)) {
+            echo 'notfound,   mkdir=', mkdir($path);
+        }
+        try {
+            $fileName = $path.'/post_'.date('Ymd_H').'.txt';
+            if (isset($_POST)) {
+                file_put_contents($fileName, date("H:i:s")."\n=====================\n".print_r($_POST, 1), FILE_APPEND);
+            } else {
+                file_put_contents($fileName, 'NO DATA', FILE_APPEND);
+                echo 'POST: NO DATA';
+            }
+
+            file_put_contents($fileName, "\nDirty Post Data\n"."\n=====================\n".$data, FILE_APPEND);
+            if (isset($_GET)) {
+                file_put_contents($path.'/get_'.date('Ymd_H').'.txt', print_r($_GET, 1), FILE_APPEND);
+            } else {
+                file_put_contents($path.'/get_'.date('Ymd_H').'.txt', 'NO DATA', FILE_APPEND);
+                echo 'GET: NO DATA';
+            }
+        } catch (\Exception $e) {
+            file_put_contents($path.'/error_'.date('Ymd_H').'.txt', $e->getMessage(), FILE_APPEND);
+            echo "Error", $e->getMessage();
+        }
+    }
+
+    public function handleNotification($data)
+    {
+        $data = json_decode($data, 1);
+        if (isset($data['results']) && count($data['results']) > 0) {
+            $commandsCount = 0;
+            $command       = Yii::$app->mongodb->createCommand();
+            foreach ($data['results'] as $item) {
+                if (! isset($item['seenAt'])) {
+                    continue;
+                }
+                $update                = [];
+                $update['status']      = Message_Phone_List::VIEWED;
+                $update['error']       = 0;
+                $update['date_viewed'] = strtotime($item['seenAt']);
+
+                try {
+                    $where = ['=', '_id', new \MongoDB\BSON\ObjectId($item['messageId'])];
+                } catch (\MongoDB\Driver\Exception\InvalidArgumentException $e) {
+
+                    $where = ['=', 'msg_id', $item['messageId']];
+                }
+                $command->addUpdate($where, $update);
+                $commandsCount += 1;
+            }
+                if ($commandsCount) {
+                    $r = $command->executeBatch(Message_Phone_List::collectionName());
+                    var_dump($r);
+                }
+
+            return true;
+        }
+
+        return false;
     }
 }

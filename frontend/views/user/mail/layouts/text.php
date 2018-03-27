@@ -10,11 +10,12 @@
  */
 
 /**
- * @var yii\web\View $this
- * @var dektrium\user\Module $module
+ * @var string $content main view render result
  */
-
-$this->title = $title;
 ?>
 
-<?//= $this->render('/_alert', ['module' => $module]);
+<?php $this->beginPage() ?>
+<?php $this->beginBody() ?>
+<?= $content ?>
+<?php $this->endBody() ?>
+<?php $this->endPage() ?>

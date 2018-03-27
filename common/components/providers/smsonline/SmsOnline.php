@@ -124,7 +124,15 @@ class SmsOnline extends Provider
                 foreach ($xml->msg_id as $key => $msg) {
                     $attr = $msg->attributes();
                     $msg = ((string)$msg);
-                    $mPhone = $phonesArray[urldecode(''.$attr['phone'])];
+                    $phone=urldecode(''.$attr['phone']);
+                    if (!isset($phonesArray[$phone])){
+                        $phone = '+' . $phone;
+
+                        if (!isset($phonesArray[$phone])) {
+                            continue;
+                        }
+                    }
+                    $mPhone = $phonesArray[$phone];
                     $mPhone['status'] = 'sended';
                     $mPhone['msg_id'] = $msg;
                     $mPhone->save();

@@ -48,8 +48,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        RegisterNotification::create(RegisterNotification::KEY_NEW_ACCOUNT, ['user' => Yii::$app->user->identity])
-            ->send();
+        //RegisterNotification::create(RegisterNotification::KEY_NEW_ACCOUNT, ['user' => Yii::$app->user->identity])
+        //    ->send();
         return $this->render('index');
     }
 

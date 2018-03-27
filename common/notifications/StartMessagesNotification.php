@@ -16,7 +16,7 @@ use webzop\notifications\Notification;
  * @property array $route
  * @property mixed $title
  */
-class RegisterNotification extends Notification
+class StartMessagesNotification extends Notification
 {
     const KEY_NEW_ACCOUNT    = 'new_account';
 
