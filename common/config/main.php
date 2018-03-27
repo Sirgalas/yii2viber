@@ -38,7 +38,7 @@ return [
 
             'timeFormat' => 'php:H:i:s',
             'defaultTimeZone' => 'Europe/Moscow',
-            'timeZone' => 'GMT+3',
+//            'timeZone' => 'GMT+3',
             'locale' => 'ru-RU',
             'currencyCode' => 'руб',
         ],

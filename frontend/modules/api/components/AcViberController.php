@@ -2,6 +2,7 @@
 namespace frontend\modules\api\components;
 
 use yii\filters\auth\HttpBasicAuth;
+use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
 
 class AcViberController extends ActiveController
@@ -14,7 +15,7 @@ class AcViberController extends ActiveController
             'class' => \yii\filters\Cors::class,
         ];
         $behaviors['authenticator'] = [
-            'class' => HttpBasicAuth::class
+            'class' => HttpBearerAuth::class,
         ];
         $behaviors['contentNegotiator'] = [
             'class' => \yii\filters\ContentNegotiator::class,
