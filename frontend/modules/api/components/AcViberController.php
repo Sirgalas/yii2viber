@@ -6,8 +6,7 @@ use yii\rest\ActiveController;
 
 class AcViberController extends ActiveController
 {
-
-
+    
     public function behaviors()
     {
         $behaviors = parent::behaviors();

@@ -28,7 +28,7 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/client',
                     'extraPatterns' => [
-                        'POST index'            =>  'index',
+                        'GET index'            =>  'index',
                         'OPTIONS index'         =>  'index',
                         'POST registration'     =>  'registration',
                         'OPTIONS registration'  =>  'registration',
