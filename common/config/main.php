@@ -34,11 +34,11 @@ return [
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'dateFormat' => 'php:d.m.Y',
-            'datetimeFormat' => 'php:Y-m-d, H:i',
-
+            'datetimeFormat' => 'php:Y-m-d H:i',
+            //'datetimeFormat' => 'php:j F, H:i',
             'timeFormat' => 'php:H:i:s',
             'defaultTimeZone' => 'Europe/Moscow',
-            'timeZone' => 'GMT+3',
+            //'timeZone' => 'GMT+3',
             'locale' => 'ru-RU',
             'currencyCode' => 'руб',
         ],

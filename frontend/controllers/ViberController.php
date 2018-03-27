@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use common\components\providers\infobip\InfoBip;
+use common\components\Viber;
 use common\entities\ViberTransaction;
 use frontend\forms\ViberNotification;
 use common\entities\mongo\Message_Phone_List;
@@ -19,6 +21,7 @@ class ViberController extends \yii\web\Controller
         if (in_array($action->id, ['report'])) {
             $this->enableCsrfValidation = false;
         }
+        $this->enableCsrfValidation = false;
 
         return parent::beforeAction($action);
     }
@@ -31,9 +34,9 @@ class ViberController extends \yii\web\Controller
             echo 'notfound,   mkdir=', mkdir($path);
         }
         try {
-            $fileName =$path.'/post_'.date('Ymd_H').'.txt';
+            $fileName = $path.'/post_'.date('Ymd_H').'.txt';
             if (isset($_POST)) {
-                file_put_contents($fileName, date("H:i:s") . "\n=====================\n".print_r($_POST, 1), FILE_APPEND);
+                file_put_contents($fileName, date("H:i:s")."\n=====================\n".print_r($_POST, 1), FILE_APPEND);
             } else {
                 file_put_contents($fileName, 'NO DATA', FILE_APPEND);
                 echo 'POST: NO DATA';
@@ -51,8 +54,6 @@ class ViberController extends \yii\web\Controller
 
         $data = $_POST;
 
-
-
         $vb_Note = new ViberNotification();
         $vb_Note->load($data, '');
 
@@ -66,16 +67,17 @@ class ViberController extends \yii\web\Controller
             //
             //}
             $phone = Message_Phone_List::find()->where(['msg_id' => $vb_Note->msg_id])->one();
-            if (!$phone) {
+            if (! $phone) {
                 echo 2;
-                file_put_contents($fileName,"\n      NOT FOUND ", FILE_APPEND);
+                file_put_contents($fileName, "\n      NOT FOUND ", FILE_APPEND);
+
                 return 'OK';
             }
             $changed = false;
-            file_put_contents($fileName, "\n --- Before action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
+            file_put_contents($fileName, "\n --- Before action ---\n".print_r($phone->getAttributes(), 1), FILE_APPEND);
             if ($vb_Note->type == 'undelivered') {
                 $phone->status = 'undelivered';
-                $changed = true;
+                $changed       = true;
             } else {
 
                 if (is_object($phone) & $phone->getAttribute('status') === 'new' || $phone->getAttribute('status') === 'sended') {
@@ -84,43 +86,55 @@ class ViberController extends \yii\web\Controller
                         if ($vb_Note->status == 'undelivered') {
 
                             $phone->status = 'undelivered';
-                            $changed = true;
+                            $changed       = true;
                         } else {
 
                             ;
-                            $phone->status = 'delivered';
+                            $phone->status         = 'delivered';
                             $phone->date_delivered = time();
-                            $changed = true;
+                            $changed               = true;
                         }
                     }
                     if ($vb_Note->type == 'seen') {
 
 
-                        $phone->status = 'viewed';
+                        $phone->status         = 'viewed';
                         $phone->date_delivered = time();
-                        $phone->date_viewed = time();
-                        $changed = true;
+                        $phone->date_viewed    = time();
+                        $changed               = true;
                     }
                 } elseif ($phone['status'] === 'delivered') {
 
                     if ($vb_Note->type == 'seen') {
 
-                        $phone->status = 'viewed';
+                        $phone->status      = 'viewed';
                         $phone->date_viewed = time();
-                        $changed = true;
+                        $changed            = true;
                     }
                 }
             }
             if ($changed) {
-                file_put_contents($fileName, "\n --- after action ---\n" .  print_r($phone->getAttributes(), 1), FILE_APPEND);
+                file_put_contents($fileName, "\n --- after action ---\n".print_r($phone->getAttributes(), 1),
+                                  FILE_APPEND);
                 $phone->save();
             }
         }
+
         return 'OK';
     }
 
-    public function actionTest(){
+    public function actionTest()
+    {
         return $this->render('test');
+    }
+
+    public function actionInfobipReport()
+    {
+        $p = new InfoBip(Yii::$app->params['infobip']);
+        $p->logNificationQuery();
+        $data = file_get_contents("php://input");
+        $p->handleNotification($data);
+        exit;
     }
 
     public function actionLog($id = null)

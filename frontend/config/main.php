@@ -56,10 +56,12 @@ return [
             'siteKey' => '6Lct8zAUAAAAAA_1RA6j_X1-jGbkZjDv1gjx1m8A',
             'secret' => '6Lct8zAUAAAAABfgswO3Z8E0fB2uyR-mKkr_7MgW',
         ],
+
         'view' => [
             'theme' => [
                 'pathMap' => [
-                    '@dektrium/user/views' => '@app/views/user'
+                    '@dektrium/user/views' => '@app/views/user',
+
                 ],
             ],
         ],
@@ -82,10 +84,14 @@ return [
             'modelMap' => [
                 'User' => 'frontend\entities\User',
                 'LoginForm' => 'frontend\forms\LoginForm',
+                'LoginForm' => 'frontend\forms\LoginForm',
                 'RegistrationForm' => 'frontend\forms\RegistrationForm',
             ],
             'controllerMap' => [
                 'registration' => 'frontend\controllers\RegistrationController'
+            ],
+            'mailer' => [
+                'viewPath' => '@app/views/user/mail',
             ],
         ],
         'home' => [

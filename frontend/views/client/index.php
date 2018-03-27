@@ -27,13 +27,11 @@ $columns = [
     'email:email',
     'attribute'=>'username'
     ];
-if (Yii::$app->user->identity->isAdmin()) {
+if (Yii::$app->user->identity->isAdmin()  ) {
+    //$columns[]=['attribute' => 'created_at', 'value' => function ($model) {
+    //    return Yii::$app->getFormatter()->asDatetime($model->created_at);
+    //}, 'format'  => 'raw', 'label' => 'Дата. Регист.'];
     $columns[]=['attribute' => 'created_at', 'value' => function ($model) {
-        return Yii::$app->getFormatter()->asDatetime($model->created_at);
-        //return date('Y-m-d', $model->created_at).' '.date('H:i', $model->created_at);
-    }, 'format'  => 'raw', 'label' => 'Дата. Регист.'];
-    $columns[]=['attribute' => 'created_at', 'value' => function ($model) {
-
         return date('Y-m-d', $model->created_at).' '.date('H:i', $model->created_at);
     }, 'format'  => 'raw', 'label' => 'Дата. Регист.'];
 

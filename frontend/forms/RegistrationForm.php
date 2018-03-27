@@ -5,6 +5,7 @@ namespace frontend\forms;
 use dektrium\user\models\RegistrationForm as FormModel;
 use Yii;
 use common\entities\user\User;
+use common\notifications\RegisterNotification;
 class RegistrationForm extends FormModel
 {
     public $token;
@@ -62,16 +63,23 @@ class RegistrationForm extends FormModel
 
 
         /** @var User $user */
-        $user = Yii::createObject(User::classname());
+        $user = Yii::createObject(User::class);
         $user->setScenario('register');
         $this->loadAttributes($user);
         $user->username =   $user->generateUsername();
         if (! $user->register()) {
             return false;
         }
+        RegisterNotification::create(RegisterNotification::KEY_NEW_ACCOUNT, ['user' =>$user ])
+            ->send();
 
-        //Yii::$app->session->setFlash('info', Yii::t('user',
-        //                                            'Your account has been created and a message with further instructions has been sent to your email'));
+        Yii::$app->session->setFlash(
+            'info',
+            Yii::t(
+                'user',
+                'Your account has been created and a message with further instructions has been sent to your email'
+            )
+        );
 
         return true;
     }

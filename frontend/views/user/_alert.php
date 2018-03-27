@@ -14,6 +14,7 @@ use yii\bootstrap\Alert;
 /**
  * @var dektrium\user\Module $module
  */
+print_r(Yii::$app->session->getAllFlashes());
 ?>
 
 <?php if ($module->enableFlashMessages): ?>
