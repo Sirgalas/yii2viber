@@ -34,11 +34,10 @@ class Message_Phone_List extends ActiveRecord
 
     public static $statusMessage=
         [
-            self::NEWMESSAGE=>"Новое",
             self::SENDED=>"Отправлено",
-            self::DELIVERED=>"Получено",
+            self::DELIVERED=>"Доставлено",
             self::VIEWED=>"Прочитано",
-            self::UNDELIVERED=>'Недоставлено'
+            self::UNDELIVERED=>'Не доставлено'
         ];
     public static $BgColor=[
         self::NEWMESSAGE=>'#3C8DBC',

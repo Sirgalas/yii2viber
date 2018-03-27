@@ -38,6 +38,7 @@ use frontend\modules\home\widgets\PriceWidget;
                 <?= ServicesWidget::widget(); ?>
             </div>
         </div>
+
     </div>
     <div class="full-width-container block-4">
         <div class="container">
