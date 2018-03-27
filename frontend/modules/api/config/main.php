@@ -20,58 +20,58 @@ return [
         ],
         'urlManager' => [
             'class'=>'yii\web\UrlManager',
-            'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
-            'showScriptName' => false,
+            'enablePrettyUrl'       => true,
+            'enableStrictParsing'   => true,
+            'showScriptName'        => false,
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/client',
                     'extraPatterns' => [
-                        'POST registration' => 'registration',
-                        'OPTIONS registration' => 'options',
-                        'POST login' => 'login',
-                        'OPTIONS login' => 'options',
-                        'POST requestPasswordReset' => 'request-password-reset',
-                        'OPTIONS requestPasswordReset' => 'options',
-                        'POST resetPassword' => 'reset-password',
-                        'OPTIONS resetPassword' => 'options',
-                        'POST redact balance' => 'balance',
-                        'OPTIONS balance' => 'balance',
-                        'DELETE deleteUser' =>'delete-user',
-                        'OPTIONS deleteUser' =>'delete-user',
+                        'POST index'            =>  'index',
+                        'OPTIONS index'         =>  'index',
+                        'POST registration'     =>  'registration',
+                        'OPTIONS registration'  =>  'registration',
+                        'POST redact balance'   =>  'balance',
+                        'OPTIONS balance'       =>  'balance',
+                        'DELETE deleteUser'     =>  'delete-user',
+                        'OPTIONS deleteUser'    =>  'delete-user',
                     ]
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/contact',
                     'extraPatterns' => [
-                        'POST create' => 'create',
-                        'OPTIONS create' => 'create',
-                        'POST update' => 'update',
-                        'OPTIONS update' => 'update',
-                        'DELETE delete' => 'delete',
-                        'OPTIONS delete' => 'delete',
+                        'POST index'        => 'index',
+                        'OPTIONS index'     => 'index',
+                        'POST create'       => 'create',
+                        'OPTIONS create'    => 'create',
+                        'POST update'       => 'update',
+                        'OPTIONS update'    => 'update',
+                        'DELETE delete'     => 'delete',
+                        'OPTIONS delete'    => 'delete',
                     ]
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/message',
                     'extraPatterns' => [
-                        'POST create' => 'create',
-                        'OPTIONS create' => 'create',
-                        'POST update' => 'update',
-                        'OPTIONS update' => 'update',
-                        'DELETE delete' => 'delete',
-                        'OPTIONS delete' => 'delete',
+                        'POST index'        => 'index',
+                        'OPTIONS index'     => 'index',
+                        'POST create'       => 'create',
+                        'OPTIONS create'    => 'create',
+                        'POST update'       => 'update',
+                        'OPTIONS update'    => 'update',
+                        'DELETE delete'     => 'delete',
+                        'OPTIONS delete'    => 'delete',
                     ]
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'report',
                     'extraPatterns' => [
-                        'GET index'=>'index',
-                        'OPTIONS index'=>'index'
+                        'GET index'     =>  'index',
+                        'OPTIONS index' =>  'index'
                     ]
                 ],
             ],

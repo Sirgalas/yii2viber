@@ -91,6 +91,9 @@ return [
         'home' => [
             'class' => 'frontend\modules\home\Home',
         ],
+        'api' => [
+            'class' => 'frontend\modules\api\Module',
+        ],
 
     ],
     'params' => $params,

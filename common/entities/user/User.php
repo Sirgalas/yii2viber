@@ -305,6 +305,11 @@ class User extends BaseUser
         return $dealersDropdown;
     }
 
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['token' => $token]);
+    }
+
     public function headerInfo()
     {
         return 'Ваш баланс = '.number_format($this->balance).' SMS ';
