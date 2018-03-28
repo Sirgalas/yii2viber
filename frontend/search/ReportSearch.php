@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: root
- * Date: 19.02.18
- * Time: 21:20
+* @property int $message_id
  */
 
 namespace frontend\search;
@@ -13,16 +10,21 @@ use common\entities\ViberTransaction;
 use common\entities\ContactCollection;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
 
 class ReportSearch extends ViberTransaction
 {
 
     public $collection_id;
+    public $message_id;
+
     public function rules()
     {
         return [
-            [['viber_message_id', 'status', 'created_at','collection_id'], 'safe']];
+            [['viber_message_id', 'status', 'created_at', 'collection_id','message_id'], 'safe']
+        ];
     }
+
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
@@ -40,10 +42,10 @@ class ReportSearch extends ViberTransaction
     {
         $query = ViberTransaction::find();
 
-        if(isset($params['collection_id'])){
-            $collection_ids=ContactCollection::find()->where(['id'=>$params['collection_id']])->all();
-            foreach ($collection_ids as $collection_id){
-                $messageId[]=$collection_id->viberMessage->id;
+        if (isset($params['collection_id'])) {
+            $collection_ids = ContactCollection::find()->where(['id' => $params['collection_id']])->all();
+            foreach ($collection_ids as $collection_id) {
+                $messageId[] = $collection_id->viberMessage->id;
             }
         }
 
@@ -61,13 +63,39 @@ class ReportSearch extends ViberTransaction
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'user_id'=>\Yii::$app->user->identity->id,
-            'viber_message_id'=>$this->viber_message_id,
-            'created_at'=>$this->created_at,
-            'status'=>$this->status
+            'user_id' => \Yii::$app->user->identity->id,
+            'viber_message_id' => $this->viber_message_id,
+            'created_at' => $this->created_at,
+            'status' => $this->status
         ]);
-        if(!empty($messageId))
-        $query->andFilterWhere(['in','viber_message_id',$messageId]);
+        if (!empty($messageId)) {
+            $query->andFilterWhere(['in', 'viber_message_id', $messageId]);
+        }
         return $dataProvider;
+    }
+
+    public function searchApi($params)
+    {
+        $query = ViberTransaction::find();
+
+        if (isset($params['collection_id'])) {
+            $collection_ids = ContactCollection::find()->where(['id' => $params['collection_id']])->all();
+            foreach ($collection_ids as $collection_id) {
+                $messageId[] = $collection_id->viberMessage->id;
+            }
+        }
+        $query->andFilterWhere([
+            'user_id' => \Yii::$app->user->identity->id,
+            'viber_message_id' => $params['message_id'],
+            'created_at' => $this->created_at,
+            'status' => $this->status
+        ]);
+        if (!empty($messageId)) {
+            $query->andFilterWhere(['in', 'viber_message_id', $messageId]);
+        }
+        if (!$this->validate())
+            throw new NotFoundHttpException('request not valid');
+
+        return $query->all();
     }
 }

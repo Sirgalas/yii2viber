@@ -87,9 +87,9 @@ class ClientController extends AcViberController
             }
             $user->balance = Yii::$app->request->post('balance');
             if (!$user->save()) {
-                throw new \Exception(var_dump($user->getFirstError()));
+                throw new \Exception(var_dump($user->getError()));
             }
-            return json_encode(['success'=>'balance update']);
+            return ['success'=>'balance update'];
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -111,7 +111,7 @@ class ClientController extends AcViberController
             }
             $user->cost = Yii::$app->request->post('cost');
             if (!$user->save()) {
-                throw new \Exception($user->getFirstError());
+                throw new \Exception($user->getError());
             }
             return json_encode(['success'=>'cost update']);
         } catch (\Exception $e) {

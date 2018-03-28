@@ -238,7 +238,7 @@ class ContactController extends AcViberController
         }
         try {
             if(!$phone->deleteAll(['phone'=>$arrPhone]))
-                throw new \Exception($phone->getFirstError());
+                throw new \Exception('error deleting');
             return ['success' => 'phones delete'];
         } catch (Exception $e) {
             return $e->getMessage();

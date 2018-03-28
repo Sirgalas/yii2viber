@@ -3,6 +3,7 @@
 namespace frontend\modules\api\controllers;
 
 use frontend\entities\User;
+use frontend\services\message\ViberMessageServices;
 use Yii;
 use frontend\modules\api\components\AcViberController;
 use common\entities\ViberMessage;
@@ -41,7 +42,7 @@ class MessageController extends AcViberController
 
 
 
-    public function actionUpdate()
+    public function actionSend()
     {
         if (!Yii::$app->user->identity->id) 
             return 'User not Auth';
@@ -51,7 +52,7 @@ class MessageController extends AcViberController
         if ($id) {
             $model = ViberMessage::findOne(['id'=>$id]);
             if (! Yii::$app->user->identity->isAdmin() && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
-                throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
+                throw new NotFoundHttpException('newsletter does not belong user', 500);
             }
         } else {
             $model = new ViberMessage();
@@ -59,7 +60,17 @@ class MessageController extends AcViberController
         if (! $model->status) {
             $model->status = ViberMessage::STATUS_PRE;
         }
+
+        if (!$model->load(Yii::$app->request->post()))
+            throw new NotFoundHttpException('request not validate', 500);
+
+        $services= new ViberMessageServices();
+        try{
+            if(!$services->send(Yii::$app->request->post(),$model))
+                throw new NotFoundHttpException('message not send',404);
+            return ['success'=>'message sending'];
+        }catch (NotFoundHttpException $e){
+            return $e->getMessage();
+        }
     }
-
-
 }

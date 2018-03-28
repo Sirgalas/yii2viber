@@ -26,11 +26,16 @@ if (Yii::$app->user->isGuest){
 
             ?>
             <ul class="nav navbar-nav">
+                
                 <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
                     <li>
                         ссылка для регистариции ваших клиентов</br> <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
                     </li>
+                    <li>
+                        ваш токен <?=Yii::$app->user->identity->token; ?>
+                    </li>
                 <?php } ?>
+                
                     <?= WantDealer::widget(); ?>
 
 
@@ -62,6 +67,9 @@ if (Yii::$app->user->isGuest){
                                 <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
                                     <p>
                                         ссылка для регистариции ваших клиентов <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
+                                    </p>
+                                    <p>
+                                        Ваш токен <?= Yii::$app->user->identity->token; ?>
                                     </p>
                                     <?php } ?>
                                 <?php else: ?>

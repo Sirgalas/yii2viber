@@ -85,7 +85,7 @@ class ViberMessageController extends Controller
         if ($id) {
             $model = $this->findModel($id);
             if (! Yii::$app->user->identity->isAdmin() && ! Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
-                throw new NotFoundHttpException('Этот рассылка вам не принадлежит', 403);
+                throw new NotFoundHttpException('Эта рассылка вам не принадлежит', 403);
             }
         } else {
             $model = new ViberMessage();

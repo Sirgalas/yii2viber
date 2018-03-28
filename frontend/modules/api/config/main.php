@@ -64,8 +64,8 @@ return [
                     'extraPatterns' => [
                         'POST index'        => 'index',
                         'OPTIONS index'     => 'index',
-                        'POST update'       => 'send',
-                        'OPTIONS update'    => 'send',
+                        'POST send'       => 'send',
+                        'OPTIONS send'    => 'send',
                         'POST delete'     => 'delete',
                         'OPTIONS delete'    => 'delete',
                     ]
@@ -75,7 +75,19 @@ return [
                     'controller' => 'report',
                     'extraPatterns' => [
                         'GET index'     =>  'index',
-                        'OPTIONS index' =>  'index'
+                        'OPTIONS index' =>  'index',
+                        'POST find'     =>  'find',
+                        'OPTIONS find'  =>  'find',
+                    ]
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'statictic',
+                    'extraPatterns' => [
+                        'GET index'     =>  'index',
+                        'OPTIONS index' =>  'index',
+                        'POST find'     =>  'find',
+                        'OPTIONS find'  =>  'find',
                     ]
                 ],
             ],
