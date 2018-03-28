@@ -50,7 +50,7 @@ class ContactController extends AcViberController
             if (!Yii::$app->user->identity->id) {
                 throw new \Exception('User not Auth');
             }
-            $id = Yii::$app->request->post('id');
+            $id = Yii::$app->request->get('id');
             if (!$id) {
                 throw new \Exception('id not specified');
             }
@@ -115,7 +115,7 @@ class ContactController extends AcViberController
             }
             $contactCollection->title = $title;
             if ($contactCollection->save()) {
-                throw new Exception (var_dump($contactCollection->getFirstError()));
+                throw new Exception (var_dump($contactCollection->errors));
             }
             return ['success' => 'collection create'];
         } catch (Exception $e) {
@@ -189,15 +189,19 @@ class ContactController extends AcViberController
         if (!Yii::$app->user->identity->id) {
             return ['error' => 'User not Auth'];
         }
+        if (!Yii::$app->request->post('id')) {
+            return ['error' => 'id not specified'];
+        }
+        $id=(int)Yii::$app->request->post('id');
         if (!Yii::$app->request->post('phone')) {
             return ['error' => 'phone not specified'];
         }
-        $phone = Phone::findOne(['phone' => (int)Yii::$app->request->post('phone')]);
+        $phone = Phone::findOne(['contact_collection_id'=>$id,'phone' => (int)Yii::$app->request->post('phone')]);
         if (!$phone) {
             return ['error' => 'phone not find'];
         }
         if (Yii::$app->request->post('phone-update')) {
-            $phone->phone = Yii::$app->request->post('phone-update');
+            $phone->phone = (int)Yii::$app->request->post('phone-update');
         }
         if (Yii::$app->request->post('username-update')) {
             $phone->username = Yii::$app->request->post('username-update');

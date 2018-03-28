@@ -113,7 +113,7 @@ class ClientController extends AcViberController
             if (!$user->save()) {
                 throw new \Exception($user->getError());
             }
-            return json_encode(['success'=>'cost update']);
+            return ['success'=>'cost update'];
         } catch (\Exception $e) {
             return $e->getMessage();
         }

@@ -34,6 +34,8 @@ return [
                         'OPTIONS registration'  =>  'registration',
                         'POST redact balance'   =>  'balance',
                         'OPTIONS balance'       =>  'balance',
+                        'POST redact cost'      =>  'cost',
+                        'OPTIONS cost'          =>  'coat',
                         'DELETE deleteUser'     =>  'delete-user',
                         'OPTIONS deleteUser'    =>  'delete-user',
                     ]
@@ -44,7 +46,7 @@ return [
                     'extraPatterns' => [
                         'GET index'         => 'index',
                         'OPTIONS index'     => 'index',
-                        'POST one'          => 'one',
+                        'GET one'          => 'one',
                         'OPTIONS one'       => 'one',
                         'POST create'       => 'create',
                         'OPTIONS create'    => 'create',
