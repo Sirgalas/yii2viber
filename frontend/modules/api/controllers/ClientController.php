@@ -21,6 +21,8 @@ class ClientController extends AcViberController
 
     public function actionIndex()
     {
+        if(!Yii::$app->user->identity->id)
+            return 'User not Auth';
         $ids = Yii::$app->user->identity->getChildList();
         $clients = Client::find()->where('coalesce(blocked_at, 0)<1');
         if ($ids != -1) {
@@ -29,23 +31,26 @@ class ClientController extends AcViberController
         $clients->all();
         foreach ($clients->all() as $client) {
             $result[] = [
-                'id'            => $client->id,
-                'email'         => $client->email,
-                'login'         => $client->username,
-                'created_at'    => $client->created_at,
-                'confirmed'     => $client->confirmed_at?'Yes':'No',
-                'blocked'       => $client->blocked_at?'Yes':'No',
-                'status'        => $client->type,
-                'cost'          => $client->cost?$client->cost:'0.00',
-                'balance'       => $client->balance
+                'id' => $client->id,
+                'email' => $client->email,
+                'login' => $client->username,
+                'created_at' => $client->created_at,
+                'confirmed' => $client->confirmed_at ? 'Yes' : 'No',
+                'blocked' => $client->blocked_at ? 'Yes' : 'No',
+                'status' => $client->type,
+                'cost' => $client->cost ? $client->cost : '0.00',
+                'balance' => $client->balance
             ];
         }
+        if(!$result)
+            $result=['error'=>'Clients not find'];
         return $result;
     }
 
     public function actionRegistration()
     {
-
+        if(!Yii::$app->user->identity->id)
+            return 'User not Auth';
         if (!$this->module->enableRegistration) {
             throw new NotFoundHttpException();
         }
@@ -68,20 +73,48 @@ class ClientController extends AcViberController
 
     public function actionBalance()
     {
-        try{
+        try {
             $id = Yii::$app->request->post('id');
-            if(!$id)
+            if (!$id) {
                 throw new \Exception('id not specified');
+            }
             $user = Client::findOne(['id' => $id]);
-            if(!$user)
+            if (!$user) {
                 throw new \Exception('client not find');
-            if(!Yii::$app->request->post('balance'))
+            }
+            if (!Yii::$app->request->post('balance')) {
                 throw new \Exception('balance not specified');
+            }
             $user->balance = Yii::$app->request->post('balance');
-            if(!$user->save())
+            if (!$user->save()) {
                 throw new \Exception(var_dump($user->getFirstError()));
-            return 'balance update';
-        }catch(\Exception $e){
+            }
+            return json_encode(['success'=>'balance update']);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function actionCost()
+    {
+        try {
+            $id = Yii::$app->request->post('id');
+            if (!$id) {
+                throw new \Exception('id not specified');
+            }
+            $user = Client::findOne(['id' => $id]);
+            if (!$user) {
+                throw new \Exception('client not find');
+            }
+            if (!Yii::$app->request->post('cost')) {
+                throw new \Exception('cost not specified');
+            }
+            $user->cost = Yii::$app->request->post('cost');
+            if (!$user->save()) {
+                throw new \Exception($user->getFirstError());
+            }
+            return json_encode(['success'=>'cost update']);
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }

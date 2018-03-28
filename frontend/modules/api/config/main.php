@@ -28,7 +28,7 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/client',
                     'extraPatterns' => [
-                        'GET index'            =>  'index',
+                        'GET index'             =>  'index',
                         'OPTIONS index'         =>  'index',
                         'POST registration'     =>  'registration',
                         'OPTIONS registration'  =>  'registration',
@@ -42,14 +42,20 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/contact',
                     'extraPatterns' => [
-                        'POST index'        => 'index',
+                        'GET index'         => 'index',
                         'OPTIONS index'     => 'index',
+                        'POST one'          => 'one',
+                        'OPTIONS one'       => 'one',
                         'POST create'       => 'create',
                         'OPTIONS create'    => 'create',
                         'POST update'       => 'update',
                         'OPTIONS update'    => 'update',
-                        'DELETE delete'     => 'delete',
+                        'POST delete'       => 'delete',
                         'OPTIONS delete'    => 'delete',
+                        'POST createPhones' => 'create-phones',
+                        'OPTIONS morePhones'=> 'more-phones',
+                        'POST updatePhones'     => 'update-phones',
+                        'OPTIONS updatePhones'  => 'update-phoneS',
                     ]
                 ],
                 [
@@ -58,11 +64,9 @@ return [
                     'extraPatterns' => [
                         'POST index'        => 'index',
                         'OPTIONS index'     => 'index',
-                        'POST create'       => 'create',
-                        'OPTIONS create'    => 'create',
-                        'POST update'       => 'update',
-                        'OPTIONS update'    => 'update',
-                        'DELETE delete'     => 'delete',
+                        'POST update'       => 'send',
+                        'OPTIONS update'    => 'send',
+                        'POST delete'     => 'delete',
                         'OPTIONS delete'    => 'delete',
                     ]
                 ],

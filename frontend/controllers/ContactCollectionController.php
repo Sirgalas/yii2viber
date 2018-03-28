@@ -85,10 +85,8 @@ class ContactCollectionController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $cnt = Phone::find()->where(['contact_collection_id' => $this->id])->count();
-
             $model->size = $cnt;
             $model->save();
-
             return $this->redirect(['index']);
         }
         $phoneSearchModel = new PhoneSearch();
