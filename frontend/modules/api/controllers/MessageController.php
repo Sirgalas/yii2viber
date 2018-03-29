@@ -73,4 +73,11 @@ class MessageController extends AcViberController
             return $e->getMessage();
         }
     }
+
+    public function actionCancel($id){
+       $model=ViberMessage::findOne($id);
+        if($model->Cancel())
+            return ['succes'=>'message cancel'];
+        return ['error'=>'message not cancel'];
+    }
 }
