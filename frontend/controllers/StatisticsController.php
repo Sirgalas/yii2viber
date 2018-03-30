@@ -34,7 +34,7 @@ class StatisticsController extends Controller
 
     public function actionIndex(){
         $model= new ViberTransaction(['scenario' => ViberTransaction::SCENARIO_SEARCH]);
-
+        $model->load(Yii::$app->request->post());
         $contact_collections = ContactCollection::find()->andWhere(['user_id' => Yii::$app->user->identity->id])->select([
             'id',
             'title',

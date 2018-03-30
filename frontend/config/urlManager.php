@@ -16,7 +16,5 @@ return  [
         '<_c:[\w\-]+>/<_a:[\w-]+>' => '<_c>/<_a>',
         '<_c:[\w\-]+>/<id:\d+>/<_a:[\w\-]+>' => '<_c>/<_a>',
         'tst/viber/notification'=>'tst/viber/notification',
-
-
     ],
 ]; ?>

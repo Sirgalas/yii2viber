@@ -34,6 +34,7 @@ class Message_Phone_List extends ActiveRecord
 
     public static $statusMessage=
         [
+            self::NEWMESSAGE=>'Новое',
             self::SENDED=>"Отправлено",
             self::DELIVERED=>"Доставлено",
             self::VIEWED=>"Прочитано",
