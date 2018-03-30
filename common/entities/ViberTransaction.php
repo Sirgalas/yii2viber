@@ -103,6 +103,7 @@ class ViberTransaction extends \yii\db\ActiveRecord
                 'targetClass' => ViberMessage::class,
                 'targetAttribute' => ['viber_message_id' => 'id'],
             ],
+            [['dateFrom','dateTo','contactCollection'], 'string']
         ];
     }
 

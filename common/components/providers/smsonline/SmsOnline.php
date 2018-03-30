@@ -17,7 +17,10 @@ class SmsOnline extends Provider
     public function sendImage()
     {
         $filePath = realpath($this->image);
-        $sign = md5($this->config['login'].md5_file($filePath).$this->config['secret']);
+        if (!$filePath){
+            $filePath = realpath(Yii::$app->params['fileUploadUrl'].$this->image);
+        }
+        $sign = md5($this->config['login']. md5_file($filePath). $this->config['secret']);
         $ch = curl_init('http://media.sms-online.com/upload/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);

@@ -80,6 +80,7 @@ class ViberMessage extends \yii\db\ActiveRecord
     const STATUS_WAIT = 'wait';
 
     const  STATUS_WAIT_PAY = 'wait-pay';
+
     const STATUS_PROCESS = 'process';
 
     const STATUS_READY = 'ready';
