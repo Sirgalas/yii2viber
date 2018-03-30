@@ -87,7 +87,7 @@ class ContactController extends AcViberController
                 'title' => $title
             ]);
             if ($contactCollection->save()) {
-                throw new Exception (var_dump($contactCollection->getFirstError()));
+                throw new Exception (var_dump($contactCollection->getErrors()));
             }
             return ['success' => 'collection create'];
         } catch (Exception $e) {
