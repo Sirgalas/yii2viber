@@ -64,12 +64,14 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => '/message',
                     'extraPatterns' => [
-                        'POST index'        => 'index',
+                        'GET index'        => 'index',
                         'OPTIONS index'     => 'index',
                         'POST send'       => 'send',
                         'OPTIONS send'    => 'send',
                         'POST delete'     => 'delete',
                         'OPTIONS delete'    => 'delete',
+                        'PUT cancel'     => 'cancel</id>',
+                        'OPTIONS cancel'    => 'cancel',
                     ]
                 ],
                 [
