@@ -46,8 +46,6 @@ class MessageController extends AcViberController
         if (!Yii::$app->user->identity->id) {
             return 'User not Auth';
         }
-        
-        
         if (Yii::$app->request->post('id')) {
             $id = Yii::$app->request->post('id');
             $model = ViberMessage::findOne(['id' => $id]);
@@ -69,7 +67,6 @@ class MessageController extends AcViberController
         if (!$model->load($array)) {
             throw new NotFoundHttpException('request not validate', 500);
         }
-
         $services = new ViberMessageServices();
         try {
             if (!$services->send(Yii::$app->request->post(), $model)) {
