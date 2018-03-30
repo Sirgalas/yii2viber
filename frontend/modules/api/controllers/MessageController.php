@@ -46,11 +46,10 @@ class MessageController extends AcViberController
         if (!Yii::$app->user->identity->id) {
             return 'User not Auth';
         }
-        if (!Yii::$app->request->post('id')) {
-            throw new NotFoundHttpException('id not specified');
-        }
-        $id = Yii::$app->request->post('id');
-        if ($id) {
+        
+        
+        if (Yii::$app->request->post('id')) {
+            $id = Yii::$app->request->post('id');
             $model = ViberMessage::findOne(['id' => $id]);
             if (!Yii::$app->user->identity->isAdmin() && !Yii::$app->user->identity->amParent($model->user_id) && Yii::$app->user->id != $model->user_id) {
                 throw new NotFoundHttpException('newsletter does not belong user', 500);
