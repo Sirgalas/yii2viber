@@ -58,18 +58,17 @@ class MessageController extends AcViberController
         if (!$model->status) {
             $model->status = ViberMessage::STATUS_PRE;
         }
-        $array = [
-            'ViberMessage' => [
-                'user_id' => Yii::$app->user->identity->id,
-                Yii::$app->request->post()
-            ]
-        ];
-        if (!$model->load($array)) {
-            throw new NotFoundHttpException('request not validate', 500);
+        $a['ViberMessage'] =Yii::$app->request->post();
+        $a['ViberMessage']['user_id'] = Yii::$app->user->identity->id;
+
+        if (!$model->load($a)) {
+            throw new NotFoundHttpException('request not validate' .print_r($model->getErrors(),1), 500);
         }
+
+
         $services = new ViberMessageServices();
         try {
-            if (!$services->send(Yii::$app->request->post(), $model)) {
+            if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
             }
             return ['success' => 'message sending'];
