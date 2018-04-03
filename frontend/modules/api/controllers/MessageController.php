@@ -71,7 +71,7 @@ class MessageController extends AcViberController
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
             }
-            return ['success' => 'message sending'];
+            return ['success' => 'message sending message id '.$model->id];
         } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         }
