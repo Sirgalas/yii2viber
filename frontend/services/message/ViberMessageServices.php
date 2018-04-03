@@ -28,6 +28,11 @@ class ViberMessageServices
                     $model->scenario = ViberMessage::SCENARIO_HARD;
                     $model->status = ViberMessage::STATUS_CHECK;
                     if ($model->validate() && $model->send()) {
+                    $model->status   = ViberMessage::STATUS_CHECK;
+                    if (!$model->validate()){
+                        \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()) );
+                    }
+                    if ($model->send()) {
                         AdminModerateNotification::create('moderate', ['message' => $model])->send();
                         return true;
                     } else {

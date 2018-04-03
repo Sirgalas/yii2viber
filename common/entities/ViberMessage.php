@@ -269,14 +269,15 @@ class ViberMessage extends \yii\db\ActiveRecord
             //[['time_start', 'time_finish'], 'string', 'max' => 5],
             [['time_start', 'time_finish'], 'time', 'format' => 'php:H:i'],
             [['time_finish'], 'compare', 'compareAttribute' => 'time_start', 'operator' => '>=', 'type' => 'time'],
-            ['assign_collections', 'each', 'rule' => ['integer']],
+            ['assign_collections', 'each', 'rule' => ['integer'], 'message' => 'не число'],
             [
                 'assign_collections',
                 function ($attribute, $params) {
                     $this->checkBalance($attribute, $params);
                 },
+                'message'=>'checkBalance error'
             ],
-            ['assign_collections', 'required', 'on' => ['hard']],
+            ['assign_collections', 'required', 'on' => ['hard'], 'message' => 'Пропущено'],
 
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range' => ['pre', 'fix', 'check', 'closed', 'cancel', 'new', 'ready', 'wait', 'process']],
@@ -337,10 +338,12 @@ class ViberMessage extends \yii\db\ActiveRecord
         $new_cost = self::cost($this->$attribute);
         if ($new_cost - $oldCost > Yii::$app->user->identity->balance) {
             $this->addError($attribute, 'Недостаточно средств на балансе');
+            echo 'Недостаточно средств на балансе';
         }
 
         if ($this->scenario == ViberMessage::SCENARIO_HARD && $new_cost < 1) {
             $this->addError($attribute, 'Нет телефонов в рассылке');
+            echo  'Нет телефонов в рассылке';
         }
     }
 
@@ -408,6 +411,9 @@ class ViberMessage extends \yii\db\ActiveRecord
             $this->date_finish = strtotime($this->date_finish);
         }
 
+        if (!is_array($this->assign_collections)){
+            $this->assign_collections=[$this->assign_collections];
+        }
         $this->defineProvider();
 
         return parent::beforeValidate();
@@ -588,6 +594,7 @@ class ViberMessage extends \yii\db\ActiveRecord
                     return false;
                 }
             } else {
+                \Yii::warning('$this->save() :: FALSE ' . print_r($this->getErrors()) );
                 return false;
             }
             $transaction->commit();
@@ -595,7 +602,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             Yii::$app->errorHandler->logException($ex);
             Yii::$app->session->setFlash($ex->getMessage());
             $transaction->rollBack();
-
+            \Yii::warning('catch :: FALSE ' . print_r($ex->getMessage() ) );
             return false;
         }
         if ($this->just_now && $this->status == self::STATUS_NEW) {

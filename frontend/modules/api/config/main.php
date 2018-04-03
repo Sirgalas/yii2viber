@@ -84,6 +84,7 @@ return [
                         'OPTIONS find'  =>  'find',
                     ]
                 ],
+
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'statictic',
