@@ -37,7 +37,7 @@ use Friday14\Mailru\Cloud;
  * @property string $cost Стоимость
  * @property string $balance Сколько средств уже потрачено
  * @property int date_send_finish время окончания рассылки
- * @property string provider ид сценария, который будет использоваться для рассылки
+ * @property string provider
  * @property int scenario_id ид сценария, который будет использоваться для рассылки
  *
  * @property ContactCollection $contactCollection
@@ -526,13 +526,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         parent::afterFind();
     }
 
-    /**
-     * @return array
-     */
-    //public function getPhones()
-    //{
-    //    $tVM = ViberTransaction::find()->where(['viber_message_id' => $this->id])->andWhere(['status' => 'new'])->one();
-    //}
+
 
     public static function Cost($id_collection)
     {
