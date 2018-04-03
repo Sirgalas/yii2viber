@@ -16,7 +16,7 @@ use common\entities\ViberTransaction;
  */
 class StatisticsMongoSearch extends Message_Phone_List
 {
-    
+
     public $create_at;
     /**
      * @inheritdoc
@@ -48,49 +48,55 @@ class StatisticsMongoSearch extends Message_Phone_List
     public function search($params)
     {
         $query = Message_Phone_List::find();
-
-
-
-        if(isset($params['user_id'])&&$params['user_id']!=""){
-            $user=User::find()->select('id')->where(['id_dealer'=>Yii::$app->user->identity->id,'id'=>$params['user_id']])->one();
-            if($user){
-                $allTransaction=ViberTransaction::find()->where(['user_id'=>$params['user_id']])->all();
-                foreach ($allTransaction as $oneTransaction){
-                    $transactionIds[]=$oneTransaction;
+        if (isset($params['user_id']) && $params['user_id'] != "") {
+            $user = User::find()->select('id')->where([
+                'id_dealer' => Yii::$app->user->identity->id,
+                'id' => $params['user_id']
+            ])->one();
+            if ($user) {
+                $allTransaction = ViberTransaction::find()->where(['user_id' => $params['user_id']])->all();
+                foreach ($allTransaction as $oneTransaction) {
+                    $transactionIds[] = $oneTransaction->id;
                 }
             }
         }
-        $id_messageFromCollection=[];
-        if($params['contactCollection']!=""){
-            $collections=MessageContactCollection::find()
-            ->where(['contact_collection_id'=>$params['contactCollection']])
-            ->select('viber_message_id')
-            ->all();
-            foreach ($collections as $viber_message_id){
-                $id_messageFromCollection[]=$viber_message_id->viber_message_id;
+        $id_messageFromCollection = [];
+        if ($params['contactCollection'] != "") {
+            $collections = MessageContactCollection::find()
+                ->where(['contact_collection_id' => $params['contactCollection']])
+                ->select('viber_message_id')
+                ->all();
+            foreach ($collections as $viber_message_id) {
+                $id_messageFromCollection[] = $viber_message_id->viber_message_id;
             }
         }
-
-        $idsTransaction[]=0;
-        $transactionsIdFromUser=ViberTransaction::find()->where(['user_id'=>Yii::$app->user->identity->id])->all();
-        if($transactionsIdFromUser){
-            foreach ($transactionsIdFromUser as $transactionIdFromUser){
-                $idsTransaction[]=$transactionIdFromUser->id;
+        $idsTransaction[] = 0;
+        $transactionsIdFromUser = ViberTransaction::find()->where(['user_id' => Yii::$app->user->identity->id])->all();
+        $idsTransactionUser = [];
+        if ($transactionsIdFromUser) {
+            foreach ($transactionsIdFromUser as $transactionIdFromUser) {
+                $idsTransactionUser[] = $transactionIdFromUser->id;
             }
         }
-        if(isset($params['dateTo'])){
-            $dateTo=strtotime($params['dateTo']. ' 23:59:59');
-        }else{
-            $dateTo=time();
+        if (isset($params['dateTo'])) {
+            $dateTo = strtotime($params['dateTo'] . ' 23:59:59');
+        } else {
+            $dateTo = time();
         }
-        if($params['dateFrom']!='') {
-            $transactionAll=ViberTransaction::find()->andFilterWhere(['>=', 'created_at', strtotime($params['dateFrom'])])->andFilterWhere(['<=', 'created_at', $dateTo]);
-            foreach ($transactionAll as $transactionOne){
-                $transactionIdsFromDate[]=$transactionOne;
+        $transactionIdsFromDate = [];
+        if ($params['dateFrom'] != '') {
+            $transactionAll = ViberTransaction::find()->andFilterWhere([
+                '>=',
+                'created_at',
+                strtotime($params['dateFrom'])
+            ])->andFilterWhere(['<=', 'created_at', $dateTo])->all();
+            foreach ($transactionAll as $transactionOne) {
+                $transactionIdsFromDate[] = $transactionOne->id;
             }
         }
+        $idsTransaction = array_intersect($idsTransactionUser, $transactionIdsFromDate);
         $dataProvider = new ActiveDataProvider([
-        'query' => $query,
+            'query' => $query,
         ]);
 
         $this->load($params);
@@ -102,17 +108,23 @@ class StatisticsMongoSearch extends Message_Phone_List
         }
 
         // grid filtering conditions
-        $query->andFilterWhere(['in','transaction_id', $idsTransaction]);
-
-        if(isset($params['titleSearch']))
-            $query->andFilterWhere(['in','phone', $params['titleSearch']]);
-        if(isset($transactionIds))
-            $query->andFilterWhere(['in','transaction_id', $transactionIds]);
-        if(isset($params['status']))
-            $query->andFilterWhere(['in','status',$params['status']]);
-        if(!empty($id_messageFromCollection))
-            $query->andFilterWhere(['in','message_id',$id_messageFromCollection]);
-
+        if (!empty($idsTransaction)) {
+            $query->andFilterWhere(['in', 'transaction_id', $idsTransaction]);
+        }else{
+            $query->where(['transaction_id'=>0]);
+        }
+        if (isset($params['titleSearch'])) {
+            $query->andFilterWhere(['in', 'phone', $params['titleSearch']]);
+        }
+        if (isset($transactionIds)) {
+            $query->andFilterWhere(['in', 'transaction_id', $transactionIds]);
+        }
+        if (isset($params['status'])) {
+            $query->andFilterWhere(['in', 'status', $params['status']]);
+        }
+        if (!empty($id_messageFromCollection)) {
+            $query->andFilterWhere(['in', 'message_id', $id_messageFromCollection]);
+        }
         return $dataProvider;
     }
 }
