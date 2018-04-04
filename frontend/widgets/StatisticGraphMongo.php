@@ -19,7 +19,6 @@ class StatisticGraphMongo extends Widget
             $dataArr[]=["label"=>$messageModel->statusMessage($key),"value"=>$this->percent($countArr,$value)];
             $background[]=$messageModel->BgColor($key);
         }
-
         return $this->render('statisticGraph',[
             'datali'=>$dataLi,
             'dataArr'=>$dataArr,
@@ -38,7 +37,7 @@ class StatisticGraphMongo extends Widget
     private function percent($sumArr,$val){
         return round(($val*100)/array_sum($sumArr));
     }
-    
+
 
 
 
