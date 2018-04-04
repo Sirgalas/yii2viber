@@ -5,6 +5,7 @@ use frontend\widgets\StatisticGraphMongo;
  * @var $searchModel common\entities\mongo\Message_Phone_List;
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $model common\entities\mongo\Message_Phone_List;
+ * @var $providerFromGetModel yii\data\ActiveDataProvider
  */
 $defaultExportConfig = [
     GridView::EXCEL => [
