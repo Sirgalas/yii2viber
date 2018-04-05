@@ -28,6 +28,7 @@ if (Yii::$app->user->identity->isAdmin()){
     }?>
 
     <?= $form->field($model, 'dealer_id')->dropDownList($dealers) ?>
+    <?= $form->field($model, 'viber_provider')->dropDownList(array_combine(Yii::$app->params['providers'],Yii::$app->params['providers'])) ?>
 
     <?= $form->field($model, 'dealer_confirmed')->checkbox() ?>
 

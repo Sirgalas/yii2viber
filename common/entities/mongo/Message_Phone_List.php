@@ -5,6 +5,7 @@ namespace common\entities\mongo;
  * This is the model class for table "phone".
  *
  * @property string phone
+ * @property string name
  * @property int $message_id
  * @property int $transaction_id
  * @property int $last_date_message
@@ -59,7 +60,7 @@ class Message_Phone_List extends ActiveRecord
 
     public function attributes()
     {
-        return ['_id','message_id','last_date_message','status','phone','date_viewed','date_delivered','transaction_id','msg_id'];
+        return ['_id','message_id','name','last_date_message','status','phone','date_viewed','date_delivered','transaction_id','msg_id'];
     }
 
     public function attributeLabels()
@@ -70,6 +71,7 @@ class Message_Phone_List extends ActiveRecord
             'last_date_message' => 'Дата рассылки',
             'status' => 'Статус рассылки',
             'phone'=> 'Телефоны',
+            'name'=> 'Имя',
             'date_viewed'=>'Дата просмотра',
             'date_delivered'=>'Дата доставки',
             'transaction_id'=> 'Транзанкция',

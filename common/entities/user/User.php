@@ -30,6 +30,7 @@ use common\entities\BalanceLog;
  * @property  string family
  * @property  string admin_comment
  * @property string token
+ * @property string viber_provider
  * @property ContactCollection[] $contactCollections
  * @property Phone[] $phones
  * @property ViberMessage[] $viberMessages
@@ -108,6 +109,7 @@ class User extends BaseUser
         //$rules['typeLength'] = ['dealer_id','exist','skipOnError' => true,'targetClass' => self::class,'targetAttribute' => ['dealer_id' => 'id'],];
         $rules['cost'] = ['cost', 'string', 'max'=>12];
         $rules['tel'] = ['tel', 'string'];
+        $rules['viber_provider'] = ['viber_provider', 'string'];
         $rules['admin_comment'] = ['admin_comment', 'string', 'max'=>1024];
         $rules['first_name'] = ['first_name', 'string', 'max' => 100];
         $rules['surname'] = ['surname', 'string', 'max' => 100];

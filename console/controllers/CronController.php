@@ -23,7 +23,9 @@ class CronController extends Controller
      */
     private function findTransactionInProcess($limit=200)
     {
-        $wait_ids = ViberMessage::find()->where(['status' => 'wait'])->select("id")->limit(3)->orderBy('id')->column();
+        $wait_ids = ViberMessage::find()->where(['status' => 'wait'])
+            ->andWhere(['channel'=> 'viber'])
+            ->select("id")->limit(3)->orderBy('id')->column();
 
         return ViberTransaction::find()
             ->where(['!=', 'status', 'ready'])
@@ -154,7 +156,9 @@ class CronController extends Controller
      */
     public function  actionLoadReports()
     {
-        $vm = ViberMessage::find()->where(['in', 'status', ['wait', 'process']])->one();
+        $vm = ViberMessage::find()
+            ->where(['in', 'status', ['wait', 'process']])
+            ->andWhere(['channel'=> 'viber'])->one();
         if (! $vm) {
             echo 'No distribution messages';
 
@@ -176,7 +180,8 @@ class CronController extends Controller
         $this->time_stop = time() + self::VIBER_TIME_LIMIT;
 
         while ($this->time_stop > time()) {
-            $vm = ViberMessage::find()->isProcess()->one();
+            $vm = ViberMessage::find()->isProcess()
+                ->andWhere(['channel'=> 'viber'])->one();
             if ($vm) {
                 echo "\nfound $vm->id";
             }

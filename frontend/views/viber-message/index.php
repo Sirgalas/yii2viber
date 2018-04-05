@@ -76,6 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             'format' => 'raw',
         ],
+        'channel',
         //'limit_messages',
         'cost',
         //'balance',

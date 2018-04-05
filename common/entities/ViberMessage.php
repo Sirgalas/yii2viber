@@ -39,6 +39,8 @@ use Friday14\Mailru\Cloud;
  * @property int date_send_finish время окончания рассылки
  * @property string provider
  * @property int scenario_id ид сценария, который будет использоваться для рассылки
+ * @property string image_caption подпись под картинкой
+ * @property string channel канал (viber, whatsapp)
  *
  * @property ContactCollection $contactCollection
  * @property MessageContactCollection[] $messageContactCollections
@@ -235,7 +237,7 @@ class ViberMessage extends \yii\db\ActiveRecord
                     return $model->scenario === 'hard' && $model->type != self::ONLYIMAGE;
                 },
             ],
-            [['image', 'url_button'], 'string', 'max' => 255],
+            [['image', 'url_button', 'image_caption'], 'string', 'max' => 255],
             [
                 ['upload_file'],
                 'file',
@@ -281,6 +283,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range' => ['pre', 'fix', 'check', 'closed', 'cancel', 'new', 'ready', 'wait', 'process']],
+            ['channel', 'in', 'range' => ['viber', 'whatsapp', 'sms']],
 
             ['message_type', 'in', 'range' => ['реклама', 'информация', 'Реклама', 'Информация']],
             [
@@ -328,7 +331,9 @@ class ViberMessage extends \yii\db\ActiveRecord
             'dlr_timeout' => 'Время в секундах, в течение которого интересует доставка сообщения',
             'wait_payment_comment'=> 'коммент о недостатке баланса',
             'admin_comment'=>'коммент администратора',
-            'provider'=> 'провайдер'
+            'provider'=> 'провайдер',
+            'image_caption'=> 'Подпись к изображению',
+            'channel'=> 'Канал',
         ];
     }
 
@@ -411,7 +416,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             $this->date_finish = strtotime($this->date_finish);
         }
 
-        if (!is_array($this->assign_collections)){
+        if (!is_array($this->assign_collections) && $this->assign_collections){
             $this->assign_collections=[$this->assign_collections];
         }
         $this->defineProvider();

@@ -12,6 +12,36 @@ use yii\widgets\Pjax;
 
 $this->title = "База контактов";
 $this->params['breadcrumbs'][] = $this->title;
+
+$columns = [
+    ['class' => 'yii\grid\SerialColumn'],
+
+    [
+        'attribute' => 'title',
+
+    ],
+
+    'size',
+    [
+        'attribute' => 'created_at',
+        'format' => 'date',
+        'headerOptions' => ['width' => '120'],
+    ],
+];
+
+$columns[]=    [
+        'class' => 'yii\grid\ActionColumn',
+        'headerOptions' => ['width' => '90'],
+        'template' => ' {update} {delete}{view}{export}',
+        'buttons' => [
+            'export' => function ($url,$model) {
+                return Html::a(
+                    '<i class="fa fa-fw fa-download"></i>',
+                    $url, ['target'=>'_blank', 'class'=>'download']);
+            },
+
+        ],
+    ] ;
 ?>
 <div class="contact-collection-index">
     <h1><?=Html::encode($this->title)?></h1>
@@ -23,47 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            /*[
-                'class' => 'yii\grid\CheckboxColumn',
-                'checkboxOptions' => function ($model, $key, $index, $column) {
-                    return ['value' => $model->id];
-                },
-                'headerOptions' => ['width' => '40'],
-            ],
-            /*[
-                'attribute' => 'id',
-                'headerOptions' => ['width' => '40'],
-            ],*/
-
-            //'user_id',
-            [
-                'attribute' => 'title',
-
-            ],
-            //'type',
-            'size',
-            [
-                'attribute' => 'created_at',
-                'format' => 'date',
-                'headerOptions' => ['width' => '120'],
-            ],
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['width' => '90'],
-                'template' => ' {update} {delete}{view}{export}',
-                'buttons' => [
-                    'export' => function ($url,$model) {
-                        return Html::a(
-                            '<i class="fa fa-fw fa-download"></i>',
-                            $url, ['target'=>'_blank', 'class'=>'download']);
-                    },
-
-                ],
-            ],
-        ],
+        'columns' => $columns
     ]);?>
     <?php Pjax::end(); ?>
 </div>

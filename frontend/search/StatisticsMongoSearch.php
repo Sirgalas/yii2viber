@@ -102,11 +102,8 @@ class StatisticsMongoSearch extends Message_Phone_List
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
-
         // grid filtering conditions
         if (!empty($idsTransaction)) {
             $query->andFilterWhere(['in', 'transaction_id', $idsTransaction]);

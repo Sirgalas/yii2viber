@@ -79,6 +79,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <div class="block-header">
                     Рассылка
                 </div>
+                <?= $form->field($model, 'channel')->dropDownList(array_combine(Yii::$app->params['channels'],Yii::$app->params['channels']),  ['maxlength' => true, 'id' => 'field_channel']) ?>
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
                 <div class="form-group radio-toggle" style="display: none">
@@ -142,6 +143,11 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <?=$form->field($model, 'url_button')->textInput([
                     'maxlength' => true,
                     'id' => 'field_url_button',
+                ])?>
+
+                <?=$form->field($model, 'image_caption')->textInput([
+                    'maxlength' => true,
+                    'id' => 'field_image_caption',
                 ])?>
             </div>
             <div class="form-group col-md-12">
@@ -291,6 +297,30 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 fild_text.val(txt + '(' + code + ')');
                 informToptext(fild_text);
             });
+            function manageChannelVisible(){
+                var type = $('#field_channel').val();
+                switch (type){
+                    case 'viber':
+                        $('#field_image_caption').hide();
+                        $('#smiles_block').show();
+                        $('.field-field_type').show();
+                        $('.field-vibermessage-alpha_name').show();
+                        manageVisible();
+                        break;
+                    case 'whatsapp':
+                        $('.field-filed_text').show();
+                        $('#remaining_text').show();
+                        $('.field-field_image').show();
+                        $('#viber_image').show();
+                        $('.field-field_title_button').hide();
+                        $('.field-field_url_button').hide();
+                        $('.field-field_type').hide();
+                        $('.field-vibermessage-alpha_name').hide();
+                        $('#smiles_block').hide();
+                        $('#field_image_caption').show();
+                        break;
+                }
+            }
             function manageVisible() {
 
                 var type = $('#field_type').val();
@@ -338,9 +368,9 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 }
             }
 
-            manageVisible();
+            manageChannelVisible();
             $('#field_type').change(manageVisible);
-
+            $('#field_channel').change(manageChannelVisible);
 
             /**
              *

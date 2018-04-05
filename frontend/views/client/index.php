@@ -131,7 +131,9 @@ $columns[]=    [
             },
         ],
     ];
-
+if (Yii::$app->user->identity->isAdmin()){
+    $columns[]='viber_provider';
+}
 ?>
 <div class="user-index">
 

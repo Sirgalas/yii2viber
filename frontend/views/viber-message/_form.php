@@ -27,6 +27,7 @@ use yii\helpers\Url;
                             <h4 class="box-title">Параметры </h4>
                         </div><!-- /.box-header -->
                         <div class="box-body">
+
                             <?=$form->field($model, 'title')->textInput(['maxlength' => true])?>
                             <?=$form->field($model, 'date_start')->widget(DateTimePicker::classname(), [
                                 'options' => ['placeholder' => 'Enter event time ...'],
