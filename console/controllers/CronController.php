@@ -203,7 +203,7 @@ class CronController extends Controller
                 $v->prepareTransaction();
             }
 
-            if ($vm) {
+            if ($vm & $vm->channel == 'viber') {
                 echo 'SEND ', $vm->id, $vm->title, $vm->user_id;
                 $v = new Viber($vm);
                 $v->sendMessage();
