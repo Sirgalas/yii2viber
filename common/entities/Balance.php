@@ -3,7 +3,7 @@
 namespace common\entities;
 
 use Yii;
-
+use common\entities\user\User;
 /**
  * This is the model class for table "balance".
  *
@@ -59,6 +59,6 @@ class Balance extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }
