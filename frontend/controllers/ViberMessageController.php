@@ -91,7 +91,7 @@ class ViberMessageController extends Controller
             $model = new ViberMessage();
         }
         if (! $model->status) {
-            $model->status = ViberMessage::STATUS_PRE;
+                $model->status = ViberMessage::STATUS_PRE;
         }
         if ($model->load(Yii::$app->request->post())) {
             $services= new ViberMessageServices();

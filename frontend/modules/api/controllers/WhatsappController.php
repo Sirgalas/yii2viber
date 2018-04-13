@@ -26,18 +26,17 @@ class WhatsappController extends AcViberController
     {
         if ($viber_message->status !== ViberMessage::STATUS_PROCESS) {
             $this->writeToTextLog('no status');
+
             return false;
         }
         $viber_transaction = ViberTransaction::find()->isNew($viber_message->id)->one();
         if (! $viber_transaction) {
-            $this->writeToTextLog('no transactions for ' . $viber_message->id);
+            $this->writeToTextLog('no transactions for '.$viber_message->id);
+
             return $viber_message->setWait();
         }
 
-        $phonesArray = Message_Phone_List::find()
-
-            ->where(['transaction_id' => $viber_transaction->id])
-            ->all();
+        $phonesArray = Message_Phone_List::find()->where(['transaction_id' => $viber_transaction->id])->all();
 
         $phonesA = [];
         foreach ($phonesArray as $rec) {
@@ -47,18 +46,20 @@ class WhatsappController extends AcViberController
             $viber_transaction->status = 'error';
             $viber_transaction->save();
             $this->writeToTextLog('no phones', $viber_transaction);
+
             return false;
         }
         // списание баланса
         $user = User::find()->where(['id' => $viber_message->user_id])->one();
         if ($user->balance < \count($phonesA)) {
             $this->viber_message->setWaitPay();
-            $this->writeToTextLog('balance',$viber_transaction);
+            $this->writeToTextLog('balance', $viber_transaction);
+
             return false;
         }
         $user->balance -= \count($phonesA);
         if (! $user->save()) {
-            $this->writeToTextLog('not save',$viber_transaction);
+            $this->writeToTextLog('not save', $viber_transaction);
             throw new \RuntimeException('not save');
         }
 
@@ -67,16 +68,17 @@ class WhatsappController extends AcViberController
             $result['msg_template']['images'] = [['link'    => $viber_message->image,
                                                   'caption' => $viber_message->image_caption]];
         }
-        $result['contacts'] = $phonesA;
+        $result['contacts']        = $phonesA;
         $viber_transaction->status = 'sended';
-        if (!$viber_transaction->save()){
-            return ['error'=>$viber_transaction->getErrors()];
+        if (! $viber_transaction->save()) {
+            return ['error' => $viber_transaction->getErrors()];
         };
-        $this->writeToTextLog($result,$viber_transaction);
+        $this->writeToTextLog($result, $viber_transaction);
+
         return $result;
     }
 
-    private function writeToTextLog($result, $viber_transaction=null)
+    private function writeToTextLog($result, $viber_transaction = null)
     {
         $path     = \Yii::getAlias('@frontend').'/runtime/whatsapp_report';
         $fileName = $path.'/query_'.date('Ymd_H').'.txt';
@@ -85,7 +87,7 @@ class WhatsappController extends AcViberController
 
         file_put_contents($fileName, Json::encode($result), FILE_APPEND);
         if ($viber_transaction) {
-            file_put_contents($fileName, "\ntransaction_id=" . $viber_transaction->id, FILE_APPEND);
+            file_put_contents($fileName, "\ntransaction_id=".$viber_transaction->id, FILE_APPEND);
         }
         file_put_contents($fileName, "\n".'======================================', FILE_APPEND);
     }
@@ -95,6 +97,7 @@ class WhatsappController extends AcViberController
         $vm = ViberMessage::find()->isProcess()->andWhere(['channel' => 'whatsapp'])->one();
         if (! $vm) {
             $this->writeToTextLog('no message');
+
             return '';
         }
 
@@ -103,8 +106,79 @@ class WhatsappController extends AcViberController
 
     public function actionReport()
     {
-        \Yii::warning('WhatsApp report POST data '.print_r($_POST, 1));
-        \Yii::warning('WhatsApp raw data '.file_get_contents("php://input"));
+
+
+        $post = file_get_contents("php://input");
+
+        $path = \Yii::getAlias('@frontend').'/runtime/whatsapp_report';
+
+        if (! file_exists($path)) {
+            echo 'notfound,   mkdir=', mkdir($path);
+        }
+        try {
+            $fileName = $path.'/post_'.date('Ymd_H').'.txt';
+            if (isset($post) && $post) {
+                file_put_contents($fileName, date("H:i:s")."\n=====================\n".$post, FILE_APPEND);
+            } else {
+                file_put_contents($fileName, 'NO DATA', FILE_APPEND);
+                echo 'POST: NO DATA';
+            }
+
+        } catch (\Exception $e) {
+            file_put_contents($path.'/error_'.date('Ymd_H').'.txt', $e->getMessage(), FILE_APPEND);
+            echo "Error", $e->getMessage();
+        }
+
+        $data =Json::decode($post,1);
+        foreach ( $data['report'] as $rec){
+
+            $phone = Message_Phone_List::find()->where(['_id' => $rec['id']])->one();
+            if (! $phone) {
+                echo 2;
+                file_put_contents($fileName, "\n      NOT FOUND ", FILE_APPEND);
+
+                return 'OK';
+            }
+            $changed = false;
+            file_put_contents($fileName, "\n --- Before action ---\n".print_r($phone->getAttributes(), 1), FILE_APPEND);
+            if ($rec['status'] == 'undelivered') {
+                $phone->status = 'undelivered';
+                $changed       = true;
+            } else {
+
+                if (is_object($phone) & $phone->getAttribute('status') === 'new' || $phone->getAttribute('status') === 'sended') {
+                    if ($rec['status'] === 'delivered' || $rec['status'] === 'delivery') {
+
+
+                            $phone->status         = 'delivered';
+                            $phone->date_delivered = time();
+                            $changed               = true;
+
+                    }
+                    if ($rec['status'] == 'seen') {
+
+
+                        $phone->status         = 'viewed';
+                        $phone->date_delivered = time();
+                        $phone->date_viewed    = time();
+                        $changed               = true;
+                    }
+                } elseif ($phone['status'] === 'delivered') {
+
+                    if ($rec['status'] == 'seen') {
+
+                        $phone->status      = 'viewed';
+                        $phone->date_viewed = time();
+                        $changed            = true;
+                    }
+                }
+            }
+            if ($changed) {
+                file_put_contents($fileName, "\n --- after action ---\n".print_r($phone->getAttributes(), 1),
+                                  FILE_APPEND);
+                $phone->save();
+            }
+        }
 
         return 'ok';
     }

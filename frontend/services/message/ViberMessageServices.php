@@ -43,5 +43,6 @@ class ViberMessageServices
                 }
             }
         }
+        return true;
     }
 }
