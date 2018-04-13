@@ -29,7 +29,7 @@ use yii\helpers\Url;
                         <div class="box-body">
 
                             <?=$form->field($model, 'title')->textInput(['maxlength' => true])?>
-                            <?=$form->field($model, 'date_start')->widget(DateTimePicker::classname(), [
+                            <?=$form->field($model, 'date_start')->widget(DateTimePicker::class, [
                                 'options' => ['placeholder' => 'Enter event time ...'],
                                 'pluginOptions' => [
                                     'startDate'=>date('d-M-Y g:i',time()),
@@ -44,7 +44,7 @@ use yii\helpers\Url;
                                     <?=$form->field($model, 'time_finish')->input('time')?>
                                 </div>
                             </div>
-                            <?=$form->field($model, 'date_finish')->widget(DateTimePicker::classname(), [
+                            <?=$form->field($model, 'date_finish')->widget(DateTimePicker::class, [
                                 'options' => ['placeholder' => 'Enter event time ...'],
                                 'pluginOptions' => [
                                     'autoclose' => true,
