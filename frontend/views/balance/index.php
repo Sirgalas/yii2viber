@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\search\BalanceSearch */
@@ -24,14 +24,23 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'user_id',
-            'viber',
+            [
+                'class'=>'kartik\grid\EditableColumn',
+                'attribute'=>'viber',
+                'editableOptions'=> function ($model, $key, $index) {
+                    return [
+                        'header'=>Yii::t('front','Viber'),
+                        'placement'=>'auto',
+                        'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                        'formOptions' => [
+                            'action' => yii\helpers\Url::toRoute('balance/'.$model->id.'/edit-coast'),
+                        ]
+                    ];
+                }
+            ],
             'watsapp',
             'telegram',
-            //'wechat',
-
+            'wechat',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

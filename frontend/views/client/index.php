@@ -4,6 +4,7 @@ use yii\helpers\Html;
 //use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\entities\user\UserSearch */
@@ -77,28 +78,13 @@ $columns[]=    [
     ];
 
 $columns[]=    [
-        'class'=>'kartik\grid\EditableColumn',
+
         'attribute'=>'cost',
         'label'=>'Цена ',
-
+        'format' => 'raw',
         'value'=>function($model){
-            if (!$model->cost){
-                return '0.00';
-            } else {
-                return $model->cost;
-            }
+            return Html::a('посмотреть цены',Url::to('balance'));
         },
-
-        'editableOptions'=> function ($model, $key, $index) {
-            return [
-                'header'=>Yii::t('front','Цену'),
-                'placement'=>'auto',
-                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-                'formOptions' => [
-                    'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
-                ]
-            ];
-        }
     ];
 $columns[]=    [
         'class'=>'kartik\grid\EditableColumn',

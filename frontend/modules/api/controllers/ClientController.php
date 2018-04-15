@@ -71,7 +71,7 @@ class ClientController extends AcViberController
         }
     }
 
-    public function actionBalance()
+    public function actionBalance($id)
     {
         try {
             $id = Yii::$app->request->post('id');
@@ -103,14 +103,20 @@ class ClientController extends AcViberController
                 throw new \Exception('id not specified');
             }
             $user = Client::findOne(['id' => $id]);
-            if (!$user) {
+            if (!$user) 
                 throw new \Exception('client not find');
-            }
-            if (!Yii::$app->request->post('cost')) {
+            
+            if (!Yii::$app->request->post('cost')) 
                 throw new \Exception('cost not specified');
-            }
-            $user->cost = Yii::$app->request->post('cost');
-            if (!$user->save()) {
+            
+            if(!Yii::$app->request->post('provider'))
+                throw new \Exception('provider  not specified');
+            else
+                $provider=Yii::$app->request->post('provider');
+           
+            $user->costProvider->$provider = Yii::$app->request->post('cost');
+
+            if (!$user->costProvider->save()) {
                 throw new \Exception($user->getError());
             }
             return ['success'=>'cost update'];
