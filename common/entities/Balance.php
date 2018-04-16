@@ -49,8 +49,9 @@ class Balance extends \yii\db\ActiveRecord
                 'targetAttribute' => ['user_id' => 'id']],
 
             'check_balance'=>[
-                ['viber', 'telegram', 'wechat'],
+                ['viber', 'telegram', 'wechat', 'whatsapp'],
                 function ($attribute, $params) {
+
                     if ($this->user_id!=Yii::$app->user->id ) {
                         if ($this->getOldAttribute($attribute) < $this->getAttribute($attribute)){
                             $balance=Yii::$app->user->identity->balance;
@@ -58,6 +59,7 @@ class Balance extends \yii\db\ActiveRecord
                             if ($balance) {
                                 $result = $balance[$attribute] + $this->getOldAttribute($attribute) - $this->getAttribute($attribute);
                             }
+
                             if ($result<0) {
                                 $this->addError($attribute, 'Недостаточно средств');
                             }
@@ -123,11 +125,12 @@ class Balance extends \yii\db\ActiveRecord
                 $balance->telegram =  $this->channelRest('telegram', $balance);
                 if ($balance->viber>=0 && $balance->whatsapp >=0 && $balance->telegram>=0){
                     $balance->setScenario('own');
-                    if ($balance->save()){
+                    if ($balance->validate() &&  $balance->save()){
                         return parent::beforeSave($insert);
                     }
                 }
-                print_r($balance->getErrors());
+
+
             }
 
             return false;
