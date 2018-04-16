@@ -80,23 +80,18 @@ class ClientController extends AcViberController
             $id = Yii::$app->request->post('id');
             if (!Yii::$app->user->identity->amParent($id))
                 throw new \Exception('Нет доступа к этому пользователю');
-
-
             if (!$id)
                 throw new \Exception('id not specified');
-
-
-
             $balanceModel=Balance::findOne(['user_id'=>$id]);
             if(!$balanceModel){
                 $balance=new Balance(['user_id'=>$id]);
-                $balance->user_id=$id;
+                $balance->save();
             }
             if (!Yii::$app->request->post('balance'))
                 throw new \Exception('balance not specified');
             $balance = Yii::$app->request->post('balance');
             if(!Yii::$app->request->post('messenger'))
-                throw new \Exception('balance not specified');
+                throw new \Exception('messenger not specified');
             $messager=Yii::$app->request->post('messenger');
             $balanceModel->$messager=(int)$balance;
             if(Yii::$app->request->post('messenger_text')){
