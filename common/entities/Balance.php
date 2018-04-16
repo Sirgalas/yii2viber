@@ -4,7 +4,6 @@ namespace common\entities;
 
 use Yii;
 use common\entities\user\User;
-
 /**
  * This is the model class for table "balance".
  *
@@ -46,7 +45,7 @@ class Balance extends \yii\db\ActiveRecord
                 ['user_id'],
                 'exist',
                 'skipOnError'     => true,
-                'targetClass'     => User::className(),
+                'targetClass'     => User::class,
                 'targetAttribute' => ['user_id' => 'id']],
 
             'check_balance'=>[
