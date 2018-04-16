@@ -93,14 +93,16 @@ class ClientController extends AcViberController
             $balance = Yii::$app->request->post('balance');
             if(!Yii::$app->request->post('messenger'))
                 throw new \Exception('messenger not specified');
-            $messager=Yii::$app->request->post('messenger');
-            $balanceModel->$messager=(int)$balance;
+            $messanger=Yii::$app->request->post('messenger');
+            $balanceModel->$messanger=(int)$balance;
+
             if(Yii::$app->request->post('messenger_text')){
-                $text_balance=$messager.'_price';
+                $text_balance=$messanger.'_price';
                 $balance->$text_balance=Yii::$app->request->post('messenger_text');
             }
-            if(!$balanceModel->save()) {
-                throw new \Exception(var_dump($balanceModel->getError()));
+            if(!$balanceModel->validate() || !$balanceModel->save()) {
+
+                throw new \Exception(print_r($balanceModel->getErrors(),1));
             }
             return ['success'=>'balance update'];
         } catch (\Exception $e) {
