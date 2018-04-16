@@ -41,8 +41,8 @@ class ClientController extends AcViberController
                 'confirmed' => $client->confirmed_at ? 'Yes' : 'No',
                 'blocked' => $client->blocked_at ? 'Yes' : 'No',
                 'status' => $client->type,
-                'cost' => $costarr ? $costarr : 'error send to administrator',
-                'balance' => $client->balance
+                'balance' => $costarr ? $costarr : 'error send to administrator',
+
             ];
         }
         if(!$result)
