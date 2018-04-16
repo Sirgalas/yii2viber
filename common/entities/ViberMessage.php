@@ -341,10 +341,10 @@ class ViberMessage extends \yii\db\ActiveRecord
     {
         $oldCost = $this->cost;
         $new_cost = self::cost($this->$attribute);
-        if ($new_cost - $oldCost > Yii::$app->user->identity->balance) {
-            $this->addError($attribute, 'Недостаточно средств на балансе');
-            //echo 'Недостаточно средств на балансе';
-        }
+        //if ($new_cost - $oldCost > Yii::$app->user->identity->balance) {
+        //    $this->addError($attribute, 'Недостаточно средств на балансе');
+        //    echo 'Недостаточно средств на балансе';
+        //}
 
         if ($this->scenario == ViberMessage::SCENARIO_HARD && $new_cost < 1) {
             $this->addError($attribute, 'Нет телефонов в рассылке');
