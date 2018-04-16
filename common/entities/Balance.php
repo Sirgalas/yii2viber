@@ -35,7 +35,7 @@ class Balance extends \yii\db\ActiveRecord
             [['user_id'], 'required'],
             [['user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'default', 'value' => null],
             [['user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'integer'],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 

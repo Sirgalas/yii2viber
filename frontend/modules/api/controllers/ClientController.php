@@ -3,6 +3,7 @@
 namespace frontend\modules\api\controllers;
 
 use Codeception\Module\Cli;
+use common\entities\Balance;
 use frontend\modules\api\components\AcViberController;
 use Yii;
 use frontend\forms\RegistrationForm;
@@ -29,6 +30,8 @@ class ClientController extends AcViberController
             $clients->andWhere(['in', 'id', $ids]);
         }
         $clients->all();
+        $cost=Balance::find(['user_id'=>Yii::$app->user->identity->id])->asArray()->one();
+        $costarr=array_slice($cost,2);
         foreach ($clients->all() as $client) {
             $result[] = [
                 'id' => $client->id,
@@ -38,7 +41,7 @@ class ClientController extends AcViberController
                 'confirmed' => $client->confirmed_at ? 'Yes' : 'No',
                 'blocked' => $client->blocked_at ? 'Yes' : 'No',
                 'status' => $client->type,
-                'cost' => $client->cost ? $client->cost : '0.00',
+                'cost' => $costarr ? $costarr : 'error send to administrator',
                 'balance' => $client->balance
             ];
         }
