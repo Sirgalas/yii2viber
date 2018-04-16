@@ -8,6 +8,7 @@ use common\entities\BalanceSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * BalanceController implements the CRUD actions for Balance model.
@@ -107,6 +108,21 @@ class BalanceController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionEditCoast($id){
+        
+        $model = Balance::findOne($id);
+        $out = Json::encode(['output'=>'', 'message'=>'']);
+        $posted = current($_POST['Balance']);
+        $post = ['Balance' => $posted];
+        if ($model->load($post)) {
+            $model->save();
+            $output = '';
+            $out = Json::encode(['output'=>$output, 'message'=>'']);
+        }
+        echo $out;
+        return ;
     }
 
     /**
