@@ -53,7 +53,7 @@ class Balance extends \yii\db\ActiveRecord
                 function ($attribute, $params) {
                     if ($this->user_id!=Yii::$app->user->id ) {
                         if ($this->getOldAttribute($attribute) < $this->getAttribute($attribute)){
-                            $balance=Yii::$app->user->identity->balances;
+                            $balance=Yii::$app->user->identity->balance;
                             $result=-1;
                             if ($balance) {
                                 $result = $balance[$attribute] + $this->getOldAttribute($attribute) - $this->getAttribute($attribute);

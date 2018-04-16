@@ -98,8 +98,8 @@ class Viber
 
             return false;
         }
-        $balances=$user->balance;
-        $balance=$balances[0];
+        $balance=$user->balance;
+
         $balance->viber -= \count($phonesA);
         if (! $balance->save()) {
             throw new \RuntimeException('not save');

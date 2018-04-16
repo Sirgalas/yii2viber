@@ -104,7 +104,7 @@ class ClientController extends AcViberController
             }
             return ['success'=>'balance update'];
         } catch (\Exception $e) {
-
+            //print_r($e);
             return $e->getMessage();
         }
     }
