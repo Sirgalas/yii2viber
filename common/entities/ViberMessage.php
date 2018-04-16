@@ -283,7 +283,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range' => ['pre', 'fix', 'check', 'closed', 'cancel', 'new', 'ready', 'wait', 'process']],
-            ['channel', 'in', 'range' => ['viber', 'whatsapp', 'sms']],
+            ['channel', 'in', 'range' => ['viber', 'whatsapp', 'sms', 'telegram','wechat']],
 
             ['message_type', 'in', 'range' => ['реклама', 'информация', 'Реклама', 'Информация']],
             [
@@ -551,14 +551,26 @@ class ViberMessage extends \yii\db\ActiveRecord
         return count(array_unique($phones)) * Yii::$app->params['cost'];
     }
 
-    public function userBalanse($cost = false)
+    public static function calcRestBalance($cost = false, $channel='viber'){
+        $balance=Yii::$app->user->identity->balances;
+        if (count($balance)>0) {
+            $result = $balance[0][$channel] - $cost;
+            return $result;
+        }
+        return -$cost;
+    }
+
+    public function userBalanse($cost = false, $channel='viber')
     {
         if (! $cost) {
             $cost = $this->cost;
         }
-        $result = $this->user->balance - $cost;
-
-        return $result;
+        $balance=$this->user->balances;
+        if (count($balance)>0) {
+            $result = $balance[0][$channel] - $cost;
+            return $result;
+        }
+        return -$cost;
     }
 
     public function getContactCollection()

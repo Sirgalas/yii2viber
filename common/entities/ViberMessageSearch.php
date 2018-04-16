@@ -19,7 +19,7 @@ class ViberMessageSearch extends ViberMessage
         return [
             [['id', 'user_id', 'date_start', 'date_finish', 'limit_messages'], 'integer'],
             [['title', 'text', 'image', 'title_button', 'url_button', 'type', 'alpha_name', 'time_start', 'time_finish', 'status','username'], 'safe'],
-            [['cost', 'balance'], 'number'],
+
         ];
     }
 
@@ -64,8 +64,7 @@ class ViberMessageSearch extends ViberMessage
             //'date_start' => $this->date_start,
             //'date_finish' => $this->date_finish,
             'limit_messages' => $this->limit_messages,
-            'cost' => $this->cost,
-            'balance' => $this->balance,
+
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])

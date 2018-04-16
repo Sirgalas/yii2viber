@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\entities\Balance;
 use common\entities\BalanceLog;
 use common\entities\user\User;
 use common\mailers\WantDealer;
@@ -72,13 +73,16 @@ class ClientController extends Controller
     public function actionCreate()
     {
         $model = new Client();
-
+        $balance= new Balance();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $balance->user_id=$model->id;
+            $balance->load(Yii::$app->request->post()) && $balance->save();
             return $this->redirect(['index']);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'balance'=>$balance,
             'dealers'=>Yii::$app->user->identity->getMyDealers()
         ]);
     }
@@ -93,12 +97,17 @@ class ClientController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $balance= Balance::find()->where(['user_id'=>$id])->one();
+        if (!$balance){
+            $balance=new Balance(['user_id'=>$id]);
+        }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $balance->load(Yii::$app->request->post()) && $balance->save();
             return $this->redirect(['index',]);
         }
 
         return $this->render('update', [
+            'balance'=>$balance,
             'model' => $model, 'dealers'=>Yii::$app->user->identity->getMyDealers()
         ]);
     }

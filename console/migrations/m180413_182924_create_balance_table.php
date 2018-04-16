@@ -16,7 +16,7 @@ class m180413_182924_create_balance_table extends Migration
             'id' => $this->primaryKey(),
             'user_id'=>$this->integer()->notNull(),
             'viber'=>$this->integer(),
-            'watsapp'=>$this->integer(),
+            'whatsapp'=>$this->integer(),
             'telegram'=>$this->integer(),
             'wechat'=>$this->integer()
         ]);

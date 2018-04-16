@@ -4,6 +4,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\entities\user\User */
+/* @var $balance common\entities\Balance */
 /* @var $dealers array */
 
 $this->title = Yii::t('app', 'Изменить: {nameAttribute}', [
@@ -22,7 +23,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
             <div class="box-body">
 
                 <?=$this->render('_form', [
-                    'model' => $model, 'dealers'=>$dealers
+                    'model' => $model,
+                    'balance'=>$balance,
+                    'dealers'=>$dealers
                 ])?>
 
             </div>

@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\entities\Balance;
-use frontend\search\BalanceSearch;
+use common\entities\BalanceSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

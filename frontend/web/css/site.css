@@ -155,13 +155,24 @@ a.desc:after {
 }
 
 .navbar-nav > li > a {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    line-height: 30px;
-    font-size: 26px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    line-height: 15px;
+    font-size: 13px;
     font-weight: bold;
+
 }
 
+
+.navbar-nav > li > a:hover {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    line-height: 15px;
+    font-size: 13px;
+    font-weight: bold;
+    overflow: visible;
+
+}
 aside .user-panel > .info > p {
     font-weight: 600;
     margin-bottom: 9px;

@@ -51,14 +51,16 @@ class WhatsappController extends AcViberController
         }
         // списание баланса
         $user = User::find()->where(['id' => $viber_message->user_id])->one();
-        if ($user->balance < \count($phonesA)) {
-            $this->viber_message->setWaitPay();
+        if (!$user->checkBalance('whatsapp', \count($phonesA))) {
             $this->writeToTextLog('balance', $viber_transaction);
+            $this->viber_message->setWaitPay();
 
             return false;
         }
-        $user->balance -= \count($phonesA);
-        if (! $user->save()) {
+        $balances=$user->balance;
+        $balance=$balances[0];
+        $balance->whatsapp -= \count($phonesA);
+        if (! $balance->save()) {
             $this->writeToTextLog('not save', $viber_transaction);
             throw new \RuntimeException('not save');
         }

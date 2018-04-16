@@ -19,6 +19,7 @@ use Yii;
  * @property string $query
  * @property string $post
  * @property string $created_at
+ * @property string $channel
  *
  * @property User $user
  */
@@ -37,11 +38,27 @@ class BalanceLog extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        return [[['user_id'], 'required'], [['user_id'], 'default', 'value' => null], [['user_id'], 'integer'],
-                [['created_at'], 'safe'],
-                [['old_balance', 'new_balance', 'diff_balance', 'controller_id', 'action_id', 'type', 'fixed', 'query',
-                  'post'], 'string', 'max' => 255],
-                //[['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+        return [
+            [['user_id'], 'required'],
+            [['user_id'], 'default', 'value' => null],
+            [['user_id'], 'integer'],
+            [['created_at'], 'safe'],
+            [
+                [
+                    'old_balance',
+                    'new_balance',
+                    'diff_balance',
+                    'controller_id',
+                    'action_id',
+                    'type',
+                    'fixed',
+                    'query',
+                    'post'],
+                'string',
+                'max' => 255],
+
+            ['channel', 'in', 'range' => ['viber', 'whatsapp', 'sms', 'telegram','wechat']],
+            //[['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -50,10 +67,21 @@ class BalanceLog extends \yii\db\ActiveRecord
      */
     public function attributeLabels()
     {
-        return ['id'          => Yii::t('app', 'ID'), 'user_id' => Yii::t('app', 'User ID'),
-                'old_balance' => 'Стар.Баланс.', 'new_balance' => 'Баланс', 'controller_id' => 'Controller',
-                'action_id'   => 'Action', 'diff_balance' => 'Измен. Баланса', 'type' => 'Type', 'fixed' => 'Fix.',
-                'query'       => 'Query', 'post' => 'Post', 'created_at' => Yii::t('app', 'Created At'),];
+        return [
+            'id'            => Yii::t('app', 'ID'),
+            'user_id'       => Yii::t('app', 'User ID'),
+            'old_balance'   => 'Стар.Баланс.',
+            'new_balance'   => 'Баланс',
+            'controller_id' => 'Controller',
+            'action_id'     => 'Action',
+            'diff_balance'  => 'Измен. Баланса',
+            'type'          => 'Type',
+            'fixed'         => 'Fix.',
+            'query'         => 'Query',
+            'post'          => 'Post',
+            'created_at'    => Yii::t('app', 'Created At'),
+            'channel' => 'Channel',
+            ];
     }
 
     /**

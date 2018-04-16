@@ -142,7 +142,7 @@ class ViberTestForm extends Model
         if ($this->phone3) {
             $phones[] = $this->phone3;
         }
-        if (count($phones) > \Yii::$app->user->identity->balance) {
+        if (!\Yii::$app->user->identity->checkBalance('viber', count($phones) )) {
             $this->addError('phone1', 'Недостаточно средств, для отправки сообщения. Для пополнения тестового баланса, пожалуйста обратитесь в службу поддержки через форму чата. Кнопка для доступа к чату находится справа, внизу');
             return false;
         }

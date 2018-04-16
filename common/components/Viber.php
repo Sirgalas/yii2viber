@@ -93,13 +93,15 @@ class Viber
         }
         // списание баланса
         $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
-        if ($user->balance < \count($phonesA)) {
+        if (!$user->checkBalance('viber', \count($phonesA))) {
             $this->viber_message->setWaitPay();
 
             return false;
         }
-        $user->balance -= \count($phonesA);
-        if (! $user->save()) {
+        $balances=$user->balance;
+        $balance=$balances[0];
+        $balance->viber -= \count($phonesA);
+        if (! $balance->save()) {
             throw new \RuntimeException('not save');
         }
         // Отправка сообщения

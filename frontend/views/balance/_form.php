@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'viber')->textInput() ?>
 
-    <?= $form->field($model, 'watsapp')->textInput() ?>
+    <?= $form->field($model, 'whatsapp')->textInput() ?>
 
     <?= $form->field($model, 'telegram')->textInput() ?>
 

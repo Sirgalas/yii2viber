@@ -4,7 +4,6 @@ use yii\helpers\Html;
 //use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\entities\user\UserSearch */
@@ -77,32 +76,41 @@ $columns[]=    [
         }
     ];
 
+//$columns[]=    [
+//        'class'=>'kartik\grid\EditableColumn',
+//        'attribute'=>'viber_price',
+//        'label'=>'Цена ',
+
+        //'value'=>function($model){
+        //    if (!$model->viber_price){
+        //        return '0.00';
+        //    } else {
+        //        return $model->viber_price;
+        //    }
+        //},
+        //
+        //'editableOptions'=> function ($model, $key, $index) {
+        //    return [
+        //        'header'=>Yii::t('front','Цену'),
+        //        'placement'=>'auto',
+        //        'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+        //        'formOptions' => [
+        //            'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
+        //        ]
+        //    ];
+        //}
+    //];
 $columns[]=    [
 
-        'attribute'=>'cost',
-        'label'=>'Цена ',
-        'format' => 'raw',
-        'value'=>function($model){
-            return Html::a('посмотреть цены',Url::to('balance'));
-        },
-    ];
-$columns[]=    [
-        'class'=>'kartik\grid\EditableColumn',
-        'attribute'=>'balance',
+
         'label'=>'Баланс SMS',
-        'value'=>function($model){return number_format($model->balance); },
-
-        'editableOptions'=> function ($model, $key, $index) {
-            return [
-                'header'=>Yii::t('front','Баланс'),
-                'placement'=>'auto',
-                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-                'formOptions' => [
-                    'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-balance'),
-                ]
-            ];
+        'format'=>'raw',
+        'value'=>function($model){
+            return $model->headerInfo();
         }
+
     ];
+
 
 $columns[]=    [
         'class' => 'yii\grid\ActionColumn',

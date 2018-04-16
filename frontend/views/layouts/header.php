@@ -52,9 +52,9 @@ if (Yii::$app->user->isGuest){
                     <?php } ?>
                 </li>
                 <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="overflow: hidden">
                         <!--<img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/> -->
-                        <span class="hidden-xs"><?= is_object(Yii::$app->user->identity)?Yii::$app->user->identity->headerInfo() :'Вы не авторизованы'; ?></span>
+                        <span class="hidden-xs"><?= is_object(Yii::$app->user->identity)?'Баланс'. Yii::$app->user->identity->headerInfo() :'Вы не авторизованы'; ?></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
@@ -66,7 +66,7 @@ if (Yii::$app->user->isGuest){
                                 <small>Member since Nov. <?= date('Y-m-d',Yii::$app->user->identity->created_at) ?></small>
                                 <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
                                     <p>
-                                        ссылка для регистариции ваших клиентов <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
+                                        ссылка для регистрации ваших клиентов <?= Yii::$app->params['frontendHostInfo'].'/?id='.Yii::$app->user->identity->token; ?>
                                     </p>
                                     <p>
                                         Ваш токен <?= Yii::$app->user->identity->token; ?>

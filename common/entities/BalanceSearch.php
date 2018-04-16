@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\search;
+namespace common\entities;
 
 use Yii;
 use yii\base\Model;
@@ -18,7 +18,8 @@ class BalanceSearch extends Balance
     public function rules()
     {
         return [
-            [['id', 'user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'integer'],
+            [['id', 'user_id', 'viber', 'telegram', 'wechat'], 'integer'],
+            [['viber_price', 'whatsapp', 'whatsapp_price', 'telegram_price', 'wechat_price'], 'safe'],
         ];
     }
 
@@ -61,10 +62,15 @@ class BalanceSearch extends Balance
             'id' => $this->id,
             'user_id' => $this->user_id,
             'viber' => $this->viber,
-            'watsapp' => $this->watsapp,
             'telegram' => $this->telegram,
             'wechat' => $this->wechat,
         ]);
+
+        $query->andFilterWhere(['ilike', 'viber_price', $this->viber_price])
+            ->andFilterWhere(['ilike', 'whatsapp', $this->whatsapp])
+            ->andFilterWhere(['ilike', 'whatsapp_price', $this->whatsapp_price])
+            ->andFilterWhere(['ilike', 'telegram_price', $this->telegram_price])
+            ->andFilterWhere(['ilike', 'wechat_price', $this->wechat_price]);
 
         return $dataProvider;
     }
