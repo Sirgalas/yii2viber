@@ -84,8 +84,9 @@ class ClientController extends AcViberController
                 throw new \Exception('id not specified');
             $balanceModel=Balance::findOne(['user_id'=>$id]);
             if(!$balanceModel){
-                $balance=new Balance(['user_id'=>$id]);
-                $balance->save();
+                $balanceModel=new Balance(['user_id'=>$id]);
+                $balanceModel->save();
+                
             }
             if (!Yii::$app->request->post('balance'))
                 throw new \Exception('balance not specified');
