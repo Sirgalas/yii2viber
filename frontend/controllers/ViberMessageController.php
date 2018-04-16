@@ -156,9 +156,13 @@ class ViberMessageController extends Controller
             $cost = ViberMessage::Cost($data);
             if (Yii::$app->request->post('id')) {
                 $entities = ViberMessage::findOne(Yii::$app->request->post('id'));
-                $balance = $entities->userBalanse($cost);
+                if ($entities->channel===Yii::$app->request->post('channel')) {
+                    $balance = $entities->userBalanse($cost, Yii::$app->request->post('channel'));
+                } else {
+                    $balance = ViberMessage::calcRestBalance( $cost,  Yii::$app->request->post('channel'));
+                }
             } else {
-                $balance = Yii::$app->user->identity->balance - $cost;
+                $balance = ViberMessage::calcRestBalance( $cost,  Yii::$app->request->post('channel'));
             }
 
             return ['cost' => $cost, 'balance' => $balance, 'result' => 'ok'];

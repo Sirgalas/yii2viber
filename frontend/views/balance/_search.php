@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'viber') ?>
 
-    <?= $form->field($model, 'watsapp') ?>
+    <?= $form->field($model, 'whatsapp') ?>
 
     <?= $form->field($model, 'telegram') ?>
 

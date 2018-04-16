@@ -76,47 +76,41 @@ $columns[]=    [
         }
     ];
 
-$columns[]=    [
-        'class'=>'kartik\grid\EditableColumn',
-        'attribute'=>'cost',
-        'label'=>'Цена ',
+//$columns[]=    [
+//        'class'=>'kartik\grid\EditableColumn',
+//        'attribute'=>'viber_price',
+//        'label'=>'Цена ',
 
-        'value'=>function($model){
-            if (!$model->cost){
-                return '0.00';
-            } else {
-                return $model->cost;
-            }
-        },
-
-        'editableOptions'=> function ($model, $key, $index) {
-            return [
-                'header'=>Yii::t('front','Цену'),
-                'placement'=>'auto',
-                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-                'formOptions' => [
-                    'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
-                ]
-            ];
-        }
-    ];
+        //'value'=>function($model){
+        //    if (!$model->viber_price){
+        //        return '0.00';
+        //    } else {
+        //        return $model->viber_price;
+        //    }
+        //},
+        //
+        //'editableOptions'=> function ($model, $key, $index) {
+        //    return [
+        //        'header'=>Yii::t('front','Цену'),
+        //        'placement'=>'auto',
+        //        'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+        //        'formOptions' => [
+        //            'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-cost'),
+        //        ]
+        //    ];
+        //}
+    //];
 $columns[]=    [
-        'class'=>'kartik\grid\EditableColumn',
-        'attribute'=>'balance',
+
+
         'label'=>'Баланс SMS',
-        'value'=>function($model){return number_format($model->balance); },
-
-        'editableOptions'=> function ($model, $key, $index) {
-            return [
-                'header'=>Yii::t('front','Баланс'),
-                'placement'=>'auto',
-                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-                'formOptions' => [
-                    'action' => yii\helpers\Url::toRoute('client/' . $model->id . '/change-balance'),
-                ]
-            ];
+        'format'=>'raw',
+        'value'=>function($model){
+            return $model->headerInfo();
         }
+
     ];
+
 
 $columns[]=    [
         'class' => 'yii\grid\ActionColumn',

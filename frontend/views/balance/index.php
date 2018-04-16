@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'user_id',
             'viber',
-            'watsapp',
+            'whatsapp',
             'telegram',
             //'wechat',
 

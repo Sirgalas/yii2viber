@@ -18,7 +18,7 @@ class BalanceSearch extends Balance
     public function rules()
     {
         return [
-            [['id', 'user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'integer'],
+            [['id', 'user_id', 'viber', 'whatsapp', 'telegram', 'wechat'], 'integer'],
         ];
     }
 
@@ -61,7 +61,7 @@ class BalanceSearch extends Balance
             'id' => $this->id,
             'user_id' => $this->user_id,
             'viber' => $this->viber,
-            'watsapp' => $this->watsapp,
+            'whatsapp' => $this->whatsapp,
             'telegram' => $this->telegram,
             'wechat' => $this->wechat,
         ]);

@@ -5,7 +5,7 @@ namespace common\entities\user;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\entities\user\Client;
+use common\entities\Balance;
 
 /**
  * UserSearch represents the model behind the search form of `common\entities\user\User`.
@@ -20,7 +20,7 @@ class ClientSearch extends Client
         return [
             [['id', 'confirmed_at',  'updated_at', 'flags', 'last_login_at', 'dealer_id'], 'integer'],
             [['username', 'email', 'password_hash', 'auth_key', 'unconfirmed_email', 'registration_ip', 'type', 'image', 'blocked_at', 'created_at'], 'safe'],
-            [['balance'], 'number'],
+            //[['balance'], 'number'],
             [['dealer_confirmed'], 'boolean'],
         ];
     }
@@ -44,7 +44,7 @@ class ClientSearch extends Client
     public function search($params)
     {
         $query = Client::find()->where('coalesce(blocked_at, 0)<1' );
-
+        $query->joinWith(['balances']);
         // add conditions that should always apply here
         $ids = Yii::$app->user->identity->getChildList();
         if ($ids !== -1) {
@@ -72,7 +72,7 @@ class ClientSearch extends Client
             'flags' => $this->flags,
             'last_login_at' => $this->last_login_at,
 
-            'balance' => $this->balance,
+            //'balance' => $this->balance,
 
         ]);
         if ( $this->created_at){

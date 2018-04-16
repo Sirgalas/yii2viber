@@ -10,9 +10,13 @@ use common\entities\user\User;
  * @property int $id
  * @property int $user_id
  * @property int $viber
- * @property int $watsapp
  * @property int $telegram
  * @property int $wechat
+ * @property string $viber_price
+ * @property string $whatsapp
+ * @property string $whatsapp_price
+ * @property string $telegram_price
+ * @property string $wechat_price
  *
  * @property User $user
  */
@@ -33,8 +37,9 @@ class Balance extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'default', 'value' => null],
-            [['user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'integer'],
+            [['user_id', 'viber', 'telegram', 'wechat'], 'default', 'value' => null],
+            [['user_id', 'viber', 'telegram', 'wechat'], 'integer'],
+            [['viber_price', 'whatsapp', 'whatsapp_price', 'telegram_price', 'wechat_price'], 'string', 'max' => 20],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -47,10 +52,14 @@ class Balance extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'viber' => 'Viber',
-            'watsapp' => 'Watsapp',
-            'telegram' => 'Telegram',
-            'wechat' => 'Wechat',
+            'viber' => 'Баланс Viber',
+            'telegram' => 'Баланс Telegram',
+            'wechat' => 'Баланс Wechat',
+            'viber_price' => 'Стоимость Viber',
+            'whatsapp' => 'Баланс Whatsapp',
+            'whatsapp_price' => 'Стоимость Whatsapp',
+            'telegram_price' => 'Стоимость Telegram',
+            'wechat_price' => 'Стоимость Wechat',
         ];
     }
 
@@ -59,6 +68,6 @@ class Balance extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        return $this->hasOne(User::class , ['id' => 'user_id']);
     }
 }

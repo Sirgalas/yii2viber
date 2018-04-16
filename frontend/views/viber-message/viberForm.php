@@ -195,12 +195,13 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     "change" => "function(e) {
                         var cost = $(this).val();
                         var id= $('.viber-test-message-form').data('id');
+                        var channel= $('#field_channel').val();
                         $.ajax(
                             {
                                 url: '/viber-message/cost',
                                 type: 'POST',
                                 dataType: 'json',
-                                data: {'data': cost,'id':id},
+                                data: {'data': cost,'id':id, 'channel':channel},
                                 success: function (data) {
                                     if(data){
                                         if(data.result == 'ok'){ 

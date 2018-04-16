@@ -31,13 +31,13 @@ $this->params['breadcrumbs'][] = $this->title ?>
             'label'=>'Фамилия'
         ],
         'email:email',
-        [
-            'attribute'=>'balance',
-            'label'=>'Баланс'
-        ],
+        //[
+        //    'attribute'=>'balance',
+        //    'label'=>'Баланс'
+        //],
         [
             'attribute'=> 'tel',
-            'label'=>'Баланс'
+
         ],
         [
             'attribute'=>'time_work',
