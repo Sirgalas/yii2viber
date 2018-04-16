@@ -314,21 +314,21 @@ class User extends BaseUser
     }
 
     public function checkBalance($channel, $cnt){
-        $balance=$this->balances;
-        if (count($balance)>0) {
-            $balance = $balance[0];
+        $balance=$this->balance;
+        if ($balance) {
+
             return $balance[$channel]>=$cnt;
         }
         return false;
     }
     public function headerInfo()
     {
-        $balance=$this->balances;
+        $balance=$this->balance;
 
 
         $b= '<table>';
-        if (count($balance)>0) {
-            $balance=$balance[0];
+        if ($balance) {
+
             if ($balance->viber) {
                 $b .= '<tr><td>Viber:</td><td>'.number_format($balance->viber).'</td></tr>';
             }

@@ -77,6 +77,7 @@ class ClientController extends AcViberController
     public function actionBalance()
     {
         try {
+
             $id = Yii::$app->request->post('id');
             if (!Yii::$app->user->identity->amParent($id))
                 throw new \Exception('Нет доступа к этому пользователю');
@@ -93,10 +94,10 @@ class ClientController extends AcViberController
                 $balance->user_id=$id;
             }
             if (!Yii::$app->request->post('balance'))
-                throw new \Exception('balance not specified');
+                throw new \Exception('balance not specified 1');
             $balance = Yii::$app->request->post('balance');
             if(!Yii::$app->request->post('messenger'))
-                throw new \Exception('balance not specified');
+                throw new \Exception('messenger not specified 2');
             $messager=Yii::$app->request->post('messenger');
             $balanceModel->$messager=(int)$balance;
             if(Yii::$app->request->post('messenger_text')){
@@ -108,6 +109,7 @@ class ClientController extends AcViberController
             }
             return ['success'=>'balance update'];
         } catch (\Exception $e) {
+            print_r($e);
             return $e->getMessage();
         }
     }

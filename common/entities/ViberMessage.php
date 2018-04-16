@@ -552,9 +552,9 @@ class ViberMessage extends \yii\db\ActiveRecord
     }
 
     public static function calcRestBalance($cost = false, $channel='viber'){
-        $balance=Yii::$app->user->identity->balances;
-        if (count($balance)>0) {
-            $result = $balance[0][$channel] - $cost;
+        $balance=Yii::$app->user->identity->balance;
+        if ($balance) {
+            $result = $balance[$channel] - $cost;
             return $result;
         }
         return -$cost;
@@ -565,9 +565,9 @@ class ViberMessage extends \yii\db\ActiveRecord
         if (! $cost) {
             $cost = $this->cost;
         }
-        $balance=$this->user->balances;
-        if (count($balance)>0) {
-            $result = $balance[0][$channel] - $cost;
+        $balance=$this->user->balance;
+        if ($balance) {
+            $result = $balance[$channel] - $cost;
             return $result;
         }
         return -$cost;
