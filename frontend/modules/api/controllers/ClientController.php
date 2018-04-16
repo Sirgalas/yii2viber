@@ -22,16 +22,17 @@ class ClientController extends AcViberController
 
     public function actionIndex()
     {
-        if(!Yii::$app->user->identity->id)
+        if (!Yii::$app->user->identity->id) {
             return 'User not Auth';
+        }
         $ids = Yii::$app->user->identity->getChildList();
         $clients = Client::find()->where('coalesce(blocked_at, 0)<1');
         if ($ids != -1) {
             $clients->andWhere(['in', 'id', $ids]);
         }
         $clients->all();
-        $cost=Balance::find(['user_id'=>Yii::$app->user->identity->id])->asArray()->one();
-        $costarr=array_slice($cost,2);
+        $cost = Balance::find(['user_id' => Yii::$app->user->identity->id])->asArray()->one();
+        $costarr = array_slice($cost, 2);
         foreach ($clients->all() as $client) {
             $result[] = [
                 'id' => $client->id,
@@ -45,15 +46,17 @@ class ClientController extends AcViberController
 
             ];
         }
-        if(!$result)
-            $result=['error'=>'Clients not find'];
+        if (!$result) {
+            $result = ['error' => 'Clients not find'];
+        }
         return $result;
     }
 
     public function actionRegistration()
     {
-        if(!Yii::$app->user->identity->id)
+        if (!Yii::$app->user->identity->id) {
             return 'User not Auth';
+        }
         if (!$this->module->enableRegistration) {
             throw new NotFoundHttpException();
         }
@@ -78,34 +81,36 @@ class ClientController extends AcViberController
     {
         try {
             $id = Yii::$app->request->post('id');
-            if (!Yii::$app->user->identity->amParent($id))
+            if (!Yii::$app->user->identity->amParent($id)) {
                 throw new \Exception('Нет доступа к этому пользователю');
-            if (!$id)
+            }
+            if (!$id) {
                 throw new \Exception('id not specified');
-            $balanceModel=Balance::findOne(['user_id'=>$id]);
-            if(!$balanceModel){
-                $balanceModel=new Balance(['user_id'=>$id]);
+            }
+            $balanceModel = Balance::findOne(['user_id' => $id]);
+            if (!$balanceModel) {
+                $balanceModel = new Balance(['user_id' => $id]);
                 $balanceModel->save();
             }
-            if (!Yii::$app->request->post('balance'))
+            if (!Yii::$app->request->post('balance')) {
                 throw new \Exception('balance not specified');
+            }
             $balance = Yii::$app->request->post('balance');
-            if(!Yii::$app->request->post('messenger'))
+            if (!Yii::$app->request->post('messenger')) {
                 throw new \Exception('messenger not specified');
-            $messanger=Yii::$app->request->post('messenger');
-            $balanceModel->$messanger=(int)$balance;
-
-            if(Yii::$app->request->post('messenger_text')){
-                $text_balance=$messanger.'_price';
-                $balance->$text_balance=Yii::$app->request->post('messenger_text');
             }
-            if(!$balanceModel->validate() || !$balanceModel->save()) {
+            $messanger = Yii::$app->request->post('messenger');
+            $balanceModel->$messanger = (int)$balance;
 
-                throw new \Exception(print_r($balanceModel->getErrors(),1));
-            if(!$balanceModel->save()) {
-                throw new \Exception($balanceModel->getErrors());
+            if (Yii::$app->request->post('messenger_text')) {
+                $text_balance = $messanger . '_price';
+                $balance->$text_balance = Yii::$app->request->post('messenger_text');
             }
-            return ['success'=>'balance update'];
+            if (!$balanceModel->validate() || !$balanceModel->save()) {
+                throw new \Exception(print_r($balanceModel->getErrors(), 1)
+                );
+            }
+            return ['success' => 'balance update'];
         } catch (\Exception $e) {
             //print_r($e);
             return $e->getMessage();
