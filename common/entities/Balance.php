@@ -10,11 +10,10 @@ use common\entities\user\User;
  * @property int $id
  * @property int $user_id
  * @property int $viber
- * @property int $watsapp
  * @property int $telegram
  * @property int $wechat
  * @property string $viber_price
- * @property string $whatsapp
+ * @property int $whatsapp
  * @property string $whatsapp_price
  * @property string $telegram_price
  * @property string $wechat_price
@@ -38,10 +37,40 @@ class Balance extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'default', 'value' => null],
-            [['user_id', 'viber', 'watsapp', 'telegram', 'wechat'], 'integer'],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-        ];
+            [['user_id', 'viber', 'telegram', 'whatsapp', 'wechat'], 'default', 'value' => null],
+            [['user_id', 'viber', 'telegram',  'whatsapp','wechat'],'integer', 'min'=>0],
+
+            [['viber_price',   'whatsapp_price', 'telegram_price', 'wechat_price'], 'string', 'max' => 20],
+            [
+                ['user_id'],
+                'exist',
+                'skipOnError'     => true,
+                'targetClass'     => User::class,
+                'targetAttribute' => ['user_id' => 'id']],
+
+            'check_balance'=>[
+                ['viber', 'telegram', 'wechat'],
+                function ($attribute, $params) {
+                    if ($this->user_id!=Yii::$app->user->id ) {
+                        if ($this->getOldAttribute($attribute) < $this->getAttribute($attribute)){
+                            $balance=Yii::$app->user->identity->balances;
+                            $result=-1;
+                            if (count($balance)>0) {
+                                $result = $balance[0][$attribute] + $this->getOldAttribute($attribute) - $this->getAttribute($attribute);
+                            }
+                            if ($result<0) {
+                                $this->addError($attribute, 'Недостаточно средств');
+                            }
+
+                        }
+                    }
+                    if ($this->user_id==Yii::$app->user->id && $this->scenario!='own' ) {
+                        if ($this->getOldAttribute($attribute) != $this->getAttribute($attribute)) {
+                            $this->addError($attribute, 'Нельзя редактиовать собственный баланс');
+                        }
+                    }
+                },
+                'message' => 'недостаточно средств']];
     }
 
     /**
@@ -50,17 +79,16 @@ class Balance extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'viber' => 'Баланс Viber',
-            'telegram' => 'Баланс Telegram',
-            'wechat' => 'Баланс Wechat',
-            'viber_price' => 'Стоимость Viber',
-            'whatsapp' => 'Баланс Whatsapp',
+            'id'             => 'ID',
+            'user_id'        => 'User ID',
+            'viber'          => 'Баланс Viber',
+            'telegram'       => 'Баланс Telegram',
+            'wechat'         => 'Баланс Wechat',
+            'viber_price'    => 'Стоимость Viber',
+            'whatsapp'       => 'Баланс Whatsapp',
             'whatsapp_price' => 'Стоимость Whatsapp',
             'telegram_price' => 'Стоимость Telegram',
-            'wechat_price' => 'Стоимость Wechat',
-        ];
+            'wechat_price'   => 'Стоимость Wechat',];
     }
 
     /**
@@ -68,6 +96,42 @@ class Balance extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::class , ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['own'] = $scenarios['default'];
+        unset( $scenarios['own']['check_balance']);
+
+        return $scenarios;
+    }
+    protected function channelRest($channel, $parent){
+        $result = (int) $parent->getAttribute($channel) + (int)$this->getOldAttribute($channel) - (int)$this->getAttribute($channel);
+        return (integer)$result;
+    }
+    public function beforeSave($insert)
+    {
+        if ($this->user_id!=Yii::$app->user->id) {
+            $balance=Yii::$app->user->identity->balances;
+
+            if (count($balance)>0) {
+                $balance = $balance[0];
+                $balance->viber =  $this->channelRest('viber', $balance);
+                $balance->whatsapp =  $this->channelRest('whatsapp', $balance);
+                $balance->telegram =  $this->channelRest('telegram', $balance);
+                if ($balance->viber>=0 && $balance->whatsapp >=0 && $balance->telegram>=0){
+                    $balance->setScenario('own');
+                    if ($balance->save()){
+                        return parent::beforeSave($insert);
+                    }
+                }
+                print_r($balance->getErrors());
+            }
+
+            return false;
+        }
+        return parent::beforeSave($insert); // TODO: Change the autogenerated stub
     }
 }

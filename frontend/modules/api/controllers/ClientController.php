@@ -74,23 +74,37 @@ class ClientController extends AcViberController
         }
     }
 
-    public function actionBalance($id)
+    public function actionBalance()
     {
         try {
             $id = Yii::$app->request->post('id');
-            if (!$id) {
+            if (!Yii::$app->user->identity->amParent($id))
+                throw new \Exception('Нет доступа к этому пользователю');
+
+
+            if (!$id)
                 throw new \Exception('id not specified');
+
+
+
+            $balanceModel=Balance::findOne(['user_id'=>$id]);
+            if(!$balanceModel){
+                $balance=new Balance(['user_id'=>$id]);
+                $balance->user_id=$id;
             }
-            $user = Client::findOne(['id' => $id]);
-            if (!$user) {
-                throw new \Exception('client not find');
-            }
-            if (!Yii::$app->request->post('balance')) {
+            if (!Yii::$app->request->post('balance'))
                 throw new \Exception('balance not specified');
+            $balance = Yii::$app->request->post('balance');
+            if(!Yii::$app->request->post('messenger'))
+                throw new \Exception('balance not specified');
+            $messager=Yii::$app->request->post('messenger');
+            $balanceModel->$messager=(int)$balance;
+            if(Yii::$app->request->post('messenger_text')){
+                $text_balance=$messager.'_price';
+                $balance->$text_balance=Yii::$app->request->post('messenger_text');
             }
-            $user->balance = Yii::$app->request->post('balance');
-            if (!$user->save()) {
-                throw new \Exception(var_dump($user->getError()));
+            if(!$balanceModel->save()) {
+                throw new \Exception(var_dump($balanceModel->getError()));
             }
             return ['success'=>'balance update'];
         } catch (\Exception $e) {
@@ -98,33 +112,5 @@ class ClientController extends AcViberController
         }
     }
 
-    public function actionCost()
-    {
-        try {
-            $id = Yii::$app->request->post('id');
-            if (!$id) {
-                throw new \Exception('id not specified');
-            }
-            $user = Client::findOne(['id' => $id]);
-            if (!$user) 
-                throw new \Exception('client not find');
-            
-            if (!Yii::$app->request->post('cost')) 
-                throw new \Exception('cost not specified');
-            
-            if(!Yii::$app->request->post('provider'))
-                throw new \Exception('provider  not specified');
-            else
-                $provider=Yii::$app->request->post('provider');
-           
-            $user->costProvider->$provider = Yii::$app->request->post('cost');
 
-            if (!$user->costProvider->save()) {
-                throw new \Exception($user->getError());
-            }
-            return ['success'=>'cost update'];
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
 }

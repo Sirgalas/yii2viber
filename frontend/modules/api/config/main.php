@@ -32,10 +32,8 @@ return [
                         'OPTIONS index'         =>  'index',
                         'POST registration'     =>  'registration',
                         'OPTIONS registration'  =>  'registration',
-                        'POST redact balance'   =>  'balance',
+                        'POST balance'          =>  'balance',
                         'OPTIONS balance'       =>  'balance',
-                        'POST redact cost'      =>  'cost',
-                        'OPTIONS cost'          =>  'coat',
                         'DELETE deleteUser'     =>  'delete-user',
                         'OPTIONS deleteUser'    =>  'delete-user',
                     ]

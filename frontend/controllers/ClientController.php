@@ -72,12 +72,25 @@ class ClientController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Client();
+        $model = new Client(['dealer_id'=>Yii::$app->user->id]);
         $balance= new Balance();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $balance->user_id=$model->id;
-            $balance->load(Yii::$app->request->post()) && $balance->save();
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())){
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                if ($model->save()) {
+                    $balance->user_id=$model->id;
+                    if ($balance->load(Yii::$app->request->post()) && $balance->save()) {
+                        $transaction->commit();
+
+                        return $this->redirect(['index']);
+                    }
+                }
+            } catch(\Exception $e){
+                $transaction->rollBack();
+                return  $e->getMessage();
+
+            }
+            $transaction->rollBack();
         }
 
         return $this->render('create', [
@@ -94,18 +107,36 @@ class ClientController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id){
+        if (!Yii::$app->user->identity->amParent($id)){
+            return ['output'=>'', 'message'=>'Нет доступа к этому пользователю'];
+        }
         $model = $this->findModel($id);
         $balance= Balance::find()->where(['user_id'=>$id])->one();
         if (!$balance){
             $balance=new Balance(['user_id'=>$id]);
+            $balance->user_id=$model->id;
         }
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $balance->load(Yii::$app->request->post()) && $balance->save();
-            return $this->redirect(['index',]);
-        }
+        if ($model->load(Yii::$app->request->post())){
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                if ($model->save()) {
 
+                    if ($balance->load(Yii::$app->request->post())){
+                        if ( $balance->save()) {
+                            $transaction->commit();
+
+                            return $this->redirect(['index']);
+                        }
+                    }
+                }
+            } catch(\Exception $e){
+                $transaction->rollBack();
+                return  $e->getMessage();
+
+            }
+            $transaction->rollBack();
+        }
         return $this->render('update', [
             'balance'=>$balance,
             'model' => $model, 'dealers'=>Yii::$app->user->identity->getMyDealers()

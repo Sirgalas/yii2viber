@@ -371,8 +371,8 @@ class User extends BaseUser
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBalances()
+    public function getBalance()
     {
-        return $this->hasMany(Balance::class, ['user_id' => 'id']);
+        return $this->hasOne(Balance::class, ['user_id' => 'id']);
     }
 }
