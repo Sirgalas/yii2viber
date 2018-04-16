@@ -57,8 +57,8 @@ class WhatsappController extends AcViberController
 
             return false;
         }
-        $balances=$user->balance;
-        $balance=$balances[0];
+        $balance=$user->balance;
+
         $balance->whatsapp -= \count($phonesA);
         if (! $balance->save()) {
             $this->writeToTextLog('not save', $viber_transaction);

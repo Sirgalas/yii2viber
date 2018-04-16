@@ -53,10 +53,10 @@ class Balance extends \yii\db\ActiveRecord
                 function ($attribute, $params) {
                     if ($this->user_id!=Yii::$app->user->id ) {
                         if ($this->getOldAttribute($attribute) < $this->getAttribute($attribute)){
-                            $balance=Yii::$app->user->identity->balances;
+                            $balance=Yii::$app->user->identity->balance;
                             $result=-1;
-                            if (count($balance)>0) {
-                                $result = $balance[0][$attribute] + $this->getOldAttribute($attribute) - $this->getAttribute($attribute);
+                            if ($balance) {
+                                $result = $balance[$attribute] + $this->getOldAttribute($attribute) - $this->getAttribute($attribute);
                             }
                             if ($result<0) {
                                 $this->addError($attribute, 'Недостаточно средств');
@@ -114,10 +114,10 @@ class Balance extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($this->user_id!=Yii::$app->user->id) {
-            $balance=Yii::$app->user->identity->balances;
+            $balance=Yii::$app->user->identity->balance;
 
-            if (count($balance)>0) {
-                $balance = $balance[0];
+            if ($balance) {
+
                 $balance->viber =  $this->channelRest('viber', $balance);
                 $balance->whatsapp =  $this->channelRest('whatsapp', $balance);
                 $balance->telegram =  $this->channelRest('telegram', $balance);
