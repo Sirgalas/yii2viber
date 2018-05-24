@@ -60,7 +60,7 @@ class MessageController extends AcViberController
         }
         $a['ViberMessage'] =Yii::$app->request->post();
         $a['ViberMessage']['user_id'] = Yii::$app->user->identity->id;
-        $a['button']= 'pre';
+        $a['button']= 'check';
 
         if (!$model->load($a)) {
             throw new NotFoundHttpException('request not validate' .print_r($model->getErrors(),1), 500);
