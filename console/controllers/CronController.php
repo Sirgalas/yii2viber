@@ -18,18 +18,26 @@ class CronController extends Controller
 
     /**
      * возвращает массив id незавершенных транзакций
+     *
      * @param int $limit
      * @return array
      */
-    private function findTransactionInProcess($limit=200)
+    private function findTransactionInProcess($limit = 200)
     {
-        $wait_ids = ViberMessage::find()->where(['status' => 'wait'])
-            ->andWhere(['channel'=> 'viber'])
-            ->select("id")->limit(3)->orderBy('id')->column();
+        $wait_ids = ViberMessage::find()
+            ->where(['status' => 'wait'])
+            ->andWhere(['channel' => 'viber'])
+            ->select("id")
+            ->limit(3)
+            ->orderBy('id')
+            ->column();
 
         return ViberTransaction::find()
             ->where(['!=', 'status', 'ready'])
-            ->andWhere(['in', 'viber_message_id', $wait_ids,])
+            ->andWhere([
+                           'in',
+                           'viber_message_id',
+                           $wait_ids,])
             ->select(['id'])
             ->limit($limit)
             ->distinct()
@@ -50,8 +58,9 @@ class CronController extends Controller
             foreach (Message_Phone_List::find()
                          ->where(['status' => Message_Phone_List::VIEWED])
                          ->andWhere(["date_delivered" => ['$not' => ['$exists' => true]]])
-                         ->andWhere(['>','date_viewed' ,  10000])
-                         ->limit(300)->all() as $phone) {
+                         ->andWhere(['>', 'date_viewed', 10000])
+                         ->limit(300)
+                         ->all() as $phone) {
 
                 $phone->date_delivered = $phone->date_viewed;
                 $phone->save();
@@ -71,51 +80,53 @@ class CronController extends Controller
     public function actionTransactionResults()
     {
         echo 'actionTransactionResults started';
-        $ids        = $this->findTransactionInProcess(100);
+        $ids = $this->findTransactionInProcess(100);
         print_r($ids);
-        if (!$ids || count($ids)==0){
+        if (! $ids || count($ids) == 0) {
             return;
         }
         $collection = Yii::$app->mongodb->getCollection(Message_Phone_List::collectionName());
 
-        $results     = $collection->aggregate([['$match' => ['transaction_id' => ['$in' => $ids]]],
-                                              ['$group' => ['_id' => ['transaction_id' => '$transaction_id',
-                                                                      'status'         => '$status',],
-                                                            'cnt' => ['$sum' => 1],],],]);
+        $results = $collection->aggregate([
+                                              ['$match' => ['transaction_id' => ['$in' => $ids]]],
+                                              [
+                                                  '$group' => [
+                                                      '_id' => [
+                                                          'transaction_id' => '$transaction_id',
+                                                          'status'         => '$status',],
+                                                      'cnt' => ['$sum' => 1],],],]);
 
         print_r($results);
-        if ($results){
-            $transactions = ViberTransaction::find()->where(['in','id',$ids])->indexBy('id')->all();
-            $undelivers=[];
-            $deliveres=[];
-            foreach ($results as $result){
-                if (!isset($transactions[$result['_id']['transaction_id']])){
+        if ($results) {
+            $transactions = ViberTransaction::find()->where(['in', 'id', $ids])->indexBy('id')->all();
+            $undelivers   = [];
+            $deliveres    = [];
+            foreach ($results as $result) {
+                if (! isset($transactions[$result['_id']['transaction_id']])) {
                     continue;
                 }
-                if ($result['_id']['status'] === Message_Phone_List::DELIVERED ||
-                $result['_id']['status'] === Message_Phone_List::VIEWED ) {
+                if ($result['_id']['status'] === Message_Phone_List::DELIVERED || $result['_id']['status'] === Message_Phone_List::VIEWED) {
                     $transactions[$result['_id']['transaction_id']][$result['_id']['status']] = $result['cnt'];
-                    $deliveres[]=[$result['_id']['transaction_id']] ;
+                    $deliveres[]                                                              = [$result['_id']['transaction_id']];
                 }
-                if ($result['_id']['status'] === Message_Phone_List::UNDELIVERED){
-                    $undelivers[$result['_id']['transaction_id']]= $result['cnt'];
+                if ($result['_id']['status'] === Message_Phone_List::UNDELIVERED) {
+                    $undelivers[$result['_id']['transaction_id']] = $result['cnt'];
                 }
 
                 print_r([
-                    'result'=>$result,
-                    '$deliveres'=>$deliveres,
-                    '$undelivers'=>$undelivers
+                            'result'      => $result,
+                            '$deliveres'  => $deliveres,
+                            '$undelivers' => $undelivers,
 
-                ]);
+                        ]);
             }
 
-            foreach ($transactions as $transaction){
-                $und  = isset($undelivers[$transaction->id])?$undelivers[$transaction->id]:0;
+            foreach ($transactions as $transaction) {
+                $und = isset($undelivers[$transaction->id]) ? $undelivers[$transaction->id] : 0;
                 $transaction->checkReady($und);
                 $transaction->save();
             }
         }
-
     }
 
     /**
@@ -130,7 +141,10 @@ class CronController extends Controller
 
         $ids = ViberTransaction::find()
             ->where(['!=', 'status', 'ready'])
-            ->andWhere(['in', 'viber_message_id', $wait_ids,])
+            ->andWhere([
+                           'in',
+                           'viber_message_id',
+                           $wait_ids,])
             ->select(['viber_message_id'])
             ->distinct()
             ->column();
@@ -154,23 +168,22 @@ class CronController extends Controller
     /**
      * Опрашиваем провайдеров. Получаем и обрабатываем отчет
      */
-    public function  actionLoadReports()
+    public function actionLoadReports()
     {
         $vm = ViberMessage::find()
             ->where(['in', 'status', ['wait', 'process']])
-            ->andWhere(['channel'=> 'viber'])->one();
+            ->andWhere(['channel' => 'viber'])
+            ->one();
         if (! $vm) {
             echo 'No distribution messages';
 
             return;
         }
-        $pf               = new ProviderFactory();
-        $provider         = $pf->createProvider($vm);
+        $pf       = new ProviderFactory();
+        $provider = $pf->createProvider($vm);
         $provider->getDeliveryReport();
         $provider->parseDeliveryReport();
     }
-
-
 
     public function ViberQueueHandle()
     {
@@ -180,8 +193,7 @@ class CronController extends Controller
         $this->time_stop = time() + self::VIBER_TIME_LIMIT;
 
         while ($this->time_stop > time()) {
-            $vm = ViberMessage::find()->isProcess()
-                ->andWhere(['channel'=> 'viber'])->one();
+            $vm = ViberMessage::find()->isProcess()->andWhere(['channel' => 'viber'])->one();
             if ($vm) {
                 echo "\nfound $vm->id";
             }
@@ -190,20 +202,33 @@ class CronController extends Controller
                 $id = ViberMessage::find()
                     ->select('viber_message.id')
                     ->joinWith('user')
-                    ->where('"user"."balance" >= "viber_message"."cost"')
+                    ->rightJoin('balance', 'balance.user_id = "user".id')
+                    ->where('"balance"."viber" >= "viber_message"."cost"')
+                    ->andWhere(['channel' => 'viber'])
                     ->isNew()
                     ->scalar();
+                if (! $id) {
+                    $id = ViberMessage::find()
+                        ->select('viber_message.id')
+                        ->joinWith('user')
+                        ->rightJoin('balance', 'balance.user_id = "user".id')
+                        ->where('"balance"."whatsapp" >= "viber_message"."cost"')
+                        ->andWhere(['channel' => 'whatsapp'])
+                        ->isNew()
+                        ->scalar();
+                }
                 if (! $id) {
                     echo 'Queue is empty !';
 
                     return;
                 }
+
                 $vm = ViberMessage::findOne($id);
                 $v  = new Viber($vm);
                 $v->prepareTransaction();
             }
 
-            if ($vm & $vm->channel == 'viber') {
+            if ($vm && $vm->channel == 'viber') {
                 echo 'SEND ', $vm->id, $vm->title, $vm->user_id;
                 $v = new Viber($vm);
                 $v->sendMessage();
@@ -212,7 +237,6 @@ class CronController extends Controller
             sleep(1);
         }
     }
-
 
     public function actionViberQueueHandle()
     {

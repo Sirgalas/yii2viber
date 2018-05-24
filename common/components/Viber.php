@@ -9,6 +9,7 @@
 namespace common\components;
 
 use common\components\providers\ProviderFactory;
+use common\entities\Balance;
 use common\entities\mongo\Phone;
 use common\entities\mongo\Message_Phone_List;
 use common\entities\user\User;
@@ -92,15 +93,17 @@ class Viber
             return false;
         }
         // списание баланса
+        $channel = $this->viber_message->channel;
         $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
-        if (!$user->checkBalance('viber', \count($phonesA))) {
+        if (!$user->checkBalance( $channel, \count($phonesA))) {
             $this->viber_message->setWaitPay();
 
             return false;
         }
         $balance=$user->balance;
 
-        $balance->viber -= \count($phonesA);
+        $balance->$channel -= \count($phonesA);
+        $balance->validate();
         if (! $balance->save()) {
             throw new \RuntimeException('not save');
         }
@@ -182,8 +185,10 @@ class Viber
                                                                       $contact_collection_ids,
                                                                   ])->distinct('phone');
             }
-            $user = User::find()->where(['id' => $this->viber_message->user_id])->one();
-            if ($user->balance < \count($phones)) {
+            //$user = User::find()->where(['id' => $this->viber_message->user_id])->one();
+            $balance=Balance::find()->where(['user_id' => $this->viber_message->user_id])->one();
+            $channel=$this->viber_message->channel;
+            if ($balance->$channel < \count($phones)) {
                 throw new \RuntimeException('balance is small, not save');
             }
             $tPhones = [];
