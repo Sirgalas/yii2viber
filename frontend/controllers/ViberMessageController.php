@@ -10,7 +10,6 @@ use frontend\entities\User;
 use Yii;
 use common\entities\ViberMessage;
 use common\entities\ViberMessageSearch;
-
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;

@@ -104,7 +104,7 @@ class ClientController extends AcViberController
 
             if (Yii::$app->request->post('messenger_text')) {
                 $text_balance = $messanger . '_price';
-                $balance->$text_balance = Yii::$app->request->post('messenger_text');
+                $balanceModel->$text_balance = Yii::$app->request->post('messenger_text');
             }
             if (!$balanceModel->validate() || !$balanceModel->save()) {
                 throw new \Exception(print_r($balanceModel->getErrors(), 1)

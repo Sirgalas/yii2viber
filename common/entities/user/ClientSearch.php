@@ -44,7 +44,7 @@ class ClientSearch extends Client
     public function search($params)
     {
         $query = Client::find()->where('coalesce(blocked_at, 0)<1' );
-        $query->joinWith(['balances']);
+        $query->joinWith(['balance']);
         // add conditions that should always apply here
         $ids = Yii::$app->user->identity->getChildList();
         if ($ids !== -1) {
