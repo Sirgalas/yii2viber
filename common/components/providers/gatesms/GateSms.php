@@ -141,6 +141,29 @@ class GateSms extends Provider
         //TODO SendAdminNotification
         return false;
     }
+    
+    
+    public function getDeliveryReport(){
+        $curl   = curl_init();
+        $bpAuth = $this->getToken();
+        curl_setopt_array($curl, [CURLOPT_URL => 'http://api.infobip.com/omni/1/reports?channel=VIBER',
+            CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT        => 30, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => 'GET', CURLOPT_POSTFIELDS => '',
+            CURLOPT_HTTPHEADER     => ['accept: application/json',
+                'authorization: '.$bpAuth->getAuthenticationHeader(),],]);
+        $response = curl_exec($curl);
+        $err      = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+            Yii::warning('GET INFOBIP REPORT CURl ERROR ::'.$err);
+            echo 'cURL Error #:'.$err;
+        } else {
+            $this->answer = $response;
+            Yii::warning('GET INFOBIP REPORT::'.$response);
+        }
+    };
 
     public function getDeliveryReport(){}
 }
