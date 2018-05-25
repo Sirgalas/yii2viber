@@ -172,7 +172,7 @@ class CronController extends Controller
     {
         $vm = ViberMessage::find()
             ->where(['in', 'status', ['wait', 'process']])
-            ->andWhere(['channel' => 'viber'])
+            ->andWhere(['in','channel' ,['viber','sms']])
             ->one();
         if (! $vm) {
             echo 'No distribution messages';
