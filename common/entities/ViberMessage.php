@@ -280,7 +280,6 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'message'=>'checkBalance error'
             ],
             ['assign_collections', 'required', 'on' => ['hard'], 'message' => 'Пропущено'],
-
             [['status'], 'string', 'max' => 16],
             ['status', 'in', 'range' => ['pre', 'fix', 'check', 'closed', 'cancel', 'new', 'ready', 'wait', 'process']],
             ['channel', 'in', 'range' => ['viber', 'whatsapp', 'sms', 'telegram','wechat']],

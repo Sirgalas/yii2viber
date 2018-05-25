@@ -24,7 +24,7 @@ class ViberMessageServices
                 if (!$model->send()) {
                     return false;
                 };
-                if ($post['button'] == 'check') {
+                if ( $post['button'] == 'check') {
                     $model->scenario = ViberMessage::SCENARIO_HARD;
                     $model->status = ViberMessage::STATUS_CHECK;
                     if ($model->validate() && $model->send()) {

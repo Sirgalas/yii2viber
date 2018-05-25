@@ -5,7 +5,7 @@ namespace frontend\modules\home\controllers;
 use yii\web\Controller;
 use common\entities\Config;
 use Yii;
-
+use common\entities\user\User;
 /**
  * Default controller for the `home` module
  */
