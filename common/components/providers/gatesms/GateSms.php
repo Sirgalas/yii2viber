@@ -120,26 +120,39 @@ class GateSms extends Provider
     
     
     public function getDeliveryReport(){
-        $curl   = curl_init();
-        $bpAuth = $this->getToken();
-        curl_setopt_array($curl, [CURLOPT_URL => 'http://api.infobip.com/omni/1/reports?channel=VIBER',
-            CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT        => 30, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST  => 'GET', CURLOPT_POSTFIELDS => '',
-            CURLOPT_HTTPHEADER     => ['accept: application/json',
-                'authorization: '.$bpAuth->getAuthenticationHeader(),],]);
-        $response = curl_exec($curl);
-        $err      = curl_error($curl);
-        curl_close($curl);
 
-        if ($err) {
-            Yii::warning('GET INFOBIP REPORT CURl ERROR ::'.$err);
-            echo 'cURL Error #:'.$err;
-        } else {
-            $this->answer = $response;
-            Yii::warning('GET INFOBIP REPORT::'.$response);
+        $smsInProceses= ViberMessage::find()->where(['channel'=>'sms'])->andWhere(['status'=>ViberMessage::STATUS_PROCESS])->all();
+        foreach ($smsInProceses as $smsInProcess){
+            $messages_id=Message_Phone_List::find()->where(['message_id'=>$smsInProcess->id])->all();
+            foreach ($messages_id as $message_id){
+                if (!$this->getToken()){
+                    return false;
+                }
+                $ch   = curl_init($this->config['url'].'/messages/status?id='.$message_id->msg_id);
+                $headers = array(
+                    sprintf('Authorization: Bearer %s', $this->access_token)
+                );
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $response = curl_exec($ch);
+                $err      = curl_error($ch);
+                curl_close($ch);
+
+                if ($err) {
+                    Yii::warning('GET INFOBIP REPORT CURl ERROR ::'.$err);
+                    echo 'cURL Error #:'.$err;
+                } else {
+                    $this->answer = $response;
+                    if($response->data=='DELIVERED'){
+                        $message_id->status=Message_Phone_List::DELIVERED;
+                        if(!$message_id->save())
+                            throw new \RuntimeException(print_r($message_id->errors,1));
+                    }
+                    Yii::warning('GET INFOBIP REPORT::'.$response);
+                }
+            }
         }
-    };
+    }
 
-    public function getDeliveryReport(){}
 }
