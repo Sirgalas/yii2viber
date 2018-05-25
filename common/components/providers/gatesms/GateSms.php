@@ -61,17 +61,17 @@ class GateSms extends Provider
         if (!$this->getToken()){
             return false;
         }
-        //curl -d  "phone=1234567&sender=test&message=TEXT"  -X POST "http://gatesms.org/api/v1/messages/send" -H "Authorization: Bearer TOKEN"
+        //curl -d  "phone=79135701937&sender=test&message=TEXT"  -X POST "http://gatesms.org/api/v1/messages/send" -H "Authorization: Bearer 0fc387460aa95f63271e7734bd725b24"
 
         $encoded = urlencode('phone').'='.urlencode($phone->phone).'&';
-        $encoded .= urlencode('sender').'=' . urlencode($this->from);
+        $encoded .= urlencode('sender').'=' . urlencode($this->from) . '&';
         $encoded .= urlencode('message').'=' .urlencode( $this->text);
-        $ch = curl_init($this->config['url']);
+        $ch = curl_init($this->config['url']. 'messages/send');
         $headers = array(
-            'Content-Type: application/json',
-            sprintf('Authorization: Bearer %s', $this->access_token)
+            sprintf('Authorization: Bearer %s', $this->access_token )
         );
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers  );
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
@@ -79,8 +79,9 @@ class GateSms extends Provider
         $result = curl_exec($ch);
         $err = curl_error($ch);
         curl_close($ch);
-        if ($err){
 
+
+        if ($err){
             $this->error = $err;
             return false;
         }
@@ -99,7 +100,17 @@ class GateSms extends Provider
             if ($result === false){
                 $phone->status = Message_Phone_List::ERROR;
             } else {
-                $phone->status = Message_Phone_List::SENDED;
+
+                $result=json_decode($result,1);
+                if (isset($result['data'])){
+                    $phone->msg_id = $result['data'];
+
+                }
+                if (isset($result['success'])){
+                    $phone->status = Message_Phone_List::SENDED;
+                } else {
+                    $phone->status = Message_Phone_List::ERROR;
+                }
             }
             $phone->save();
         }
