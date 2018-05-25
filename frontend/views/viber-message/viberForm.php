@@ -79,7 +79,9 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <div class="block-header">
                     Рассылка
                 </div>
-                <?= $form->field($model, 'channel')->dropDownList(array_combine(Yii::$app->params['channels'],Yii::$app->params['channels']),  ['maxlength' => true, 'id' => 'field_channel']) ?>
+                <?= $form->field($model, 'channel')
+                    ->dropDownList(array_combine(Yii::$app->params['channels'],Yii::$app->params['channels']),
+                        ['maxlength' => true, 'id' => 'field_channel']) ?>
                 <?=$form->field($model, 'type')->dropDownList(ViberMessage::listTypes(),
                     ['maxlength' => true, 'id' => 'field_type'])?>
                 <div class="form-group radio-toggle" style="display: none">
@@ -306,6 +308,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('#smiles_block').show();
                         $('.field-field_type').show();
                         $('.field-vibermessage-alpha_name').show();
+
                         manageVisible();
                         break;
                     case 'whatsapp':
@@ -316,6 +319,20 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('.field-field_title_button').hide();
                         $('.field-field_url_button').hide();
                         $('.field-field_type').hide();
+                        $('.field-vibermessage-alpha_name').hide();
+                        $('.field-field_image_caption').hide();
+                        $('#smiles_block').hide();
+                        $('#field_image_caption').show();
+                        break;
+                    case 'sms':
+                        $('.field-filed_text').show();
+                        $('#remaining_text').show();
+                        $('.field-field_image').hide();
+                        $('#viber_image').hide();
+                        $('.field-field_title_button').hide();
+                        $('.field-field_url_button').hide();
+                        $('.field-field_type').hide();
+                        $('.field-field_image_caption').hide();
                         $('.field-vibermessage-alpha_name').hide();
                         $('#smiles_block').hide();
                         $('#field_image_caption').show();
@@ -335,6 +352,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('#viber_image').hide();
                         $('.field-field_title_button').hide();
                         $('.field-field_url_button').hide();
+                        $('.field-field_image_caption').hide();
                         break;
                     case
                     '<?= ViberMessage::ONLYIMAGE?>'
@@ -343,6 +361,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('#remaining_text').hide();
                         $('.field-field_image').show();
                         $('#viber_image').show();
+                        $('.field-field_image_caption').show();
                         $('.field-field_title_button').hide();
                         $('.field-field_url_button').hide();
                         break;
@@ -355,6 +374,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('#viber_image').hide();
                         $('.field-field_title_button').show();
                         $('.field-field_url_button').show();
+                        $('.field-field_image_caption').hide();
                         break
                     case
                     '<?= ViberMessage::TEXTBUTTONIMAGE?>'
@@ -365,6 +385,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('#viber_image').show();
                         $('.field-field_title_button').show();
                         $('.field-field_url_button').show();
+                        $('.field-field_image_caption').show();
                         break
                 }
             }

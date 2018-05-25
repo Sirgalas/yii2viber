@@ -187,7 +187,6 @@ class CronController extends Controller
 
     public function ViberQueueHandle()
     {
-
         $this->actionMarkWaitAsReady();
 
         $this->time_stop = time() + self::VIBER_TIME_LIMIT;
@@ -237,17 +236,64 @@ class CronController extends Controller
             sleep(1);
         }
     }
+    public function SmsQueueHandle()
+    {
+        $this->actionMarkWaitAsReady();
 
+        $this->time_stop = time() + self::VIBER_TIME_LIMIT;
+
+        while ($this->time_stop > time()) {
+            $vm = ViberMessage::find()->isProcess()->andWhere(['channel' => 'sms'])->one();
+            if ($vm) {
+                echo "\nfound $vm->id";
+            }
+            if (! $vm) {
+                echo " Vm for process not found\n";
+                $id = ViberMessage::find()
+                    ->select('viber_message.id')
+                    ->joinWith('user')
+                    ->rightJoin('balance', 'balance.user_id = "user".id')
+                    ->where('"balance"."sms" >= "viber_message"."cost"')
+                    ->andWhere(['channel' => 'sms'])
+                    ->isNew()
+                    ->scalar();
+
+                if (! $id) {
+                    echo 'Queue is empty !';
+
+                    return;
+                }
+
+                $vm = ViberMessage::findOne($id);
+                $v  = new Viber($vm);
+                $v->prepareTransaction();
+            }
+
+            if ($vm && $vm->channel == 'sms') {
+
+                echo 'SEND ', $vm->id, $vm->title, $vm->user_id;
+                $pf = new ProviderFactory();
+                $provider = $pf->createProvider($vm);
+                $r = $provider->getToken();
+                echo $r;
+                exit;
+                $v = new Viber($vm);
+
+                $v->sendMessage();
+            }
+
+            sleep(1);
+        }
+    }
     public function actionViberQueueHandle()
     {
-        return $this->ViberQueueHandle();
+        $this->ViberQueueHandle();
+        $this->SmsQueueHandle();
     }
 
     public function actionTestViberQueueHandle()
     {
 
-        Yii::$app->params['smsonline'] = Yii::$app->params['viber-test'];
-
-        return $this->ViberQueueHandle();
+        $this->SmsQueueHandle();
     }
 }
