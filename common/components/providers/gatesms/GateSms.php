@@ -9,6 +9,7 @@
 namespace common\components\providers\gatesms;
 
 use common\components\providers\Provider;
+use common\entities\mongo\Message_Phone_List;
 use common\entities\ViberMessage;
 use Yii;
 
@@ -56,6 +57,35 @@ class GateSms extends Provider
         return false;
     }
 
+    public function sendToPhone(Message_Phone_List $phone){
+        if (!$this->getToken()){
+            return false;
+        }
+        //curl -d  "phone=1234567&sender=test&message=TEXT"  -X POST "http://gatesms.org/api/v1/messages/send" -H "Authorization: Bearer TOKEN"
+
+        $encoded = urlencode('phone').'='.urlencode($phone->phone).'&';
+        $encoded .= urlencode('sender').'=' . urlencode($this->from);
+        $encoded .= urlencode('message').'=' .urlencode( $this->text);
+        $ch = curl_init($this->config['url']);
+        $headers = array(
+            'Content-Type: application/json',
+            sprintf('Authorization: Bearer %s', $this->access_token)
+        );
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
+        $result = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+        if ($err){
+
+            $this->error = $err;
+            return false;
+        }
+        return $result;
+    }
     /**
      * в действительности к sms
      * @param $phones
@@ -64,45 +94,14 @@ class GateSms extends Provider
      */
     public function sendToViber($phones, $transaction_id)
     {
-        if ($this->getToken()){
-            return false;
-        }
-        $this->err='';
-        $this->answer='';
-        //curl -d  "phone=1234567&sender=test&message=TEXT"  -X POST "http://gatesms.org/api/v1/messages/send" -H "Authorization: Bearer TOKEN"
-
-        $encoded='';
-        $encoded .= urlencode('p_transaction_id').'='.((int)$transaction_id).'&';
-        $encoded .= urlencode('dlr').'=1&';
-        $encoded .= urlencode('dlr_timeout').'=360&';
-
-
-
-
-        //echo "\n\n", $encoded, "\n";
-        $ch = curl_init($this->config['url']);
-        $headers = array(
-            'Content-Type: application/json',
-            sprintf('Authorization: Bearer %s', $this->access_token)
-        );
-
-
-
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->viberQuery);
-        $result = curl_exec($ch);
-        $err = curl_error($ch);
-
-        curl_close($ch);
-
-        if ($err) {
-            $this->error = $err;
-            return false;
-        } else {
-            $this->answer = $result;
+        foreach ($phones as $phone){
+            $result = $this->sendToPhone($phone);
+            if ($result === false){
+                $phone->status = Message_Phone_List::ERROR;
+            } else {
+                $phone->status = Message_Phone_List::SENDED;
+            }
+            $phone->save();
         }
         return true;
     }
@@ -116,30 +115,7 @@ class GateSms extends Provider
      */
     public function parseSendResult(  $phonesArray)
     {
-        if (is_string($this->answer)) {
-            $xml = simplexml_load_string($this->answer);
-            if ($xml->code == 0) {
-                foreach ($xml->msg_id as $key => $msg) {
-                    $attr = $msg->attributes();
-                    $msg = ((string)$msg);
-                    $phone=urldecode(''.$attr['phone']);
-                    if (!isset($phonesArray[$phone])){
-                        $phone = '+' . $phone;
-
-                        if (!isset($phonesArray[$phone])) {
-                            continue;
-                        }
-                    }
-                    $mPhone = $phonesArray[$phone];
-                    $mPhone['status'] = 'sended';
-                    $mPhone['msg_id'] = $msg;
-                    $mPhone->save();
-                }
-                return true;
-            }
-        }
-        //TODO SendAdminNotification
-        return false;
+       return true;
     }
 
     public function getDeliveryReport(){}

@@ -28,6 +28,7 @@ class Message_Phone_List extends ActiveRecord
 {
 
     const NEWMESSAGE='new';
+    const ERROR='err';
     const SENDED = 'sended';
     const DELIVERED = 'delivered';
     const VIEWED = 'viewed';
@@ -36,6 +37,7 @@ class Message_Phone_List extends ActiveRecord
     public static $statusMessage=
         [
             self::NEWMESSAGE=>'Новое',
+            self::ERROR=>'Ошибка',
             self::SENDED=>"Отправлено",
             self::DELIVERED=>"Доставлено",
             self::VIEWED=>"Прочитано",

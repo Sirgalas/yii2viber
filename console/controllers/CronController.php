@@ -272,11 +272,7 @@ class CronController extends Controller
             if ($vm && $vm->channel == 'sms') {
 
                 echo 'SEND ', $vm->id, $vm->title, $vm->user_id;
-                $pf = new ProviderFactory();
-                $provider = $pf->createProvider($vm);
-                $r = $provider->getToken();
-                echo $r;
-                exit;
+
                 $v = new Viber($vm);
 
                 $v->sendMessage();
