@@ -12,26 +12,37 @@ class ViberMessageServices
     {
         if (isset($post['button']) && $post['button'] == 'cancel') {
             $model->Cancel();
+
             return true;
         }
-        var_dump($model->status && !$model->isEditable());
         if ($model->status && !$model->isEditable()) {
             return true;
         }
         if ($model->getAttribute('status') && $model->isEditable()) {
-            $model->scenario = ViberMessage::SCENARIO_HARD;
-            $model->status = $post['button'];
-            if (!$model->validate()) {
-                \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
+            if ($model->validate()) {
+                $model->upload_file = UploadedFile::getInstance($model, 'upload_file');
+                if (!$model->send()) {
+                    return false;
+                };
+                if ( $post['button'] == 'check') {
+                    $model->scenario = ViberMessage::SCENARIO_HARD;
+                    $model->status = ViberMessage::STATUS_CHECK;
+                    if ($model->validate() && $model->send()) {
+                        $model->status = ViberMessage::STATUS_CHECK;
+                        if (!$model->validate()) {
+                            \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
+                        }
+                        if ($model->send()) {
+                            AdminModerateNotification::create('moderate', ['message' => $model])->send();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
             }
-            if ($model->send()) {
-                AdminModerateNotification::create('moderate', ['message' => $model])->send();
-                return true;
-            } else {
-                return false;
-            }
-        }else{
-            return false;
         }
+        return true;
     }
 }

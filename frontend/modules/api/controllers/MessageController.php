@@ -3,7 +3,7 @@
 namespace frontend\modules\api\controllers;
 
 use frontend\entities\User;
-use frontend\services\message\ViberMessageServices;
+use frontend\modules\api\services\ViberMessageServices;
 use Yii;
 use frontend\modules\api\components\AcViberController;
 use common\entities\ViberMessage;
@@ -73,7 +73,6 @@ class MessageController extends AcViberController
         }
         $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
-        return var_dump($services->send($a, $model));
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
