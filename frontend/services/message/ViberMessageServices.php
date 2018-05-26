@@ -12,12 +12,12 @@ class ViberMessageServices
     {
         if (isset($post['button']) && $post['button'] == 'cancel') {
             $model->Cancel();
-
             return true;
         }
         if ($model->status && !$model->isEditable()) {
             return true;
         }
+        return var_dump($model->getAttribute('status') .' '.$model->isEditable());
         if ($model->getAttribute('status') && $model->isEditable()) {
             $model->scenario = ViberMessage::SCENARIO_HARD;
             $model->status = $post['button'];
@@ -33,7 +33,5 @@ class ViberMessageServices
         }else{
             return false;
         }
-        
-        return true;
     }
 }
