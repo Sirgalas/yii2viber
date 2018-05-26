@@ -335,6 +335,9 @@ class User extends BaseUser
             if ($balance->whatsapp) {
                 $b .= '<tr><td>Whatsapp:</td><td>'.number_format($balance->whatsapp).'</td></tr>';
             }
+            if($balance->sms){
+                $b.='<tr><td>Sms: </td><td>'.number_format($balance->sms).'</td>';
+            }
 
         }
         $b .='</table>';

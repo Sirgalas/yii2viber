@@ -35,10 +35,7 @@ if (Yii::$app->user->isGuest){
                         ваш токен <?=Yii::$app->user->identity->token; ?>
                     </li>
                 <?php } ?>
-                
                     <?= WantDealer::widget(); ?>
-
-
                 <li>
                     <?php
                     if (Yii::$app->session->has(\frontend\controllers\ClientController::ORIGINAL_USER_SESSION_KEY)){
@@ -59,10 +56,9 @@ if (Yii::$app->user->isGuest){
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-
                             <p>
                                 <?php if (is_object(Yii::$app->user->identity)):  ?>
-                                <?= Yii::$app->user->identity->username; ?>111
+                                <?= Yii::$app->user->identity->username; ?>
                                 <small>Member since Nov. <?= date('Y-m-d',Yii::$app->user->identity->created_at) ?></small>
                                 <?php if(!Yii::$app->user->isGuest&&(Yii::$app->user->identity->isAdmin()||Yii::$app->user->identity->isDealer())){ ?>
                                     <p>
