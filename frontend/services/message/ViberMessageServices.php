@@ -19,40 +19,21 @@ class ViberMessageServices
             return true;
         }
         if ($model->getAttribute('status') && $model->isEditable()) {
-            if ($model->validate()) {
-                $model->upload_file = UploadedFile::getInstance($model, 'upload_file');
-                if (!$model->send()) {
-                    return false;
-                };
-                if ( $post['button'] == 'check') {
-                    $model->scenario = ViberMessage::SCENARIO_HARD;
-                    $model->status = ViberMessage::STATUS_CHECK;
-                        $model->status = ViberMessage::STATUS_CHECK;
-                        if (!$model->validate()) {
-                            \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
-                        }
-                        if ($model->send()) {
-                            AdminModerateNotification::create('moderate', ['message' => $model])->send();
-                            return true;
-                        } else {
-                            return false;
-                        }
-                }
-                if ( $post['button'] == ViberMessage::STATUS_NEW) {
-                    $model->scenario = ViberMessage::SCENARIO_HARD;
-                    $model->status = ViberMessage::STATUS_NEW;
-                    if (!$model->validate()) {
-                        \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
-                    }
-                    if ($model->send()) {
-                        AdminModerateNotification::create('moderate', ['message' => $model])->send();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
+            $model->scenario = ViberMessage::SCENARIO_HARD;
+            $model->status = $post['button'];
+            if (!$model->validate()) {
+                \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
             }
+            if ($model->send()) {
+                AdminModerateNotification::create('moderate', ['message' => $model])->send();
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            return false;
         }
+        
         return true;
     }
 }

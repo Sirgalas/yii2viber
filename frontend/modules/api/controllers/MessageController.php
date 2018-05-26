@@ -71,7 +71,7 @@ class MessageController extends AcViberController
         if (!$model->load($a)) {
             throw new NotFoundHttpException('request not validate' . print_r($model->getErrors(), 1), 500);
         }
-
+        $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
         try {
             if (!$services->send($a, $model)) {
