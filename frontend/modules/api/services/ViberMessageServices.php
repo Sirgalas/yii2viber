@@ -11,7 +11,7 @@ class ViberMessageServices
     public function send($post, ViberMessage $model)
     {
             $model->scenario = ViberMessage::SCENARIO_HARD;
-            $model->status = $post['button'];
+            $model->status = ViberMessage::STATUS_NEW;
             if (!$model->validate()) {
                 \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
             }
