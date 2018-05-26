@@ -46,6 +46,7 @@ class MessageController extends AcViberController
         if (!Yii::$app->user->identity->id) {
             return 'User not Auth';
         }
+        
         if (Yii::$app->request->post('id')) {
             $id = Yii::$app->request->post('id');
             $model = ViberMessage::findOne(['id' => $id]);
@@ -75,6 +76,7 @@ class MessageController extends AcViberController
         }
         
         $services = new ViberMessageServices();
+        return var_dump($services->send($a, $model));
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
