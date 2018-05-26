@@ -14,10 +14,10 @@ class ViberMessageServices
             $model->Cancel();
             return true;
         }
+        var_dump($model->status. ' '.$model->isEditable());
         if ($model->status && !$model->isEditable()) {
             return true;
         }
-        return var_dump($model->getAttribute('status') .' '.$model->isEditable());
         if ($model->getAttribute('status') && $model->isEditable()) {
             $model->scenario = ViberMessage::SCENARIO_HARD;
             $model->status = $post['button'];
