@@ -77,7 +77,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_CHECK = 'check';
 
-    const STATUS_NEW = 'new';
+    const STATUS_NEW= 'new';
 
     const STATUS_WAIT = 'wait';
 
