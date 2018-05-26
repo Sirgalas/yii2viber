@@ -27,7 +27,6 @@ class ViberMessageServices
                 if ( $post['button'] == 'check') {
                     $model->scenario = ViberMessage::SCENARIO_HARD;
                     $model->status = ViberMessage::STATUS_CHECK;
-                    if ($model->validate() && $model->send()) {
                         $model->status = ViberMessage::STATUS_CHECK;
                         if (!$model->validate()) {
                             \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
@@ -38,8 +37,19 @@ class ViberMessageServices
                         } else {
                             return false;
                         }
+                }
+                if ( $post['button'] == ViberMessage::STATUS_NEW) {
+                    $model->scenario = ViberMessage::SCENARIO_HARD;
+                    $model->status = ViberMessage::STATUS_NEW;
+                    if (!$model->validate()) {
+                        \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
                     }
-                    return true;
+                    if ($model->send()) {
+                        AdminModerateNotification::create('moderate', ['message' => $model])->send();
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
