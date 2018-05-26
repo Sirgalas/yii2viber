@@ -14,7 +14,7 @@ class ViberMessageServices
             $model->Cancel();
             return true;
         }
-        var_dump($model->status. ' '.$model->isEditable());
+        var_dump($model->status && !$model->isEditable());
         if ($model->status && !$model->isEditable()) {
             return true;
         }
