@@ -65,7 +65,7 @@ class GateSms extends Provider
 
         $encoded = [
             'phone'=>$phone->phone,
-            'sender'=>'test', $this->from,
+            'sender'=>'test', Yii::$app->params['gatesms']['from'],
             'message'=> $this->text . 'q4 я'
         ];
         $ch = curl_init($this->config['url']. 'messages/send');
