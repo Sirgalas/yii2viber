@@ -1,2 +1,2 @@
-<?= Yii::t('mailer','You clients'.$clients->username.' want dealer'); ?>
+<?= Yii::t('mailer','You clients '.$clients->username.' want dealer'); ?>
 
