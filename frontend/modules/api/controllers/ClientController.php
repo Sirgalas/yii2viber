@@ -46,7 +46,7 @@ class ClientController extends AcViberController
 
             ];
         }
-        if (!$result) {
+        if (empty($result)) {
             $result = ['error' => 'Clients not find'];
         }
         return $result;
