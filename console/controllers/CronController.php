@@ -192,7 +192,7 @@ class CronController extends Controller
         $this->time_stop = time() + self::VIBER_TIME_LIMIT;
 
         while ($this->time_stop > time()) {
-            $vm = ViberMessage::find()->isProcess()->andWhere(['channel' => 'viber'])->one();
+            $vm = ViberMessage::find()->isProcess()->andWhere(['channel'=>'viber'])->one();
             if ($vm) {
                 echo "\nfound $vm->id";
             }
