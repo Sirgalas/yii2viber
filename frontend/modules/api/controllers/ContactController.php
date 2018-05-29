@@ -84,7 +84,7 @@ class ContactController extends AcViberController
                 throw new Exception('title not specified');
             }
             $collection= ContactCollection::find()->where(['title'=>$title])->one();
-            if(!empty($contactCollection))
+            if(!empty($collection))
               return ['error'=> 'collection already exists'];
             $contactCollection = new ContactCollection([
                 'title' => $title
