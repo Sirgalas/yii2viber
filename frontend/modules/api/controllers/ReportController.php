@@ -21,7 +21,7 @@ class ReportController extends AcViberController
         $searchModel = new ReportSearch();
         if(!Yii::$app->request->post())
             throw new NotFoundHttpException('request not found',403);
-        $data = $searchModel->searchApi(Yii::$app->request->post());
+        $data = $searchModel->searchApiOne(Yii::$app->request->post());
         return $data;
     }
 
