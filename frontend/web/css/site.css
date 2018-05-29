@@ -329,7 +329,6 @@ aside .user-panel > .info > p.notAuth{
     padding: 0 10px;
 }
 
-
-.field-vibermessage-alpha_name,#vibermessage-alpha_name{
+.field-vibermessage-alpha_name, #vibermessage-alpha_name{
     display: none !important;
 }
