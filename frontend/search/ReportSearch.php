@@ -122,6 +122,7 @@ class ReportSearch extends ViberTransaction
 
         $messagesId=$query->one();
 
-        return $messagesId->StatusPhone();
+        $messagesId->phones=$messagesId->StatusPhone();
+        return $messagesId;
     }
 }
