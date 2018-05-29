@@ -37,7 +37,7 @@ class ContactController extends AcViberController
                 'size' => $collection->size
             ];
         }
-        if (!$result) {
+        if (empty($result)) {
             $result = ['error' => 'Collection not find'];
         }
         return $result;
@@ -86,10 +86,13 @@ class ContactController extends AcViberController
             $contactCollection = new ContactCollection([
                 'title' => $title
             ]);
-            if ($contactCollection->save()) {
+            if (!$contactCollection->save()) {
                 throw new Exception (var_dump($contactCollection->getErrors()));
             }
-            return ['success' => 'collection create'];
+            return [
+                'success' => 'collection create',
+                'id_colection'=>$contactCollection->id
+            ];
         } catch (Exception $e) {
             return $e->getMessage();
         }
