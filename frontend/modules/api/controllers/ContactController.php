@@ -59,13 +59,13 @@ class ContactController extends AcViberController
                 'contact_collection_id' => 1 * $id
             ])->all();
             if (!$query) {
-                $result = ['error' => 'phone not phone'];
+                $result = ['error' => 'phone not find'];
             }
             foreach ($query as $phone) {
                 $result[] = ['phone' => $phone->phone, 'username' => $phone->username];
             }
             if (empty($result)) {
-                $result = ['error' => 'phone not phone'];
+                $result = ['error' => 'phone not find'];
             }
             return $result;
         } catch (Exception $e) {
