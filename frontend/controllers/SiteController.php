@@ -161,4 +161,7 @@ class SiteController extends Controller
     public function actionAdvertising(){
         return $this->render('advertising');
     }
+    public function actionCheapChannels(){
+        return $this->render('cheap-channels');
+    }
 }

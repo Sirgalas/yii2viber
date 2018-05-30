@@ -61,12 +61,13 @@ class GateSms extends Provider
         if (!$this->getToken()){
             return false;
         }
-
+        echo  'GateSms.token=', $this->access_token;
+        exit;
         //curl -d  "phone=79135701937&sender=test&message=TEXT"  -X POST "http://gatesms.org/api/v1/messages/send" -H "Authorization: Bearer 0fc387460aa95f63271e7734bd725b24"
 
         $encoded = [
             'phone'=>$phone->phone,
-            'sender'=>  Yii::$app->params['gatesms']['from'],
+            'sender'=>'test', Yii::$app->params['gatesms']['from'],
             'message'=> $this->text
         ];
         $ch = curl_init($this->config['url']. 'messages/send');
@@ -82,7 +83,7 @@ class GateSms extends Provider
         //curl_setopt($ch, CURLOPT_VERBOSE, $this->debug);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($encoded));
         $result = curl_exec($ch);
-
+        echo 'GateSms.sendToPhone result=', $result;
         $err = curl_error($ch);
         curl_close($ch);
 
@@ -132,10 +133,10 @@ class GateSms extends Provider
      */
     public function parseSendResult(  $phonesArray)
     {
-        return true;
+       return true;
     }
-
-
+    
+    
     public function getDeliveryReport(){
         /**
          *
