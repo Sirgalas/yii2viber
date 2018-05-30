@@ -252,6 +252,16 @@ class ViberTransaction extends \yii\db\ActiveRecord
 
         return $status;
     }
+    public function StatusPhone()
+    {
+        $phoneList = Message_Phone_List::find()->where(['transaction_id' => $this->id])->all();
+        $status=[];
+        foreach ($phoneList as $messagePhoneList) {
+            $status[$messagePhoneList->phone] = $messagePhoneList::$statusMessage[$messagePhoneList->status];
+        }
+
+        return $status;
+    }
 
     public function DateDelivery()
     {

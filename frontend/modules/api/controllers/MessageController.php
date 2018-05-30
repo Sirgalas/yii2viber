@@ -3,7 +3,7 @@
 namespace frontend\modules\api\controllers;
 
 use frontend\entities\User;
-use frontend\services\message\ViberMessageServices;
+use frontend\modules\api\services\ViberMessageServices;
 use Yii;
 use frontend\modules\api\components\AcViberController;
 use common\entities\ViberMessage;
@@ -46,6 +46,7 @@ class MessageController extends AcViberController
         if (!Yii::$app->user->identity->id) {
             return 'User not Auth';
         }
+
         if (Yii::$app->request->post('id')) {
             $id = Yii::$app->request->post('id');
             $model = ViberMessage::findOne(['id' => $id]);
@@ -55,30 +56,28 @@ class MessageController extends AcViberController
         } else {
             $model = new ViberMessage();
         }
-        $channel=Yii::$app->request->post('channel');
-        $type=Yii::$app->request->post('type');
-        if($channel=='whatsapp'&&(($type=='txt_btn'||$type=='all')||(!empty(Yii::$app->request->post('title_button'))||!empty(Yii::$app->request->post('url_button'))||!empty(Yii::$app->request->post('alpha_name'))))){
+        $channel = Yii::$app->request->post('channel');
+        $type = Yii::$app->request->post('type');
+        if ($channel == 'whatsapp' && (($type == ViberMessage::TEXTBUTTON || $type == ViberMessage::TEXTBUTTONIMAGE) || (!empty(Yii::$app->request->post('title_button')) || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
             throw new NotFoundHttpException('the forbidden fields are indicated', 500);
         }
-        if (!$model->status) {
-            $model->status = ViberMessage::STATUS_PRE;
+        if ($channel == 'sms' && (($type != ViberMessage::ONLYTEXT) || (!empty(Yii::$app->request->post('upload_file')) || !empty(Yii::$app->request->post('title_button')) || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
+            throw new NotFoundHttpException('the forbidden fields are indicated', 500);
         }
-        $a['ViberMessage'] =Yii::$app->request->post();
+        $a['ViberMessage'] = Yii::$app->request->post();
         $a['ViberMessage']['user_id'] = Yii::$app->user->identity->id;
-        $a['button']= 'check';
+        $a['button'] = ViberMessage::STATUS_NEW;
 
         if (!$model->load($a)) {
-            throw new NotFoundHttpException('request not validate' .print_r($model->getErrors(),1), 500);
+            throw new NotFoundHttpException('request not validate' . print_r($model->getErrors(), 1), 500);
         }
-
-
+        $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
             }
-            $model->status = ViberMessage::STATUS_NEW;
-            return ['success' => 'message sending','messageId '.$model->id];
+            return ['success' => 'message sending', 'messageId '=> $model->id];
         } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         }

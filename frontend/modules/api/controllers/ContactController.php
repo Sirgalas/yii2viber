@@ -37,7 +37,7 @@ class ContactController extends AcViberController
                 'size' => $collection->size
             ];
         }
-        if (!$result) {
+        if (empty($result)) {
             $result = ['error' => 'Collection not find'];
         }
         return $result;
@@ -59,13 +59,13 @@ class ContactController extends AcViberController
                 'contact_collection_id' => 1 * $id
             ])->all();
             if (!$query) {
-                throw new \Exception('Phones not find');
+                $result = ['error' => 'phone not find'];
             }
             foreach ($query as $phone) {
                 $result[] = ['phone' => $phone->phone, 'username' => $phone->username];
             }
-            if (!$result) {
-                $result = ['error' => 'phone not phone'];
+            if (empty($result)) {
+                $result = ['error' => 'phone not find'];
             }
             return $result;
         } catch (Exception $e) {
@@ -83,13 +83,19 @@ class ContactController extends AcViberController
             if (!$title) {
                 throw new Exception('title not specified');
             }
+            $collection= ContactCollection::find()->where(['title'=>$title])->one();
+            if(!empty($collection))
+              return ['error'=> 'collection already exists'];
             $contactCollection = new ContactCollection([
                 'title' => $title
             ]);
-            if ($contactCollection->save()) {
+            if (!$contactCollection->save()) {
                 throw new Exception (var_dump($contactCollection->getErrors()));
             }
-            return ['success' => 'collection create'];
+            return [
+                'success' => 'collection create',
+                'id_colection'=>$contactCollection->id
+            ];
         } catch (Exception $e) {
             return $e->getMessage();
         }
