@@ -698,10 +698,10 @@ use Friday14\Mailru\Cloud;
  * @property int date_send_finish время окончания рассылки
  * @property string provider
  * @property int scenario_id ид сценария, который будет использоваться для рассылки
- * @property string image_caption подпись под картинкой
- * @property string channel канал (viber, whatsapp)
+ *@property string image_caption подпись под картинкой
  *
  * @property ContactCollection $contactCollection
+ * @property string channel канал (viber, whatsapp)
  * @property MessageContactCollection[] $messageContactCollections
  * @property User $user
  * @property Message_Phone_List messagePhoneList
