@@ -105,7 +105,8 @@ class Viber
         $balance->$channel -= \count($phonesA);
         $balance->validate();
         if (! $balance->save()) {
-            throw new \RuntimeException('not save');
+            Yii::error('Viber balance->save error  '.print_r($balance->getErrors()));
+            throw new \RuntimeException('not save' . print_r($balance->getErrors()));
         }
         // Отправка сообщения
         $pf = new ProviderFactory();
