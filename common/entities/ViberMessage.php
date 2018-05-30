@@ -252,7 +252,6 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'when' => function ($model) {
                     return ($model->scenario === 'hard'
                         && (($model->type == self::ONLYIMAGE || $model->type == self::TEXTBUTTONIMAGE))
-                        || $model->channel=='whatsapp'
                     );
                 },
             ],
