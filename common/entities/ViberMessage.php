@@ -575,7 +575,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function getContactCollection()
     {
-        return $this->hasMany(ContactCollection::className(),
+        return $this->hasMany(ContactCollection::class,
                               ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(),
                                                                            ['viber_message_id' => 'id']);
     }
@@ -599,6 +599,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             if ($upload_file) {
                 $this->image = $upload_file;
             }
+            return var_dump($this);
             if ($this->save()) {
                 $result = MessageContactCollection::assign($this->id, $this->user_id, $this->assign_collections);
                 if ($result !== 'ok') {
