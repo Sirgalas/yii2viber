@@ -8,7 +8,7 @@ use Yii;
 use frontend\modules\api\components\AcViberController;
 use common\entities\ViberMessage;
 use yii\web\NotFoundHttpException;
-
+use yii\web\UploadedFile;
 class MessageController extends AcViberController
 {
     public $modelClass = 'common\entities\ViberMessage';
@@ -74,6 +74,7 @@ class MessageController extends AcViberController
             throw new NotFoundHttpException('request not validate' . print_r($model->getErrors(), 1), 500);
         }
         $model->status=ViberMessage::STATUS_NEW;
+        $model->upload_file=UploadedFile::getInstance($model, 'upload_file');
         $services = new ViberMessageServices();
         try {
             if (!$services->send($a, $model)) {
