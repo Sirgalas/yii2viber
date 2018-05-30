@@ -74,8 +74,6 @@ class MessageController extends AcViberController
             throw new NotFoundHttpException('request not validate' . print_r($model->getErrors(), 1), 500);
         }
         $model->status=ViberMessage::STATUS_NEW;
-        $model->upload_file=UploadedFile::getInstance($model, 'upload_file');
-        return var_dump(Yii::$app->request->post());
         $services = new ViberMessageServices();
         try {
             if (!$services->send($a, $model)) {
