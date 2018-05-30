@@ -495,6 +495,7 @@ class ViberMessage extends \yii\db\ActiveRecord
         if (empty($this->upload_file)) {
             return false;
         }
+        return var_dump($this->upload_file);
         $imageName=time().'.'.$this->upload_file->extension;
         $filepath='image/'.date('m_Y',time()).'/'.Yii::$app->user->identity->username;
         FileHelper::createDirectory($filepath,0777);
