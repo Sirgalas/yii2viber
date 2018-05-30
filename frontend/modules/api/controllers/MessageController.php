@@ -75,6 +75,7 @@ class MessageController extends AcViberController
         }
         $model->status=ViberMessage::STATUS_NEW;
         $model->upload_file=UploadedFile::getInstance($model, 'upload_file');
+        return var_dump($model->upload_file);
         $services = new ViberMessageServices();
         try {
             if (!$services->send($a, $model)) {
