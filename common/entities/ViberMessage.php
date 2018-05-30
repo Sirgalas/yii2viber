@@ -594,8 +594,9 @@ class ViberMessage extends \yii\db\ActiveRecord
      public function send()
     {
         $upload_file = $this->uploadFile();
-        $transaction = Yii::$app->db->beginTransaction();
         return var_dump($upload_file);
+        $transaction = Yii::$app->db->beginTransaction();
+
         try {
             if ($upload_file) {
                 $this->image = $upload_file;
