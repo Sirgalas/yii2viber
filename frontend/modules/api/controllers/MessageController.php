@@ -76,7 +76,8 @@ class MessageController extends AcViberController
         }
         $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
-        return var_dump('model '.$model.', arr '.$arr.', post'.$post);
+        $varModel= var_dump($model);
+        return 'model '.$varModel.', arr '.$arr.', post'.$post;
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
