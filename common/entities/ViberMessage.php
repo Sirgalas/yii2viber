@@ -594,14 +594,11 @@ class ViberMessage extends \yii\db\ActiveRecord
      public function send()
     {
         $upload_file = $this->uploadFile();
-        return var_dump($upload_file);
         $transaction = Yii::$app->db->beginTransaction();
-
         try {
             if ($upload_file) {
                 $this->image = $upload_file;
             }
-
             if ($this->save()) {
                 $result = MessageContactCollection::assign($this->id, $this->user_id, $this->assign_collections);
                 if ($result !== 'ok') {

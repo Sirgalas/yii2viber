@@ -66,15 +66,17 @@ class MessageController extends AcViberController
         if ($channel == 'sms' && (($type != ViberMessage::ONLYTEXT) || (!empty(Yii::$app->request->post('upload_file')) || !empty(Yii::$app->request->post('title_button')) || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
             throw new NotFoundHttpException('the forbidden fields are indicated', 500);
         }
+        $post = var_dump(Yii::$app->request->post());
         $a['ViberMessage'] = Yii::$app->request->post();
         $a['ViberMessage']['user_id'] = Yii::$app->user->identity->id;
         $a['button'] = ViberMessage::STATUS_NEW;
-
+        $arr= var_dump($a);
         if (!$model->load($a)) {
             throw new NotFoundHttpException('request not validate' . print_r($model->getErrors(), 1), 500);
         }
         $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
+        return var_dump('model '.$model.', arr '.$arr.', post'.$post);
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
