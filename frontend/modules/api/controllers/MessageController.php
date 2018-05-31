@@ -74,8 +74,6 @@ class MessageController extends AcViberController
         }
         $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
-        $model->upload_file = file(Yii::$app->request->post('upload_file'));
-        $model->upload_file = UploadedFile::getInstance($model,'upload_file');
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);
