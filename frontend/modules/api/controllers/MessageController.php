@@ -60,7 +60,7 @@ class MessageController extends AcViberController
         $type = Yii::$app->request->post('type');
 
         if ($channel == 'whatsapp' && (($type == ViberMessage::TEXTBUTTON) || !empty(Yii::$app->request->post('title_button') || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
-            throw new NotFoundHttpException('the forbidden fields are indicated', 500);
+            throw new NotFoundHttpException('the forbidden fields are indicated whatsapp', 500);
         }
 
         if ($channel == 'sms' && (($type != ViberMessage::ONLYTEXT) || (!empty(Yii::$app->request->post('upload_file')) || !empty(Yii::$app->request->post('title_button')) || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
