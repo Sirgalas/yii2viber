@@ -147,7 +147,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                     'id' => 'field_url_button',
                 ])?>
 
-                <?=$form->field($model, 'image_caption')->textInput([
+                <?=$form->field($model, 'image_caption')->textarea([
                     'maxlength' => true,
                     'id' => 'field_image_caption',
                 ])?>
