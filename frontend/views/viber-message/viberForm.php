@@ -320,7 +320,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                         $('.field-field_url_button').hide();
                         $('.field-field_type').hide();
                         $('.field-vibermessage-alpha_name').hide();
-                        $('.field-field_image_caption').hide();
+                        $('.field-field_image_caption').show();
                         $('#smiles_block').hide();
                         $('#field_image_caption').show();
                         break;
