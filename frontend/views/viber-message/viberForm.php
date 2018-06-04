@@ -150,6 +150,7 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
                 <?=$form->field($model, 'image_caption')->textarea([
                     'maxlength' => true,
                     'id' => 'field_image_caption',
+                    'rows' => 10,
                 ])?>
             </div>
             <div class="form-group col-md-12">
