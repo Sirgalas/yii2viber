@@ -408,5 +408,4 @@ $js = '
   
        $(document).ready(function() {initPage();});
 ';
->>>>>>> 3812ceee495057faabb4ee4963c72b5cf596f013
 $this->registerJs($js);
