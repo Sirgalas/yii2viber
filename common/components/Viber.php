@@ -103,10 +103,11 @@ class Viber
         $balance=$user->balance;
 
         $balance->$channel -= \count($phonesA);
+        $balance->scenario = 'own';
         $balance->validate();
         if (! $balance->save()) {
-            Yii::error('Viber balance->save error  '.print_r($balance->getErrors()));
-            throw new \RuntimeException('not save' . print_r($balance->getErrors()));
+            Yii::error('Viber balance->save error  '. print_r( $balance->getErrors()) . "\n----------------");
+            throw new \RuntimeException('not save' . var_dump($balance));
         }
         // Отправка сообщения
         $pf = new ProviderFactory();
@@ -180,11 +181,15 @@ class Viber
             if (\count($this->phones) > 0) {
                 $phones = $this->phones;
             } else {
-                $phones = Phone::find()->select(['phone'])->where([
+                $phones = Phone::find()
+                    ->select(['phone','username'])
+                    ->where([
                                                                       'in',
                                                                       'contact_collection_id',
                                                                       $contact_collection_ids,
-                                                                  ])->distinct('phone');
+                                                                  ])
+                -> all();
+//                ->distinct('phone');
             }
             //$user = User::find()->where(['id' => $this->viber_message->user_id])->one();
             $balance=Balance::find()->where(['user_id' => $this->viber_message->user_id])->one();
@@ -194,7 +199,7 @@ class Viber
             }
             $tPhones = [];
             foreach ($phones as $phone) {
-                $tPhones[] = ['phone' => $phone, 'status' => 'new', 'message_id' => $this->viber_message->id];
+                $tPhones[] = ['phone' => $phone->phone, 'status' => 'new', 'name'=>$phone->username,'message_id' => $this->viber_message->id];
                 if (\count($tPhones) >= Yii::$app->params[$this->viber_message->provider]['transaction_size_limit']) {
                     $this->saveNewTransaction($tPhones);
                     $tPhones = [];

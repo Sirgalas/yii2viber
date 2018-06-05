@@ -10,10 +10,11 @@ use common\entities\ViberTransaction;
 use common\entities\user\User;
 use frontend\search\ReportSearch;
 use yii\helpers\Json;
+use yii\rest\ActiveController;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class WhatsappController extends AcViberController
+class WhatsappController extends  AcViberController
 {
     public $modelClass = 'common\entities\ViberTransaction';
 
