@@ -8,7 +8,7 @@ use Yii;
 use frontend\modules\api\components\AcViberController;
 use common\entities\ViberMessage;
 use yii\web\NotFoundHttpException;
-
+use yii\web\UploadedFile;
 class MessageController extends AcViberController
 {
     public $modelClass = 'common\entities\ViberMessage';
@@ -58,21 +58,23 @@ class MessageController extends AcViberController
         }
         $channel = Yii::$app->request->post('channel');
         $type = Yii::$app->request->post('type');
-        if ($channel == 'whatsapp' && (($type == ViberMessage::TEXTBUTTON || $type == ViberMessage::TEXTBUTTONIMAGE) || (!empty(Yii::$app->request->post('title_button')) || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
-            throw new NotFoundHttpException('the forbidden fields are indicated', 500);
+
+        if ($channel == 'whatsapp' && (($type == ViberMessage::TEXTBUTTON) || !empty(Yii::$app->request->post('title_button') || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
+            throw new NotFoundHttpException('the forbidden fields are indicated whatsapp', 500);
         }
+
         if ($channel == 'sms' && (($type != ViberMessage::ONLYTEXT) || (!empty(Yii::$app->request->post('upload_file')) || !empty(Yii::$app->request->post('title_button')) || !empty(Yii::$app->request->post('url_button')) || !empty(Yii::$app->request->post('alpha_name'))))) {
             throw new NotFoundHttpException('the forbidden fields are indicated', 500);
         }
         $a['ViberMessage'] = Yii::$app->request->post();
         $a['ViberMessage']['user_id'] = Yii::$app->user->identity->id;
         $a['button'] = ViberMessage::STATUS_NEW;
-
         if (!$model->load($a)) {
             throw new NotFoundHttpException('request not validate' . print_r($model->getErrors(), 1), 500);
         }
         $model->status=ViberMessage::STATUS_NEW;
         $services = new ViberMessageServices();
+        $model->upload_file=UploadedFile::getInstanceByName('upload_file');
         try {
             if (!$services->send($a, $model)) {
                 throw new NotFoundHttpException('message not send', 404);

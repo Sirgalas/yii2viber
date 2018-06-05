@@ -39,10 +39,10 @@ use Friday14\Mailru\Cloud;
  * @property int date_send_finish время окончания рассылки
  * @property string provider
  * @property int scenario_id ид сценария, который будет использоваться для рассылки
- * @property string image_caption подпись под картинкой
- * @property string channel канал (viber, whatsapp)
+ *@property string image_caption подпись под картинкой
  *
  * @property ContactCollection $contactCollection
+ * @property string channel канал (viber, whatsapp)
  * @property MessageContactCollection[] $messageContactCollections
  * @property User $user
  * @property Message_Phone_List messagePhoneList
@@ -251,7 +251,8 @@ class ViberMessage extends \yii\db\ActiveRecord
                 'required',
                 'when' => function ($model) {
                     return ($model->scenario === 'hard'
-                        && ($model->type == self::ONLYIMAGE || $model->type == self::TEXTBUTTONIMAGE));
+                        && (($model->type == self::ONLYIMAGE || $model->type == self::TEXTBUTTONIMAGE))
+                    );
                 },
             ],
 
@@ -574,7 +575,7 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     public function getContactCollection()
     {
-        return $this->hasMany(ContactCollection::className(),
+        return $this->hasMany(ContactCollection::class,
                               ['id' => 'contact_collection_id'])->viaTable(MessageContactCollection::tableName(),
                                                                            ['viber_message_id' => 'id']);
     }
@@ -593,6 +594,7 @@ class ViberMessage extends \yii\db\ActiveRecord
      public function send()
     {
         $upload_file = $this->uploadFile();
+
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($upload_file) {

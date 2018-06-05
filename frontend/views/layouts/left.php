@@ -46,7 +46,7 @@ $action = Yii::$app->controller->action->id;
             $menuItems[] = ['label' => 'Все отчеты', 'url' => Url::toRoute(['/report']),'options'=>['class'=>($controller=='report')?'active':'not-active']];
             $menuItems[] = ['label' => 'Вся статистика', 'url' => Url::toRoute(['/statistics']),'options'=>['class'=>($controller=='statistics')?'active':'not-active']];
             $menuItems[] = ['label' => 'Реклама', 'url' => Url::toRoute(['/site/advertising']),'options'=>['class'=>($controller=='site'&&$action=='advertising')?'active':'not-active']];
-            $menuItems[] = ['label' => 'Дешовые каналы', 'url' => Url::toRoute(['/site/cheap-channels']),'options'=>['class'=>($controller=='site'&&$action=='cheap-channels')?'active':'not-active']];
+            $menuItems[] = ['label' => 'Дешевые каналы', 'url' => Url::toRoute(['/site/cheap-channels']),'options'=>['class'=>($controller=='site'&&$action=='cheap-channels')?'active':'not-active']];
         }
         ?>
         <?=dmstr\widgets\Menu::widget([

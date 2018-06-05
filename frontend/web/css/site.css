@@ -332,3 +332,7 @@ aside .user-panel > .info > p.notAuth{
 .field-vibermessage-alpha_name, #vibermessage-alpha_name{
     display: none !important;
 }
+
+.has-toggle-input label.active{
+    width: auto;
+}
