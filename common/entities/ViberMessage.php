@@ -229,7 +229,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             ['viber_image_id', 'string'],
             [['title'], 'string', 'max' => 50, 'min' => 3],
 
-            [['text'], 'string', 'max' => 1000],
+            [['text','image_caption'], 'string', 'max' => 1023],
             [
                 'text',
                 'required',
@@ -237,7 +237,7 @@ class ViberMessage extends \yii\db\ActiveRecord
                     return $model->scenario === 'hard' && $model->type != self::ONLYIMAGE;
                 },
             ],
-            [['image', 'url_button', 'image_caption'], 'string', 'max' => 255],
+            [['image', 'url_button', ], 'string', 'max' => 255],
             [
                 ['upload_file'],
                 'file',
