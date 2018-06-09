@@ -48,7 +48,7 @@ class ClientSearch extends Client
         // add conditions that should always apply here
         $ids = Yii::$app->user->identity->getChildList();
         if ($ids !== -1) {
-            $query->andWhere(['in', 'id', $ids]);
+            $query->andWhere(['in', User::tableName().'.id', $ids]);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
