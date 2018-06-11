@@ -44,7 +44,7 @@ class ReportMongoSearch extends Message_Phone_List
         if (!$this->validate()) {
             return $dataProvider;
         }
-
+        $dataProvider->pagination=false;
         return $dataProvider;
 
     }
