@@ -55,7 +55,7 @@ $gridColumns = [
 
 <?= StatisticGraphMongo::widget(['model'=>$providerFromGetModel->getModels()]) ?>
 <?php
-//$exeportExelDataProvider->pagination=false;
+$exeportExelDataProvider->pagination=false;
 $export =ExportMenu::widget([
     'dataProvider' => $exeportExelDataProvider,
     'enableFormatter'=>false,
