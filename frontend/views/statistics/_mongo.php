@@ -55,8 +55,8 @@ $gridColumns = [
 
 <?= StatisticGraphMongo::widget(['model'=>$providerFromGetModel->getModels()]) ?>
 <?php
-$exeportExelDataProvider->pagination=false;
-$export=ExportMenu::widget([
+//$exeportExelDataProvider->pagination=false;
+$export =ExportMenu::widget([
     'dataProvider' => $exeportExelDataProvider,
     'enableFormatter'=>false,
     'columns' => $gridColumns,
@@ -79,7 +79,7 @@ $export=ExportMenu::widget([
         //ExportMenu::FORMAT_CSV=>false,
         ExportMenu::FORMAT_EXCEL => [
             'label' => Yii::t('kvexport', 'Excel 95 +'),
-            /*'icon' => $isFa ? 'file-excel-o' : 'floppy-remove',
+            'icon' => $isFa ? 'file-excel-o' : 'floppy-remove',
             'iconOptions' => ['class' => 'text-success'],
             'linkOptions' => [],
             'options' => ['title' => Yii::t('kvexport', 'Microsoft Excel 95+ (xls)')],
@@ -87,7 +87,7 @@ $export=ExportMenu::widget([
             'mime' => 'application/vnd.ms-excel',
             'extension' => 'xls',
             'encoding'=>'utf-8',
-            'writer' => ExportMenu::FORMAT_EXCEL*/
+            'writer' => ExportMenu::FORMAT_EXCEL
         ],
         ExportMenu::FORMAT_EXCEL_X => [
             'label' => Yii::t('kvexport', 'Excel 2007+'),
