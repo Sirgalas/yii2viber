@@ -89,7 +89,7 @@ $gridColumns = [
         ],
         ExportMenu::FORMAT_EXCEL_X => [
             'label' => Yii::t('kvexport', 'Excel 2007+'),
-            'icon' => $isFa ? 'file-excel-o' : 'floppy-remove',
+            'icon' => 'file-excel-o' ,
             'iconOptions' => ['class' => 'text-success'],
             'linkOptions' => [],
             'options' => ['title' => Yii::t('kvexport', 'Microsoft Excel 2007+ (xlsx)')],
