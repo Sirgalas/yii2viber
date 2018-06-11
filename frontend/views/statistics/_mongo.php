@@ -9,6 +9,7 @@ use frontend\widgets\StatisticGraphMongo;
  */
 $defaultExportConfig = [
     GridView::EXCEL => [
+        'dataProvider'=>$exeportExelDataProvider,
         'label' => Yii::t('kvgrid', 'Excel'),
         'icon' =>'file-excel-o',
         'iconOptions' => ['class' => 'text-success'],

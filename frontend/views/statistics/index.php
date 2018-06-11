@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="col-md-12">
         <?php
-            echo $this->render('_mongo',compact('dataProvider','searchModel','post','providerFromGetModel'));
+            echo $this->render('_mongo',compact('dataProvider','searchModel','exeportExelDataProvider','post','providerFromGetModel'));
        ?>
     </div>
     <div class="clearfix"></div>
