@@ -51,8 +51,10 @@ class ReportSearch extends ViberTransaction
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination'=>false
+
         ]);
+
+        $dataProvider->pagination=false;
 
         $this->load($params);
 
