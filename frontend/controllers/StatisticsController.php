@@ -55,7 +55,7 @@ class StatisticsController extends Controller
         $status = $messagePhoneList->allStatus();
         ViberTransaction::find()->where(['user_id' => Yii::$app->user->identity->id]);
         $dataProvider = $searchModel->search(Yii::$app->request->post('ViberTransaction'));
-        $exeportExelDataProvider=$$dataProvider;
+        $exeportExelDataProvider=$searchModel->search(Yii::$app->request->post('ViberTransaction'));
         $providerFromGetModel = (new StatisticsSearch())->search(Yii::$app->request->post('ViberTransaction'));
         return $this->render('index',
             compact('model', 'contact_collections', 'searchModel', 'dataProvider','exeportExelDataProvider', 'clients', 'post',
