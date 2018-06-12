@@ -131,7 +131,7 @@ class Balance extends \yii\db\ActiveRecord
                     $balance->sms      = $this->channelRest('sms', $balance);
                     $balance->whatsapp = $this->channelRest('whatsapp', $balance);
                     $balance->telegram = $this->channelRest('telegram', $balance);
-                    if ($balance->viber >= 0 && $balance->whatsapp >= 0 && $balance->telegram >= 0 && $balance->sms >= 0) {
+                    if ($balance->viber >= 0 && $balance->whatsapp >= 0 && $balance->telegram >= 0) {
                         $balance->setScenario('own');
                         if ($balance->validate() && $balance->save()) {
                             return parent::beforeSave($insert);

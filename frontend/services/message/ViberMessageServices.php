@@ -24,24 +24,26 @@ class ViberMessageServices
                 if (!$model->send()) {
                     return false;
                 };
-                if ( $post['button'] == 'check') {
+                if ($post['button'] == 'check') {
                     $model->scenario = ViberMessage::SCENARIO_HARD;
-                    $model->status = ViberMessage::STATUS_CHECK;
-                    if ($model->validate() && $model->send()) {
-                        $model->status = ViberMessage::STATUS_CHECK;
-                        if (!$model->validate()) {
-                            \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
-                        }
-                        if ($model->send()) {
-                            AdminModerateNotification::create('moderate', ['message' => $model])->send();
-                            return true;
-                        } else {
-                            return false;
-                        }
+//                    $model->status = ViberMessage::STATUS_CHECK;
+                    $model->status = ViberMessage::STATUS_NEW;
+
+                    if (!$model->validate()) {
+                        \Yii::warning('2 model->validate :: FALSE ' . print_r($model->getErrors()));
                     }
-                    return true;
+                    if ($model->send()) {
+                        AdminModerateNotification::create('moderate', ['message' => $model])->send();
+                        return true;
+                    }
+                    return false;
+
+
                 }
+            } else {
+                return false;
             }
+
         }
         return true;
     }

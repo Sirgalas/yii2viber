@@ -10,10 +10,7 @@ namespace common\entities;
 
 class Provider
 {
-    public static function getProviders()
-    {
-        return ['infobip', 'smsonline'];
-    }
+
 
     public static function getAlphaNames($provider = 'smsonline')
     {
@@ -43,6 +40,7 @@ class Provider
                 'AUTO' => 'AUTO',
             ];
         }
+        return ['default'=>'defult'];
     }
 
 

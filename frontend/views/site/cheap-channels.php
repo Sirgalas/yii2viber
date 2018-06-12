@@ -6,6 +6,6 @@ use yii\helpers\Html;
 
 ?>
 <div class="site-about">
-    <h1>Дешовые каналы</h1>
-    <a href="http://kanal.vibershop24.ru" target="_blank"  >Канал Вайбер рассылок</a>
+    <h1>Дешевые каналы</h1>
+    <h2>За информацией по дешевым каналам обращайтесь к своему личному менеджеру</h2>
 </div>

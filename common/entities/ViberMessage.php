@@ -429,12 +429,8 @@ class ViberMessage extends \yii\db\ActiveRecord
         if ($this->provider) {
             return $this->provider;
         }
-        if ($this->id) {
-            $this->provider = 'smsonline';
-        } else {
-            $this->provider = 'infobip';
-        }
 
+        $this->provider = Yii::$app->user->identity->viber_provider;
         return $this->provider;
     }
 

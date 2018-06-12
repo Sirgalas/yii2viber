@@ -28,6 +28,6 @@ class ProviderFactory
         } else if ($viberMessage->channel === 'sms') {
                 return new GateSms(Yii::$app->params['gatesms']);
         }
-        return new InfoBip(Yii::$app->params['infobip']);
+        //return new InfoBip(Yii::$app->params['infobip']);
     }
 }
