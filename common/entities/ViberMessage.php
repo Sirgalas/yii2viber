@@ -93,6 +93,8 @@ class ViberMessage extends \yii\db\ActiveRecord
 
     const STATUS_CANCEL = 'cancel';
 
+    const IMAGE_PATH='image/';
+
     /**
      *
      *   Таблица переходов
@@ -497,17 +499,18 @@ class ViberMessage extends \yii\db\ActiveRecord
             return false;
         }
         $imageName=time().'.'.$this->upload_file->extension;
-        $filepath='image/'.date('m_Y',time()).'/'.Yii::$app->user->identity->username;
+        $filepath=self::IMAGE_PATH.'/'.Yii::$app->user->identity->username;
         FileHelper::createDirectory($filepath,0777);
         if(!$this->upload_file->saveAs($filepath.'/'.$imageName))
             throw new \RuntimeException('ошибка загрузки файла');
-        $cloud = new \Friday14\Mailru\Cloud(Yii::$app->params['cloud'], Yii::$app->params['cloudpass'], 'mail.ru');
+        /*$cloud = new \Friday14\Mailru\Cloud(Yii::$app->params['cloud'], Yii::$app->params['cloudpass'], 'mail.ru');
         $file = new \SplFileObject($filepath.'/'.$imageName,"r");
         $cloud->upload($file,$filepath.'/'.$imageName);
         $cloudImageLink=$cloud->getLink($filepath.'/'.$imageName);
         @unlink(\Yii::getAlias('@frontend').'/web/' . $filepath.'/'.$imageName);
         $this->upload_file=null;
-        return $cloudImageLink;
+        return $cloudImageLink;*/
+        return $filepath.'/'.$imageName;
     }
 
     /**
