@@ -660,4 +660,3 @@ class ViberMessage extends \yii\db\ActiveRecord
         ];
     }
 }
-
