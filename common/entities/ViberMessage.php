@@ -1156,7 +1156,7 @@ class ViberMessage extends \yii\db\ActiveRecord
             return false;
         }
         $imageName=time().'.'.$this->upload_file->extension;
-        $filepath=self::IMAGE_PATH.'/'.Yii::$app->user->identity->username;
+        $filepath=self::IMAGE_PATH.'/'.Yii::$app->user->identity->username.'/'.$this->channel;
         FileHelper::createDirectory($filepath,0777);
         if(!$this->upload_file->saveAs($filepath.'/'.$imageName))
             throw new \RuntimeException('ошибка загрузки файла');
