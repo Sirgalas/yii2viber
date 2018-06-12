@@ -501,8 +501,9 @@ class ViberMessage extends \yii\db\ActiveRecord
         $imageName=time().'.'.$this->upload_file->extension;
         $filepath=Yii::getAlias('@frontend').'/web/'.self::IMAGE_PATH.Yii::$app->user->identity->username.'/'.$this->channel;
 
+
         FileHelper::createDirectory($filepath,0777);
-        if(!$this->upload_file->saveAs($filepath.'/'.$imageName))
+        if(!$this->upload_file->saveAs($filepath.'/'.$imageName, false))
             throw new \RuntimeException('ошибка загрузки файла');
         /*$cloud = new \Friday14\Mailru\Cloud(Yii::$app->params['cloud'], Yii::$app->params['cloudpass'], 'mail.ru');
         $file = new \SplFileObject($filepath.'/'.$imageName,"r");

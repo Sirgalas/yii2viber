@@ -158,8 +158,8 @@ $this->registerCssFile('/css/jquery.toggleinput.css ');
 
                     echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary right-20',  'name'=>'button' ,'value'=>'save' ]);
                     echo '<span style="width:20px"></span>';
-
-                    echo Html::submitButton('Отправить на модерацию', ['class' => 'btn btn-success right-20',  'name'=>'button' ,'value'=>'check']);
+                    if($model->status==$model::STATUS_PRE||$model->status==$model::STATUS_FIX)
+                        echo Html::submitButton('Отправить на модерацию', ['class' => 'btn btn-success right-20',  'name'=>'button' ,'value'=>'check']);
                 }
                 if ($model->status && $model->isCancalable()) {
                     echo Html::submitButton('Прервать', ['class' => 'btn btn-primary right-20',   'name'=>'button' ,'value'=>'cancel']);

@@ -21,6 +21,7 @@ class ViberMessageServices
         if ($model->getAttribute('status') && $model->isEditable()) {
             if ($model->validate()) {
                 $model->upload_file = UploadedFile::getInstance($model, 'upload_file');
+
                 if (!$model->send()) {
                     return false;
                 };
