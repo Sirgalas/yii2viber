@@ -499,7 +499,8 @@ class ViberMessage extends \yii\db\ActiveRecord
             return false;
         }
         $imageName=time().'.'.$this->upload_file->extension;
-        $filepath=Yii::getAlias('@web').self::IMAGE_PATH.'/'.Yii::$app->user->identity->username.'/'.$this->channel;
+        $filepath=Yii::getAlias('@frontend').'/web/'.self::IMAGE_PATH.Yii::$app->user->identity->username.'/'.$this->channel;
+
         FileHelper::createDirectory($filepath,0777);
         if(!$this->upload_file->saveAs($filepath.'/'.$imageName))
             throw new \RuntimeException('ошибка загрузки файла');
@@ -509,8 +510,10 @@ class ViberMessage extends \yii\db\ActiveRecord
         $cloudImageLink=$cloud->getLink($filepath.'/'.$imageName);
         @unlink(\Yii::getAlias('@frontend').'/web/' . $filepath.'/'.$imageName);
         $this->upload_file=null;
-        return $cloudImageLink;*/
-        return $filepath.'/'.$imageName;
+        return $cloudImageLink;
+        var_dump(Yii::$app->params['frontendHostInfo'].'/'.self::IMAGE_PATH.Yii::$app->user->identity->username.'/'.$this->channel.'/'.$imageName);
+        exit();*/
+        return Yii::$app->params['frontendHostInfo'].'/'.self::IMAGE_PATH.Yii::$app->user->identity->username.'/'.$this->channel.'/'.$imageName;
     }
 
     /**
